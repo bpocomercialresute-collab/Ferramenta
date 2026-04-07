@@ -7,79 +7,129 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0b1120; --bg-card: #141e33; --bg-hover: #1f2d4a; --border: #2a3b5c;
-      --text: #f8fafc; --text-muted: #94a3b8; --accent: #3b82f6; --accent-hover: #2563eb;
-      --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --radius: 12px;
+      --bg-dark: #070b14;
+      --bg-grad: linear-gradient(135deg, #0f172a 0%, #070b14 100%);
+      --glass-bg: rgba(30, 41, 59, 0.4);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+      --text: #f8fafc; --text-muted: #94a3b8; 
+      --accent-grad: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      --accent-hover: linear-gradient(135deg, #2563eb, #7c3aed);
+      --success: #10b981; --warning: #f59e0b; --danger: #ef4444; 
+      --radius: 16px;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 20px; min-height: 100vh; }
     
-    .container { max-width: 1700px; margin: 0 auto; }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 20px; background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--border); }
-    .header h1 { font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 4px; }
-    .header p { color: var(--text-muted); font-size: 14px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg-grad); color: var(--text); padding: 20px; min-height: 100vh; font-family: 'Plus Jakarta Sans', sans-serif; background-attachment: fixed; }
     
-    .upload-area { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-    .dropzone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 20px; text-align: center; cursor: pointer; background: rgba(255,255,255,0.02); transition: 0.3s; }
-    .dropzone:hover, .dropzone.dragover { border-color: var(--accent); background: rgba(59, 130, 246, 0.05); }
-    .dropzone p { color: var(--text-muted); font-size: 13px; margin-top: 8px; }
-    .dropzone h3 { color: var(--accent); font-size: 16px; margin-bottom: 5px; }
+    /* Scrollbar Customizada */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+
+    .container { max-width: 1750px; margin: 0 auto; }
     
-    .toolbar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 10px; }
-    .controls { background: var(--bg-card); padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 20px; }
-    .controls-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    /* Header e Cartões Base (Glassmorphism) */
+    .glass-panel {
+      background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border); border-radius: var(--radius);
+      box-shadow: var(--glass-shadow); padding: 25px; margin-bottom: 25px;
+      animation: fadeUp 0.6s ease-out forwards;
+    }
+
+    .header { display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 32px; font-weight: 800; font-family: 'Outfit', sans-serif; background: var(--accent-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
+    .header p { color: var(--text-muted); font-size: 15px; font-weight: 500; }
     
-    select, input, button { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 13px; outline: none; transition: 0.2s; }
-    select:focus, input:focus { border-color: var(--accent); }
-    select option { background: var(--bg-card); color: #fff; }
+    .upload-area { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+    .dropzone { 
+      border: 2px dashed rgba(59, 130, 246, 0.4); border-radius: var(--radius); padding: 25px; text-align: center; cursor: pointer; 
+      background: rgba(59, 130, 246, 0.02); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    }
+    .dropzone:hover { border-color: #8b5cf6; background: rgba(139, 92, 246, 0.08); transform: translateY(-3px); box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.2); }
+    .dropzone h3 { color: #fff; font-size: 18px; margin-bottom: 8px; font-family: 'Outfit', sans-serif;}
+    .dropzone p { color: var(--text-muted); font-size: 13px; }
     
-    button { cursor: pointer; font-weight: 600; background: var(--bg-hover); border: none; }
-    button:hover { filter: brightness(1.2); }
-    button.primary { background: var(--accent); color: #fff; }
-    button.primary:hover { background: var(--accent-hover); }
-    button.danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
-    button.danger:hover { background: var(--danger); color: #fff; }
-    button.warning-btn { background: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
-    button.warning-btn:hover { background: var(--warning); color: #fff; }
+    .toolbar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 15px; }
+    .controls-title { font-size: 13px; font-weight: 700; margin-bottom: 15px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px;}
+    
+    /* Inputs e Selects */
+    select, input { 
+      width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid var(--glass-border); 
+      background: rgba(0,0,0,0.3); color: var(--text); font-size: 14px; font-family: 'Plus Jakarta Sans', sans-serif;
+      outline: none; transition: 0.3s; cursor: pointer;
+    }
+    select:focus, input:focus { border-color: #8b5cf6; box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); }
+    select option { background: #0f172a; color: #fff; }
+    
+    /* Botoes */
+    button { 
+      padding: 12px 20px; border-radius: 10px; font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif;
+      border: none; cursor: pointer; transition: all 0.3s ease; color: #fff; 
+      background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+    }
+    button:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+    button.primary { background: var(--accent-grad); border: none; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+    button.primary:hover { background: var(--accent-hover); box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6); }
+    button.danger { background: rgba(239, 68, 68, 0.1); color: #fca5a5; border-color: rgba(239, 68, 68, 0.3); }
+    button.danger:hover { background: var(--danger); color: #fff; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
+    button.warning-btn { background: rgba(245, 158, 11, 0.1); color: #fcd34d; border-color: rgba(245, 158, 11, 0.3); }
+    button.warning-btn:hover { background: var(--warning); color: #fff; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); }
     
     /* Tabs */
-    .tabs { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 10px; overflow-x: auto; scrollbar-width: none; }
-    .tab { padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 600; color: var(--text-muted); transition: 0.3s; white-space: nowrap; font-size: 14px; }
-    .tab:hover { color: var(--text); background: var(--bg-hover); }
-    .tab.active { background: var(--accent); color: #fff; }
+    .tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 2px solid var(--glass-border); padding-bottom: 15px; overflow-x: auto; }
+    .tab { 
+      padding: 12px 22px; border-radius: 10px; cursor: pointer; font-weight: 600; color: var(--text-muted); 
+      transition: all 0.3s; white-space: nowrap; font-size: 15px; background: rgba(0,0,0,0.2);
+    }
+    .tab:hover { color: #fff; background: rgba(255,255,255,0.05); transform: translateY(-2px); }
+    .tab.active { background: var(--accent-grad); color: #fff; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
     .tab-content { display: none; }
-    .tab-content.active { display: block; animation: fadeIn 0.3s; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    .tab-content.active { display: block; animation: fadeUp 0.5s ease-out forwards; }
+    
+    /* Animações */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(59,130,246,0.4); } 70% { box-shadow: 0 0 0 10px rgba(59,130,246,0); } 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); } }
+    
+    /* KPIs */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
+    .kpi-card { 
+      background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 22px; 
+      position: relative; overflow: hidden; transition: 0.3s;
+    }
+    .kpi-card:hover { transform: translateY(-5px); background: rgba(30, 41, 59, 0.8); border-color: rgba(255,255,255,0.2); }
+    .kpi-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 4px 0 0 4px; }
+    .kpi-card.info::before { background: var(--accent-grad); } .kpi-card.success::before { background: var(--success); } .kpi-card.warning::before { background: var(--warning); } .kpi-card.danger::before { background: var(--danger); }
+    .kpi-card h4 { color: var(--text-muted); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .kpi-card .value { font-size: 28px; font-weight: 800; font-family: 'Outfit', sans-serif; color: #fff; }
+    .kpi-card .sub { font-size: 12px; color: #64748b; margin-top: 5px; font-weight: 500; }
     
     /* Grids & Cards */
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
-    .kpi-card { background: var(--bg-card); padding: 18px; border-radius: var(--radius); border: 1px solid var(--border); border-left: 4px solid var(--border); display: flex; flex-direction: column; justify-content: center; }
-    .kpi-card h4 { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-    .kpi-card .value { font-size: 24px; font-weight: 800; }
-    .kpi-card .sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-    .kpi-card.success { border-left-color: var(--success); } .kpi-card.warning { border-left-color: var(--warning); } .kpi-card.danger { border-left-color: var(--danger); } .kpi-card.info { border-left-color: var(--accent); }
-    
-    .grid-2 { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 20px; margin-bottom: 20px; }
-    .card { background: var(--bg-card); padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); }
-    .card h3 { margin-bottom: 15px; font-size: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .grid-2 { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 25px; margin-bottom: 25px; }
+    .card { background: rgba(15, 23, 42, 0.5); border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 25px; transition: 0.3s; }
+    .card:hover { border-color: rgba(255,255,255,0.15); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5); }
+    .card h3 { font-family: 'Outfit', sans-serif; font-size: 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
     
     /* Tables */
-    .table-responsive { overflow-x: auto; max-height: 450px; border-radius: 8px; border: 1px solid var(--border); }
-    table { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px; }
-    th { position: sticky; top: 0; background: var(--bg-hover); padding: 12px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; border-bottom: 2px solid var(--border); z-index: 10;}
-    td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
-    tr:hover td { background: rgba(255,255,255,0.03); }
+    .table-responsive { overflow-x: auto; max-height: 500px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; min-width: 600px; }
+    th { position: sticky; top: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(5px); padding: 15px; font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--glass-border); z-index: 10;}
+    td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; color: #e2e8f0; transition: 0.2s;}
+    tr:hover td { background: rgba(255,255,255,0.05); color: #fff; }
     
-    .tag { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-    .tag.good { background: rgba(16, 185, 129, 0.2); color: var(--success); }
-    .tag.warn { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
-    .tag.bad { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+    .tag { display: inline-block; padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
+    .tag.good { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .tag.warn { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .tag.bad { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
     
-    canvas { max-height: 320px; width: 100% !important; }
-    #loader { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(11, 17, 32, 0.9); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(5px); }
-    .spinner { border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+    canvas { max-height: 350px; width: 100% !important; }
+    
+    #loader { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(7, 11, 20, 0.85); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(10px); }
+    .spinner { border: 4px solid rgba(255,255,255,0.05); border-left-color: #3b82f6; border-radius: 50%; width: 60px; height: 60px; animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     
     @media(max-width: 1200px) { .grid-2 { grid-template-columns: 1fr; } }
@@ -89,38 +139,38 @@
 
 <div id="loader">
   <div class="spinner"></div>
-  <h2 style="margin-top: 20px; color: white;">Cruzando Dados...</h2>
-  <p style="color: var(--text-muted); margin-top: 5px;">Aguarde o processamento.</p>
+  <h2 style="margin-top: 25px; color: white; font-family: 'Outfit'; font-size: 24px;">Processando Inteligência...</h2>
+  <p style="color: var(--text-muted); margin-top: 5px;">Construindo painéis analíticos.</p>
 </div>
 
 <div class="container">
-  <div class="header">
+  <div class="glass-panel header">
     <div>
       <h1>Gerador de Relatórios Base</h1>
-      <p>Módulo de Inteligência com Filtros em Cascata e Separação Estrita.</p>
+      <p>Dashboard Analítico • Visualização Otimizada • Filtros em Cascata</p>
     </div>
-    <div style="display: flex; gap: 10px;">
-      <button class="primary" onclick="processarBases()">🔄 Processar Bases</button>
-      <button onclick="exportarCSV()">⬇ Exportar Dados</button>
+    <div style="display: flex; gap: 12px;">
+      <button class="primary" onclick="processarBases()" style="animation: pulseGlow 2s infinite;">🔄 Processar Dados</button>
+      <button onclick="exportarCSV()">⬇ Exportar CSV</button>
       <button onclick="window.print()">🖨️ Imprimir</button>
     </div>
   </div>
 
   <div class="upload-area">
-    <div class="dropzone" id="dropProd" onclick="document.getElementById('fileProd').click()">
+    <div class="glass-panel dropzone" id="dropProd" onclick="document.getElementById('fileProd').click()">
       <h3>📁 Base de Produtos (Opcional)</h3>
       <p id="lblProd">Clique ou arraste a planilha (.csv, .xlsx)</p>
       <input type="file" id="fileProd" style="display: none" accept=".csv, .xlsx, .xls">
     </div>
-    <div class="dropzone" id="dropPed" onclick="document.getElementById('filePed').click()">
+    <div class="glass-panel dropzone" id="dropPed" onclick="document.getElementById('filePed').click()">
       <h3>📦 Pedidos de Venda (Obrigatório)</h3>
       <p id="lblPed">Clique ou arraste a planilha (.csv, .xlsx)</p>
       <input type="file" id="filePed" style="display: none" accept=".csv, .xlsx, .xls">
     </div>
   </div>
 
-  <div class="controls">
-    <div class="controls-title">⚙️ Controles Principais</div>
+  <div class="glass-panel controls">
+    <div class="controls-title">⚙️ Configurações Base</div>
     <div class="toolbar-grid">
       <input type="date" id="dtIni" title="Data Inicial" class="trigger-filter">
       <input type="date" id="dtFim" title="Data Final" class="trigger-filter">
@@ -131,10 +181,10 @@
         <option value="50">Top 50</option>
         <option value="100">Top 100</option>
       </select>
-      <button class="danger" onclick="limparTudo()">🗑️ Limpar Tudo (Arquivos)</button>
+      <button class="danger" onclick="limparTudo()">🗑️ Apagar Tudo</button>
     </div>
 
-    <div class="controls-title" style="margin-top: 15px;">🔍 Filtros Dinâmicos em Cascata</div>
+    <div class="controls-title" style="margin-top: 25px;">🔍 Filtros Dinâmicos em Cascata</div>
     <div class="toolbar-grid">
       <select id="fltProduto" class="trigger-filter"><option value="">Todos os Produtos</option></select>
       <select id="fltEstampa" class="trigger-filter"><option value="">Todas as Estampas</option></select>
@@ -158,30 +208,30 @@
     <div class="tab" onclick="openTab('tab-estampas', this)">✨ Estampas</div>
     <div class="tab" onclick="openTab('tab-cores', this)">🎨 Cores</div>
     <div class="tab" onclick="openTab('tab-tamanhos', this)">📏 Tamanhos</div>
-    <div class="tab" onclick="openTab('tab-base', this)">🗄️ Base Analítica & OP</div>
+    <div class="tab" onclick="openTab('tab-base', this)">🗄️ Base de Dados</div>
     <div class="tab" onclick="openTab('tab-orfaos', this)">⚠️ Diagnóstico</div>
   </div>
 
   <div id="tab-resumo" class="tab-content active">
     <div class="kpi-grid">
-      <div class="kpi-card info"><h4>Pedidos (Linhas)</h4><div class="value" id="kpiLinhas">0</div><div class="sub">linhas filtradas</div></div>
-      <div class="kpi-card info"><h4>Volume (Peças)</h4><div class="value" id="kpiPecas">0</div><div class="sub">unidades vendidas</div></div>
-      <div class="kpi-card success"><h4>Faturamento</h4><div class="value" id="kpiFat">R$ 0,00</div><div class="sub">receita total</div></div>
-      <div class="kpi-card"><h4>Ticket Médio</h4><div class="value" id="kpiTicket">R$ 0,00</div><div class="sub">por linha de pedido</div></div>
-      <div class="kpi-card"><h4>Itens Únicos (Produtos)</h4><div class="value" id="kpiMix">0</div><div class="sub">variedade de itens vendidos</div></div>
+      <div class="kpi-card info"><h4>Linhas de Pedido</h4><div class="value" id="kpiLinhas">0</div><div class="sub">Total Filtrado</div></div>
+      <div class="kpi-card info"><h4>Volume Físico</h4><div class="value" id="kpiPecas">0</div><div class="sub">Peças Vendidas</div></div>
+      <div class="kpi-card success"><h4>Faturamento Líquido</h4><div class="value" id="kpiFat">R$ 0,00</div><div class="sub">Receita Total</div></div>
+      <div class="kpi-card"><h4>Ticket Médio</h4><div class="value" id="kpiTicket">R$ 0,00</div><div class="sub">Por Linha</div></div>
+      <div class="kpi-card"><h4>Mix de Produtos</h4><div class="value" id="kpiMix">0</div><div class="sub">Modelos Únicos</div></div>
     </div>
     <div class="grid-2">
-      <div class="card"><h3>Curva de Tendência de Vendas</h3><canvas id="chartEvolucao"></canvas></div>
-      <div class="card"><h3>Faturamento por Produto (Top)</h3><canvas id="chartTopProdsVisao"></canvas></div>
+      <div class="card"><h3>Curva de Faturamento</h3><canvas id="chartEvolucao"></canvas></div>
+      <div class="card"><h3>Composição por Grupo (Visão Geral)</h3><canvas id="chartTopProdsVisao"></canvas></div>
     </div>
   </div>
 
   <div id="tab-produtos" class="tab-content">
     <div class="grid-2">
-      <div class="card"><h3>Top Faturamento por Produto</h3><canvas id="chartTopProds"></canvas></div>
+      <div class="card"><h3>Top 10 Produtos (Barras Horizontais)</h3><canvas id="chartTopProds"></canvas></div>
       <div class="card">
-        <h3>Ranking Completo de Produtos</h3>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Exibe os produtos reais da planilha, sem misturar cores ou tamanhos.</p>
+        <h3>Ranking Completo: Produtos Extraídos</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Os produtos reais da planilha, limpos de cores e tamanhos.</p>
         <div class="table-responsive"><table id="tblProdutos"></table></div>
       </div>
     </div>
@@ -189,10 +239,10 @@
 
   <div id="tab-estampas" class="tab-content">
     <div class="grid-2">
-      <div class="card"><h3>Top Estampas Mais Vendidas</h3><canvas id="chartEstampas"></canvas></div>
+      <div class="card"><h3>Artes & Estampas Mais Desejadas</h3><canvas id="chartEstampas"></canvas></div>
       <div class="card">
-        <h3>Ranking Completo de Estampas</h3>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Exibe apenas as artes/estampas, isoladas do nome do produto.</p>
+        <h3>Ranking Completo: Estampas</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Apenas as descrições das artes extraídas da descrição principal.</p>
         <div class="table-responsive"><table id="tblEstampas"></table></div>
       </div>
     </div>
@@ -200,10 +250,10 @@
 
   <div id="tab-cores" class="tab-content">
     <div class="grid-2">
-      <div class="card"><h3>Distribuição de Volume por Cor</h3><canvas id="chartCores"></canvas></div>
+      <div class="card"><h3>Distribuição de Cores (Polar Area)</h3><canvas id="chartCores"></canvas></div>
       <div class="card">
-        <h3>Ranking Completo de Cores</h3>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Exibe apenas as cores isoladas.</p>
+        <h3>Ranking Completo: Paleta de Cores</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Mapeamento rigoroso baseado em dicionário têxtil.</p>
         <div class="table-responsive"><table id="tblCores"></table></div>
       </div>
     </div>
@@ -211,10 +261,10 @@
 
   <div id="tab-tamanhos" class="tab-content">
     <div class="grid-2">
-      <div class="card"><h3>Curva de Tamanhos (Grade)</h3><canvas id="chartTamanhos"></canvas></div>
+      <div class="card"><h3>Grade de Tamanhos</h3><canvas id="chartTamanhos"></canvas></div>
       <div class="card">
-        <h3>Ranking Completo de Tamanhos</h3>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Exibe apenas os tamanhos extraídos.</p>
+        <h3>Ranking Completo: Curva de Grade</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Volume faturado e quantidade por tamanho identificado.</p>
         <div class="table-responsive"><table id="tblTamanhos"></table></div>
       </div>
     </div>
@@ -222,30 +272,52 @@
 
   <div id="tab-base" class="tab-content">
     <div class="grid-2">
-      <div class="card"><h3>Resumo por Ordem de Produção / Status</h3><div class="table-responsive"><table id="tblOP"></table></div></div>
-      <div class="card"><h3>Dicionário Original</h3><div class="table-responsive"><table id="tblDicionario"></table></div></div>
+      <div class="card"><h3>Status Operacional (OP)</h3><div class="table-responsive"><table id="tblOP"></table></div></div>
+      <div class="card"><h3>Tabela Mestre Identificada</h3><div class="table-responsive"><table id="tblDicionario"></table></div></div>
     </div>
     <div class="card">
-      <h3>Base Analítica Unificada <div style="display:flex; gap:10px;"><button style="width:auto; padding:4px 10px; font-size:11px;" onclick="renderBaseAnalitica(100)">100 Linhas</button><button style="width:auto; padding:4px 10px; font-size:11px;" onclick="renderBaseAnalitica(99999)">Ver Tudo</button></div></h3>
-      <div class="table-responsive" style="max-height: 500px;"><table id="tblBaseUnificada"></table></div>
+      <h3>Base Analítica Consolidada 
+        <div style="display:flex; gap:10px;">
+          <button style="padding:6px 12px; font-size:12px;" onclick="renderBaseAnalitica(100)">100 Linhas</button>
+          <button style="padding:6px 12px; font-size:12px;" class="primary" onclick="renderBaseAnalitica(99999)">Exibir Toda Base</button>
+        </div>
+      </h3>
+      <div class="table-responsive" style="max-height: 600px;"><table id="tblBaseUnificada"></table></div>
     </div>
   </div>
 
   <div id="tab-orfaos" class="tab-content">
     <div class="kpi-grid">
-      <div class="kpi-card success"><h4>Match de SKU</h4><div class="value" id="diagSku">0</div><div class="sub">100% Exato</div></div>
-      <div class="kpi-card success"><h4>Match de Nome</h4><div class="value" id="diagNome">0</div><div class="sub">Texto Exato</div></div>
-      <div class="kpi-card warning"><h4>Auto-Extração</h4><div class="value" id="diagRegex">0</div><div class="sub">Detectado</div></div>
-      <div class="kpi-card danger"><h4>Sem Match Total</h4><div class="value" id="diagSem">0</div><div class="sub">Não Identificado</div></div>
+      <div class="kpi-card success"><h4>100% SKU</h4><div class="value" id="diagSku">0</div><div class="sub">Match Exato</div></div>
+      <div class="kpi-card success"><h4>Texto Exato</h4><div class="value" id="diagNome">0</div><div class="sub">Match por Nome</div></div>
+      <div class="kpi-card warning"><h4>Motor IA</h4><div class="value" id="diagRegex">0</div><div class="sub">Extração Automática</div></div>
+      <div class="kpi-card danger"><h4>Falhas</h4><div class="value" id="diagSem">0</div><div class="sub">Não Identificado</div></div>
     </div>
     <div class="grid-2">
-      <div class="card"><h3>Qualidade do Cruzamento</h3><canvas id="chartMatch"></canvas></div>
-      <div class="card"><h3>Produtos Órfãos (Sem Match Mestre)</h3><div class="table-responsive"><table id="tblOrfaos"></table></div></div>
+      <div class="card"><h3>Precisão do Algoritmo</h3><canvas id="chartMatch"></canvas></div>
+      <div class="card"><h3>Logs de Extração (Auditoria)</h3><div class="table-responsive"><table id="tblOrfaos"></table></div></div>
     </div>
   </div>
 </div>
 
 <script>
+// --- CONFIGURAÇÃO GLOBAL DO CHART.JS PARA TEMA DARK E FONTES ---
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(15, 23, 42, 0.9)';
+Chart.defaults.plugins.tooltip.titleFont = { size: 14, family: 'Outfit', weight: 'bold' };
+Chart.defaults.plugins.tooltip.padding = 12;
+Chart.defaults.plugins.tooltip.cornerRadius = 8;
+Chart.defaults.plugins.tooltip.borderColor = 'rgba(255,255,255,0.1)';
+Chart.defaults.plugins.tooltip.borderWidth = 1;
+
+// PALETA DE CORES VIBRANTES PARA GRÁFICOS
+const colorPalette = [
+  '#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', 
+  '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1',
+  '#14b8a6', '#d946ef', '#f43f5e', '#eab308', '#0ea5e9'
+];
+
 let dbProdutosRaw = [], dbPedidosRaw = [], dbUnificada = [], dbFiltrada = [], graficos = {};
 
 const $ = id => document.getElementById(id);
@@ -297,46 +369,26 @@ function parseData(v) {
 function fmtData(d) { return d ? `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}` : ''; }
 function fmtMesAno(d) { return d ? `${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}` : ''; }
 
-// ===== ALGORITMO DE EXTRAÇÃO ESTRITA COM DICIONÁRIO ATUALIZADO =====
+// ===== ALGORITMO DE EXTRAÇÃO ESTRITA MANTIDO INTACTO =====
 function extrairAtributosDaDescricao(descricao) {
   let nome = String(descricao).toUpperCase().trim();
   let cor = '', tamanho = '', grupo = 'OUTROS';
-  
   const colors = ['PRETO','PRETA','BRANCO','BRANCA','OFF WHITE','OFF-WHITE','OFFWHITE','AZUL MARINHO','MARINHO','AZUL','ROSA','VERMELHO','VERMELHA','VERDE','AMARELO','LILAS','ROXO','BEGE','NUDE','CINZA','MESCLA','BORDO','VINHO','CARAMELO','CAQUI','PINK','CHUMBO','AREIA','MOSTARDA','TERRACOTA','LAVANDA','MAGENTA','SALMAO','CORAL'];
-  
-  // ADICIONADO: G1, G2, G3, G4, U, UNICO, UNICA, ÚNICO, VARIADOS, VARIADAS
   const sizes = ['PP','P','M','G','GG','XG','XGG','EXG','EG','G1','G2','G3','G4','U','UNICO','UNICA','ÚNICO','VARIADOS','VARIADAS','34','36','38','40','42','44','46','48','50','52'];
-
   let tempNome = ' ' + nome + ' ';
 
-  // 1. Isolar Tamanho e remover da string base (Atualizado com novos tamanhos)
   const tamRegex = /(?:-?\s*(?:TAMANHO|TAM|GRADE)[:\s-]*\s*)(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|U|UNICO|UNICA|ÚNICO|VARIADOS|VARIADAS|34|36|38|40|42|44|46|48|50|52)\b/i;
   const matchTam = tempNome.match(tamRegex);
-  if (matchTam) {
-     tamanho = matchTam[1].toUpperCase();
-     tempNome = tempNome.replace(matchTam[0], ' ');
-  } else {
-     for (let s of sizes) {
-       if (tempNome.match(new RegExp(`\\s-?\\s*${s}\\s`))) {
-         tamanho = s; tempNome = tempNome.replace(new RegExp(`\\s-?\\s*${s}\\s`), ' '); break;
-       }
-     }
-  }
+  if (matchTam) { tamanho = matchTam[1].toUpperCase(); tempNome = tempNome.replace(matchTam[0], ' '); } 
+  else { for (let s of sizes) { if (tempNome.match(new RegExp(`\\s-?\\s*${s}\\s`))) { tamanho = s; tempNome = tempNome.replace(new RegExp(`\\s-?\\s*${s}\\s`), ' '); break; } } }
 
-  // 2. Isolar Cor e remover da string base
   for (let c of colors) {
      const regex = new RegExp(`\\b${c.replace('-', '\\-')}\\b`, 'i');
-     if (tempNome.match(regex)) {
-        cor = c.replace('PRETA','PRETO').replace('BRANCA','BRANCO').replace('VERMELHA','VERMELHO').replace('OFF-WHITE','OFF WHITE').replace('OFFWHITE','OFF WHITE');
-        tempNome = tempNome.replace(regex, ' ');
-        break;
-     }
+     if (tempNome.match(regex)) { cor = c.replace('PRETA','PRETO').replace('BRANCA','BRANCO').replace('VERMELHA','VERMELHO').replace('OFF-WHITE','OFF WHITE').replace('OFFWHITE','OFF WHITE'); tempNome = tempNome.replace(regex, ' '); break; }
   }
 
-  // 3. O "PRODUTO" real é o nome inteiro que sobrou sem a Cor e o Tamanho
   let produtoFull = tempNome.replace(/\s+/g, ' ').replace(/\s-\s/g, ' ').replace(/^[-\s:]+|[-\s:]+$/g, '').trim();
 
-  // Define um Grupo interno
   if (produtoFull.includes('T-SHIRT') || produtoFull.includes('TSHIRT')) grupo = 'T-SHIRT';
   else if (produtoFull.includes('CROPPED') || produtoFull.includes('MOLECROPPED')) grupo = 'CROPPED';
   else if (produtoFull.includes('VESTIDO')) grupo = 'VESTIDO';
@@ -344,10 +396,7 @@ function extrairAtributosDaDescricao(descricao) {
   else if (produtoFull.includes('MOLETOM')) grupo = 'MOLETOM';
   else if (produtoFull.includes('CONJUNTO')) grupo = 'CONJUNTO';
 
-  // 4. A "ESTAMPA" é o produtoFull, mas removendo palavras de confecção e as palavras que vazaram antes
-  // ADICIONADO: MOLECROPPED, MUSCLE TEE, T-SHIRTS (plural), KIT, 10, FEM, *LD*
   let estampa = produtoFull.replace(/\b(T-SHIRTS|T-SHIRT|TSHIRT|MUSCLE TEE|BABY LOOK|MOLECROPPED|CROPPED|VESTIDO|BLUSA|MOLETOM|CONJUNTO|REGATA|BODY|MACAQUINHO|CALÇA|CALCA|SHORTS|SHORT|SAIA|JAQUETA|CASACO|CAMISETA|CAMISA|DTF|SILK|RELEVO|BORDADO|LISO|LISA|COM|DE|DA|DO|KIT|10|FEM|\*LD\*)\b/gi, ' ').replace(/\s+/g, ' ').trim();
-  
   if (!estampa || estampa === '*' || estampa === '-') estampa = 'SEM ESTAMPA / LISA';
 
   return { produto: produtoFull, estampa: estampa, cor: cor||'N/D', tamanho: tamanho||'N/D', grupo: grupo };
@@ -386,7 +435,6 @@ function processarBases() {
       let produtoFinal = (prodRef && prodRef._nomeBase) ? prodRef._nomeBase : extr.produto;
       let estampaFinal = extr.estampa;
 
-      // Se o nome começa com "ESTAMPA", movemos para a aba de Estampas e agrupamos o Produto.
       if (produtoFinal.toUpperCase().trim().startsWith('ESTAMPA')) {
         estampaFinal = produtoFinal;
         produtoFinal = 'ESTAMPA (AVULSA)';
@@ -395,13 +443,7 @@ function processarBases() {
       return {
         data: dataObj, mesAno: fmtMesAno(dataObj), pedido: ped['Número pedido'] || ped['Pedido'] || '-',
         skuOriginal: rawSKU, skuMestre: skuMestre, nomeOriginal: rawNome,
-        
-        produtoBase: produtoFinal, 
-        estampa: estampaFinal,     
-        cor: extr.cor,             
-        tamanho: extr.tamanho,     
-        grupo: extr.grupo,
-        
+        produtoBase: produtoFinal, estampa: estampaFinal, cor: extr.cor, tamanho: extr.tamanho, grupo: extr.grupo,
         quantidade: qtd, valorUnitario: (qtd ? valTotal/qtd : 0), valorTotal: valTotal,
         opStatus: ped['OP'] || ped['Status'] || ped['Fase'] || 'Concluído', match: matchTipo
       };
@@ -412,7 +454,7 @@ function processarBases() {
   }, 100);
 }
 
-// Filtros em Cascata Perfeitos
+// Filtros Cascata
 function popularSelect(id, valoresDisponiveis, textoPadrao) {
   const sel = $(id), valAtual = sel.value;
   sel.innerHTML = `<option value="">${textoPadrao}</option>` + valoresDisponiveis.map(v => `<option value="${v}">${v}</option>`).join('');
@@ -423,8 +465,7 @@ function aplicarFiltrosGerais() {
   let ini = $('dtIni').value ? new Date($('dtIni').value+'T00:00:00') : null;
   let fim = $('dtFim').value ? new Date($('dtFim').value+'T23:59:59') : null;
   let mes = $('filtroMes').value;
-  let fp = $('fltProduto').value, fc = $('fltCor').value, ft = $('fltTamanho').value, 
-      fe = $('fltEstampa').value, fm = $('fltMatch').value;
+  let fp = $('fltProduto').value, fc = $('fltCor').value, ft = $('fltTamanho').value, fe = $('fltEstampa').value, fm = $('fltMatch').value;
 
   const dadosSimulados = (ignorar) => {
     return dbUnificada.filter(r => {
@@ -468,8 +509,7 @@ function aplicarFiltrosGerais() {
 
 function limparApenasFiltros() {
   $('dtIni').value = ''; $('dtFim').value = ''; $('filtroMes').value = '';
-  $('fltProduto').value = ''; $('fltCor').value = '';
-  $('fltTamanho').value = ''; $('fltEstampa').value = ''; $('fltMatch').value = '';
+  $('fltProduto').value = ''; $('fltCor').value = ''; $('fltTamanho').value = ''; $('fltEstampa').value = ''; $('fltMatch').value = '';
   if(dbUnificada.length > 0) aplicarFiltrosGerais();
 }
 
@@ -484,7 +524,6 @@ function agrupar(dados, chave, porFat = false) {
   });
   return Array.from(map.values()).sort((a, b) => porFat ? b.fat - a.fat : b.qtd - a.qtd);
 }
-
 function agruparData(dados) {
   const map = new Map();
   dados.forEach(d => {
@@ -497,7 +536,7 @@ function agruparData(dados) {
 
 function renderTable(id, cols, dados) {
   const thead = `<tr>${cols.map(c => `<th>${c.label}</th>`).join('')}</tr>`;
-  const tbody = !dados.length ? `<tr><td colspan="${cols.length}">Nenhum dado encontrado</td></tr>` : 
+  const tbody = !dados.length ? `<tr><td colspan="${cols.length}" style="text-align:center; padding: 20px;">Nenhum dado encontrado</td></tr>` : 
     dados.map(row => `<tr>${cols.map(c => {
       let v = c.fmt ? c.fmt(row[c.key], row) : (row[c.key]||'-');
       if(c.tag && v !== '-') v = `<span class="tag ${c.tag(v)}">${v}</span>`;
@@ -506,9 +545,43 @@ function renderTable(id, cols, dados) {
   $(id).innerHTML = `<thead>${thead}</thead><tbody>${tbody}</tbody>`;
 }
 
+// --- RENDERIZAÇÃO DE GRÁFICOS MELHORADA (ANIMAÇÕES E ESTILOS) ---
 function renderChart(id, tipo, rotulos, valores, label, extra={}) {
   if (graficos[id]) graficos[id].destroy();
-  graficos[id] = new Chart($(id).getContext('2d'), { type: tipo, data: { labels: rotulos, datasets: [{ label: label, data: valores, ...extra }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8' } } }, scales: tipo === 'pie' || tipo === 'doughnut' ? {} : { x: { ticks: { color: '#94a3b8' }, grid:{color:'rgba(255,255,255,0.05)'} }, y: { ticks: { color: '#94a3b8' }, grid:{color:'rgba(255,255,255,0.05)'} } } } });
+  
+  const ctx = $(id).getContext('2d');
+  
+  // Efeito Gradiente para linha de Evolução
+  if(tipo === 'line') {
+    let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
+    gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+    extra.backgroundColor = gradient;
+    extra.borderColor = '#3b82f6';
+    extra.fill = true;
+    extra.tension = 0.4;
+    extra.pointBackgroundColor = '#0f172a';
+    extra.pointBorderColor = '#3b82f6';
+    extra.pointBorderWidth = 2;
+    extra.pointRadius = 4;
+    extra.pointHoverRadius = 6;
+  }
+
+  graficos[id] = new Chart(ctx, { 
+    type: tipo, 
+    data: { labels: rotulos, datasets: [{ label: label, data: valores, ...extra }] }, 
+    options: { 
+      responsive: true, maintainAspectRatio: false, 
+      animation: { duration: 1500, easing: 'easeOutQuart' },
+      plugins: { 
+        legend: { display: tipo === 'pie' || tipo === 'doughnut' || tipo === 'polarArea', position: 'right', labels: { color: '#cbd5e1', padding: 20, font: {family: 'Plus Jakarta Sans'} } } 
+      }, 
+      scales: tipo === 'pie' || tipo === 'doughnut' || tipo === 'polarArea' ? {} : { 
+        x: { ticks: { color: '#64748b', font:{family: 'Plus Jakarta Sans'} }, grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false } }, 
+        y: { ticks: { color: '#64748b', font:{family: 'Plus Jakarta Sans'} }, grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false } } 
+      } 
+    } 
+  });
 }
 
 function renderBaseAnalitica(lim) {
@@ -536,30 +609,44 @@ function renderizarPainel() {
   $('diagSku').textContent = fmtInt(dSku); $('diagNome').textContent = fmtInt(dNome); $('diagRegex').textContent = fmtInt(dRegex); $('diagSem').textContent = fmtInt(dSem);
 
   const rankProd = agrupar(rows, 'produtoBase', true); 
+  const rankGrupo = agrupar(rows, 'grupo', false); // Visão Geral de Grupos
   const rankEst = agrupar(rows, 'estampa', false);     
   const rankCor = agrupar(rows, 'cor', false);         
   const rankTam = agrupar(rows, 'tamanho', false);     
   const rankOP = agrupar(rows, 'opStatus', false);
   const trend = agruparData(rows);
 
-  renderChart('chartEvolucao', 'line', trend.map(x=>x.nome), trend.map(x=>x.fat), 'Faturamento (R$)', {borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.1)', fill:true, tension:0.3});
-  renderChart('chartTopProdsVisao', 'bar', rankProd.slice(0, 5).map(x=>x.nome), rankProd.slice(0, 5).map(x=>x.fat), 'Faturamento', {backgroundColor:'#10b981', borderRadius:4});
-  renderChart('chartTopProds', 'bar', rankProd.slice(0, 10).map(x=>x.nome), rankProd.slice(0, 10).map(x=>x.fat), 'Faturamento', {backgroundColor:'#3b82f6', borderRadius:4});
-  renderChart('chartCores', 'pie', rankCor.slice(0, 10).map(x=>x.nome), rankCor.slice(0, 10).map(x=>x.qtd), 'Volume', {backgroundColor:['#f8fafc','#0f172a','#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6'], borderWidth:1, borderColor:'#141e33'});
-  renderChart('chartTamanhos', 'bar', rankTam.map(x=>x.nome), rankTam.map(x=>x.qtd), 'Volume', {backgroundColor:'#10b981', borderRadius:4});
-  renderChart('chartEstampas', 'bar', rankEst.slice(0, 15).map(x=>x.nome), rankEst.slice(0, 15).map(x=>x.qtd), 'Volume', {backgroundColor:'#f59e0b', borderRadius:4});
-  renderChart('chartMatch', 'doughnut', ['SKU','Nome','Auto-Extração','Sem Match'], [dSku, dNome, dRegex, dSem], 'Qualidade', {backgroundColor:['#10b981','#059669','#f59e0b','#ef4444'], borderWidth:0});
+  // Evolução com Gradiente
+  renderChart('chartEvolucao', 'line', trend.map(x=>x.nome), trend.map(x=>x.fat), 'Faturamento (R$)', {});
+  
+  // Grupos Visão Geral (Polar Area agora, muito mais bonito)
+  renderChart('chartTopProdsVisao', 'polarArea', rankGrupo.slice(0, 7).map(x=>x.nome), rankGrupo.slice(0, 7).map(x=>x.qtd), 'Peças', { backgroundColor: colorPalette.map(c=> c+'cc'), borderWidth: 0 });
+  
+  // Top Produtos (Barras Horizontais para melhor leitura)
+  renderChart('chartTopProds', 'bar', rankProd.slice(0, 10).map(x=>x.nome), rankProd.slice(0, 10).map(x=>x.fat), 'Faturamento (R$)', { backgroundColor: '#3b82f6', borderRadius: 6, indexAxis: 'y' });
+  
+  // Cores (Doughnut com espessura menor)
+  renderChart('chartCores', 'doughnut', rankCor.slice(0, 10).map(x=>x.nome), rankCor.slice(0, 10).map(x=>x.qtd), 'Volume', { backgroundColor: colorPalette, borderWidth: 2, borderColor: '#0f172a', cutout: '70%' });
+  
+  // Tamanhos (Barras com cores variadas)
+  renderChart('chartTamanhos', 'bar', rankTam.map(x=>x.nome), rankTam.map(x=>x.qtd), 'Volume', { backgroundColor: colorPalette.slice(0, rankTam.length), borderRadius: 6 });
+  
+  // Estampas (Barras Horizontais com cor vibrante)
+  renderChart('chartEstampas', 'bar', rankEst.slice(0, 15).map(x=>x.nome), rankEst.slice(0, 15).map(x=>x.qtd), 'Volume', { backgroundColor: '#8b5cf6', borderRadius: 6, indexAxis: 'y' });
+  
+  // Qualidade Match (Doughnut)
+  renderChart('chartMatch', 'doughnut', ['SKU Exato','Nome Exato','Extração IA','Falha'], [dSku, dNome, dRegex, dSem], 'Qualidade', { backgroundColor: ['#10b981','#06b6d4','#f59e0b','#ef4444'], borderWidth: 0, cutout: '65%' });
 
   const tblOpts = (arr) => arr.slice(0, limit).map((r,i)=>({...r, pos:i+1}));
-  const colsRank = [{label:'Pos',key:'pos'}, {label:'Item',key:'nome'}, {label:'Volume (Pçs)',key:'qtd',fmt:fmtInt}, {label:'Faturamento',key:'fat',fmt:fmtValor}];
+  const colsRank = [{label:'Pos',key:'pos'}, {label:'Item Identificado',key:'nome'}, {label:'Volume Físico',key:'qtd',fmt:fmtInt}, {label:'Faturamento',key:'fat',fmt:fmtValor}];
   
   renderTable('tblProdutos', colsRank, tblOpts(rankProd)); 
   renderTable('tblEstampas', colsRank, tblOpts(rankEst));
   renderTable('tblCores', colsRank, tblOpts(rankCor));
   renderTable('tblTamanhos', colsRank, tblOpts(rankTam)); 
-  renderTable('tblOP', [{label:'OP / Status',key:'nome'}, {label:'Volume',key:'qtd',fmt:fmtInt}, {label:'Faturamento',key:'fat',fmt:fmtValor}], tblOpts(rankOP));
-  renderTable('tblDicionario', [{label:'Código Base', key:'SKU'}, {label:'Produto (Mestre)', key:'_nomeBase'}], dbProdutosRaw.slice(0, limit));
-  renderTable('tblOrfaos', [{label:'Pedido', key:'pedido'}, {label:'SKU Original', key:'skuOriginal'}, {label:'Descrição Fornecida', key:'nomeOriginal'}, {label:'Produto Limpo', key:'produtoBase'}, {label:'Cor Extraída', key:'cor'}, {label:'Tam Extraído', key:'tamanho'}], rows.filter(r=>r.match==='AUTO-EXTRAÇÃO' || r.match==='SEM MATCH').slice(0, limit));
+  renderTable('tblOP', [{label:'Status Operacional',key:'nome'}, {label:'Volume',key:'qtd',fmt:fmtInt}, {label:'Faturamento',key:'fat',fmt:fmtValor}], tblOpts(rankOP));
+  renderTable('tblDicionario', [{label:'Código Base (SKU)', key:'SKU'}, {label:'Produto Identificado', key:'_nomeBase'}], dbProdutosRaw.slice(0, limit));
+  renderTable('tblOrfaos', [{label:'Pedido', key:'pedido'}, {label:'SKU Original', key:'skuOriginal'}, {label:'Descrição Planilha', key:'nomeOriginal'}, {label:'Produto (IA)', key:'produtoBase'}, {label:'Cor (IA)', key:'cor'}, {label:'Tam (IA)', key:'tamanho'}], rows.filter(r=>r.match==='AUTO-EXTRAÇÃO' || r.match==='SEM MATCH').slice(0, limit));
 
   renderBaseAnalitica(100);
 }
