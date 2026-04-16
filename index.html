@@ -52,7 +52,7 @@
     }
     .dropzone:hover { border-color: #8b5cf6; background: rgba(139, 92, 246, 0.08); transform: translateY(-3px); box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.2); }
     .dropzone h3 { color: #fff; font-size: 18px; margin-bottom: 8px; font-family: 'Outfit', sans-serif;}
-    .dropzone p { color: var(--text-muted); font-size: 13px; }
+    .dropzone p { color: var(--text-muted); font-size: 13px; font-weight: 600; }
     
     .toolbar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 15px; }
     .controls-title { font-size: 13px; font-weight: 700; margin-bottom: 15px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px;}
@@ -349,25 +349,68 @@ function openTab(tabId, element) {
   element.classList.add('active');
 }
 
+// ===== SISTEMA DE LEITURA DE ARQUIVO ATUALIZADO (TRATOR DE CSV) =====
 function lerArquivo(file, callback) {
   if (!file) return;
   const ext = file.name.split('.').pop().toLowerCase();
   showLoader(true);
+  
   if (ext === 'csv') {
     const reader = new FileReader();
-    reader.onload = e => Papa.parse(e.target.result, { header: true, skipEmptyLines: true, complete: res => callback(res.data) });
-    reader.readAsText(file, 'utf-8');
+    reader.onload = e => {
+      let text = e.target.result;
+      
+      // AUTO-CORREÇÃO DO SEPARADOR (Padrão Excel Brasil)
+      const delimitador = text.includes(';') ? ';' : ',';
+      
+      Papa.parse(text, { 
+        header: true, 
+        skipEmptyLines: 'greedy', 
+        delimiter: delimitador,
+        transformHeader: h => h ? h.trim().replace(/^"|"$/g, '') : '', // Limpa cabeçalhos sujos
+        complete: res => {
+            if(res.data.length === 0) console.warn("Aviso: PapaParse retornou 0 linhas.");
+            callback(res.data);
+        }
+      });
+    };
+    // PADRÃO WINDOWS-1252: Resolve o problema do Excel não ler UTF-8 e quebrar os cabeçalhos
+    reader.readAsText(file, 'windows-1252');
   } else {
     const reader = new FileReader();
     reader.onload = e => {
-      const data = XLSX.utils.sheet_to_json(XLSX.read(new Uint8Array(e.target.result), {type:'array'}).Sheets[XLSX.read(new Uint8Array(e.target.result), {type:'array'}).SheetNames[0]], {defval:''});
-      callback(data);
+      try {
+        const data = XLSX.utils.sheet_to_json(XLSX.read(new Uint8Array(e.target.result), {type:'array'}).Sheets[XLSX.read(new Uint8Array(e.target.result), {type:'array'}).SheetNames[0]], {defval:''});
+        callback(data);
+      } catch (err) {
+        alert("Erro ao ler Excel. Tente salvar como CSV.");
+        callback([]);
+      }
     };
     reader.readAsArrayBuffer(file);
   }
 }
-$('fileProd').addEventListener('change', e => { lerArquivo(e.target.files[0], data => { dbProdutosRaw = data; $('lblProd').textContent = `${data.length} linhas`; showLoader(false); }); });
-$('filePed').addEventListener('change', e => { lerArquivo(e.target.files[0], data => { dbPedidosRaw = data; $('lblPed').textContent = `${data.length} linhas`; showLoader(false); }); });
+
+// ===== NOVOS LISTENERS COM FEEDBACK VISUAL E RESET =====
+$('fileProd').addEventListener('change', e => { 
+  lerArquivo(e.target.files[0], data => { 
+    dbProdutosRaw = data; 
+    $('lblProd').textContent = data.length > 0 ? `${data.length} linhas carregadas` : `⚠️ Formato não reconhecido (0 linhas)`;
+    $('lblProd').style.color = data.length > 0 ? '#34d399' : '#f87171';
+    showLoader(false); 
+  }); 
+  e.target.value = ''; // RESETA O INPUT (Permite upar o mesmo arquivo se errar)
+});
+
+$('filePed').addEventListener('change', e => { 
+  lerArquivo(e.target.files[0], data => { 
+    dbPedidosRaw = data; 
+    $('lblPed').textContent = data.length > 0 ? `${data.length} linhas carregadas` : `⚠️ Formato não reconhecido (0 linhas)`;
+    $('lblPed').style.color = data.length > 0 ? '#34d399' : '#f87171';
+    showLoader(false); 
+  }); 
+  e.target.value = ''; // RESETA O INPUT
+});
 
 function limparMascaraNumero(v) {
   if(typeof v === 'number') return v;
@@ -429,16 +472,16 @@ function extrairAtributosDaDescricao(descricao) {
 }
 
 function processarBases() {
-  if (!dbPedidosRaw.length) return alert('Carregue o arquivo de Pedidos de Venda.');
+  if (!dbPedidosRaw.length) return alert('Carregue o arquivo de Pedidos de Venda primeiro.');
   showLoader(true);
   setTimeout(() => {
     const mapProdSKU = new Map(), mapProdNome = new Map();
     
     dbProdutosRaw.forEach(p => {
-      // SOLUÇÃO ADICIONADA: Busca Ultra-Tolerante de Cabeçalhos (Ignora espaços e Maiúsculas na Planilha Base)
       let skuRaw = p['SKU'] || p['Código'] || p['Referência'] || '';
       let nomeRaw = p['Produto'] || p['Nome'] || p['Descrição'] || p['Descricao'] || '';
       
+      // Busca Dinâmica caso o cabeçalho seja diferente do esperado (Ex: " SKU ", "codigo_base")
       if (!skuRaw || !nomeRaw) {
          for (let key in p) {
             let kClean = key.toUpperCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -468,7 +511,6 @@ function processarBases() {
           if (sizeFromSku === 'UN' || sizeFromSku === 'UNICO' || sizeFromSku === 'UNICA' || sizeFromSku === 'ÚNICA' || sizeFromSku === 'ÚNICO') sizeFromSku = 'U';
       }
 
-      // SOLUÇÃO ADICIONADA: Limpa traços e pontos no final do SKU para o Match ser perfeito
       let skuMestre = rawSKU.toUpperCase().trim().replace(/[-_.\s]?(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|UNICA|UNICO|ÚNICA|ÚNICO|[0-9]{2})$/i, '');
       skuMestre = skuMestre.replace(/[-_.\s]+$/, '').trim();
 
@@ -699,7 +741,9 @@ function renderizarPainel() {
 
 function limparTudo() {
   dbProdutosRaw=[]; dbPedidosRaw=[]; dbUnificada=[]; dbFiltrada=[]; graficos={};
-  $('fileProd').value=''; $('filePed').value=''; $('lblProd').textContent='Planilha (.csv, .xlsx)'; $('lblPed').textContent='Planilha (.csv, .xlsx)';
+  $('fileProd').value=''; $('filePed').value=''; 
+  $('lblProd').textContent='Clique ou arraste a planilha (.csv, .xlsx)'; $('lblProd').style.color='var(--text-muted)';
+  $('lblPed').textContent='Clique ou arraste a planilha (.csv, .xlsx)'; $('lblPed').style.color='var(--text-muted)';
   limparApenasFiltros();
   document.querySelectorAll('.value').forEach(el => el.textContent = el.textContent.includes('R$') ? 'R$ 0,00' : '0');
   ['tblProdutos','tblCores','tblTamanhos','tblEstampas','tblOP','tblDicionario','tblBaseUnificada','tblOrfaos'].forEach(id => $(id).innerHTML = '');
