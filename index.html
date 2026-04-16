@@ -250,7 +250,7 @@
 
   <div id="tab-cores" class="tab-content">
     <div class="grid-2">
-      <div class="card"><h3>Distribuição de Cores (Polar Area)</h3><canvas id="chartCores"></canvas></div>
+      <div class="card"><h3>Distribuição de Cores (Paleta Real)</h3><canvas id="chartCores"></canvas></div>
       <div class="card">
         <h3>Ranking Completo: Paleta de Cores</h3>
         <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Mapeamento rigoroso baseado em dicionário têxtil.</p>
@@ -311,12 +311,24 @@ Chart.defaults.plugins.tooltip.cornerRadius = 8;
 Chart.defaults.plugins.tooltip.borderColor = 'rgba(255,255,255,0.1)';
 Chart.defaults.plugins.tooltip.borderWidth = 1;
 
-// PALETA DE CORES VIBRANTES PARA GRÁFICOS
+// PALETA DE CORES VIBRANTES PADRÃO
 const colorPalette = [
   '#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', 
   '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1',
   '#14b8a6', '#d946ef', '#f43f5e', '#eab308', '#0ea5e9'
 ];
+
+// NOVO: DICIONÁRIO DE CORES LITERAIS (Mapeia o nome extraído para o Hexadecimal Real)
+const colorNameMap = {
+  'PRETO': '#000000', 'BRANCO': '#f8fafc', 'OFF WHITE': '#f1f5f9', 'AZUL MARINHO': '#1e3a8a',
+  'AZUL': '#3b82f6', 'ROSA': '#f472b6', 'VERMELHO': '#ef4444', 'VERDE': '#10b981',
+  'AMARELO': '#facc15', 'LILAS': '#c084fc', 'ROXO': '#a855f7', 'BEGE': '#fef08a',
+  'NUDE': '#ffedd5', 'CINZA': '#94a3b8', 'MESCLA': '#cbd5e1', 'BORDO': '#7f1d1d',
+  'VINHO': '#831843', 'CARAMELO': '#d97706', 'CAQUI': '#b45309', 'PINK': '#db2777',
+  'CHUMBO': '#334155', 'AREIA': '#fef3c7', 'MOSTARDA': '#ca8a04', 'TERRACOTA': '#c2410c',
+  'LAVANDA': '#a78bfa', 'MAGENTA': '#d946ef', 'SALMAO': '#fb923c', 'CORAL': '#f87171',
+  'N/D': '#475569'
+};
 
 let dbProdutosRaw = [], dbPedidosRaw = [], dbUnificada = [], dbFiltrada = [], graficos = {};
 
@@ -609,7 +621,7 @@ function renderizarPainel() {
   $('diagSku').textContent = fmtInt(dSku); $('diagNome').textContent = fmtInt(dNome); $('diagRegex').textContent = fmtInt(dRegex); $('diagSem').textContent = fmtInt(dSem);
 
   const rankProd = agrupar(rows, 'produtoBase', true); 
-  const rankGrupo = agrupar(rows, 'grupo', false); // Visão Geral de Grupos
+  const rankGrupo = agrupar(rows, 'grupo', false); 
   const rankEst = agrupar(rows, 'estampa', false);     
   const rankCor = agrupar(rows, 'cor', false);         
   const rankTam = agrupar(rows, 'tamanho', false);     
@@ -619,14 +631,27 @@ function renderizarPainel() {
   // Evolução com Gradiente
   renderChart('chartEvolucao', 'line', trend.map(x=>x.nome), trend.map(x=>x.fat), 'Faturamento (R$)', {});
   
-  // Grupos Visão Geral (Polar Area agora, muito mais bonito)
+  // Grupos Visão Geral
   renderChart('chartTopProdsVisao', 'polarArea', rankGrupo.slice(0, 7).map(x=>x.nome), rankGrupo.slice(0, 7).map(x=>x.qtd), 'Peças', { backgroundColor: colorPalette.map(c=> c+'cc'), borderWidth: 0 });
   
   // Top Produtos (Barras Horizontais para melhor leitura)
   renderChart('chartTopProds', 'bar', rankProd.slice(0, 10).map(x=>x.nome), rankProd.slice(0, 10).map(x=>x.fat), 'Faturamento (R$)', { backgroundColor: '#3b82f6', borderRadius: 6, indexAxis: 'y' });
   
-  // Cores (Doughnut com espessura menor)
-  renderChart('chartCores', 'doughnut', rankCor.slice(0, 10).map(x=>x.nome), rankCor.slice(0, 10).map(x=>x.qtd), 'Volume', { backgroundColor: colorPalette, borderWidth: 2, borderColor: '#0f172a', cutout: '70%' });
+  // ==========================================
+  // NOVO: GRÁFICO DE CORES COM A PALETA REAL
+  // ==========================================
+  const topCores = rankCor.slice(0, 15); // Pega até 15 cores
+  const labelsCores = topCores.map(x => x.nome);
+  const dataCores = topCores.map(x => x.qtd);
+  // Se a cor existir no nosso dicionário, usa a cor real. Se não, pega uma aleatória.
+  const bgCores = labelsCores.map(cor => colorNameMap[cor.toUpperCase()] || colorPalette[Math.floor(Math.random() * colorPalette.length)]);
+
+  renderChart('chartCores', 'doughnut', labelsCores, dataCores, 'Volume', { 
+    backgroundColor: bgCores, 
+    borderWidth: 2, 
+    borderColor: '#0f172a', 
+    cutout: '70%' 
+  });
   
   // Tamanhos (Barras com cores variadas)
   renderChart('chartTamanhos', 'bar', rankTam.map(x=>x.nome), rankTam.map(x=>x.qtd), 'Volume', { backgroundColor: colorPalette.slice(0, rankTam.length), borderRadius: 6 });
@@ -634,7 +659,7 @@ function renderizarPainel() {
   // Estampas (Barras Horizontais com cor vibrante)
   renderChart('chartEstampas', 'bar', rankEst.slice(0, 15).map(x=>x.nome), rankEst.slice(0, 15).map(x=>x.qtd), 'Volume', { backgroundColor: '#8b5cf6', borderRadius: 6, indexAxis: 'y' });
   
-  // Qualidade Match (Doughnut)
+  // Qualidade Match
   renderChart('chartMatch', 'doughnut', ['SKU Exato','Nome Exato','Extração IA','Falha'], [dSku, dNome, dRegex, dSem], 'Qualidade', { backgroundColor: ['#10b981','#06b6d4','#f59e0b','#ef4444'], borderWidth: 0, cutout: '65%' });
 
   const tblOpts = (arr) => arr.slice(0, limit).map((r,i)=>({...r, pos:i+1}));
