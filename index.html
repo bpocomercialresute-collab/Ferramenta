@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gerador de Relatórios Base PRO - Edição Definitiva</title>
+  <title>Gerador de Relatórios Base PRO - Hyper Otimizado</title>
   
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -151,7 +151,7 @@
     .card h3 { font-family: 'Outfit', sans-serif; font-size: 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; }
     
     /* =========================================
-       TABELAS DE DADOS
+       TABELAS DE DADOS (Turbo Render)
        ========================================= */
     .table-responsive { overflow-x: auto; max-height: 500px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); }
     table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; min-width: 600px; }
@@ -184,16 +184,16 @@
 
 <div id="loader">
   <div class="spinner"></div>
-  <h2 style="margin-top: 25px; color: white; font-family: 'Outfit'; font-size: 24px;">Processamento PRO em Andamento...</h2>
-  <p style="color: var(--text-muted); margin-top: 5px;">Caçando Cores Órfãs, Destrinchando SKUs e Unificando Tamanhos.</p>
+  <h2 style="margin-top: 25px; color: white; font-family: 'Outfit'; font-size: 24px;">Extração Turbo em Andamento...</h2>
+  <p style="color: var(--text-muted); margin-top: 5px;">Executando Deep Parsing Cacheado V8.</p>
 </div>
 
 <div class="container">
   
   <div class="glass-panel header">
     <div>
-      <h1>Gerador de Relatórios Base <span style="font-size: 14px; background: var(--danger); padding: 4px 8px; border-radius: 6px; color: white; vertical-align: middle;">PRO ENGINE</span></h1>
-      <p>Ferramenta de relatórios By Resute" • Dashboard Analítico Definitivo</p>
+      <h1>Gerador de Relatórios Base <span style="font-size: 14px; background: var(--danger); padding: 4px 8px; border-radius: 6px; color: white; vertical-align: middle;">PRO HYPER</span></h1>
+      <p>Inteligência V8 • Cacheamento Global • Dashboard Analítico Definitivo</p>
     </div>
     <div style="display: flex; gap: 12px;">
       <button class="primary" onclick="processarBases()" style="animation: pulseGlow 2s infinite;">🔄 Processar Dados</button>
@@ -358,7 +358,7 @@ Chart.defaults.plugins.tooltip.cornerRadius = 8;
 Chart.defaults.plugins.tooltip.borderColor = 'rgba(255,255,255,0.1)';
 Chart.defaults.plugins.tooltip.borderWidth = 1;
 
-// --- MEGA DICIONÁRIO DE CORES MESTRE (Com Variações) ---
+// --- MEGA DICIONÁRIO DE CORES MESTRE ---
 const colorNameMap = {
   'PRETO': '#000000', 'BRANCO': '#f8fafc', 'OFF WHITE': '#f1f5f9', 'OFF-WHITE': '#f1f5f9', 'AZUL MARINHO': '#1e3a8a',
   'AZUL CLARO': '#7dd3fc', 'AZUL BEBE': '#bfdbfe', 'AZUL': '#3b82f6', 
@@ -381,30 +381,43 @@ const colorNameMap = {
   'TURQUESA': '#06b6d4', 'RUBI': '#be123c', 'N/D': '#475569'
 };
 
-// --- DECODIFICADOR DE SKU (Cracker de Siglas Comuns) ---
 const skuAbbrMap = {
     'PRT': 'PRETO', 'BCO': 'BRANCO', 'OFF': 'OFF WHITE', 'MRN': 'AZUL MARINHO', 'VML': 'VERMELHO',
     'AMR': 'AMARELO', 'RS': 'ROSA', 'AZL': 'AZUL', 'VRD': 'VERDE', 'CIN': 'CINZA', 'BGE': 'BEGE'
 };
 
-// Ordena o dicionário pelas maiores strings para evitar "sombreamento" de palavras nas buscas
-const masterColors = Object.keys(colorNameMap).filter(k => k !== 'N/D');
-masterColors.sort((a,b) => b.length - a.length);
+// =================================================================================
+// 🚀 OTIMIZAÇÃO V8 CORE (CACHE GLOBAL DE REGEX PARA EVITAR TRAVAMENTO DE MEMÓRIA)
+// =================================================================================
+const masterColors = Object.keys(colorNameMap).filter(k => k !== 'N/D').sort((a,b) => b.length - a.length);
 
-// --- GERADOR DE CORES DINÂMICO PARA GRÁFICOS ---
+// 1. Compilamos a matemática pesada 1 vez na abertura, e não 800.000 vezes por segundo.
+const regexCacheColors = masterColors.map(c => ({
+    nome: c,
+    regex: new RegExp(`\\b${c.replace('-', '\\-')}\\b`, 'i')
+}));
+
+// 2. Regex Global Única
+const sizeRegexGlobal = /(?:\s|-|_|:|\b)(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|UNICO|UNICA|ÚNICO|ÚNICA|34|36|38|40|42|44|46|48|50|52|54|56)(?:$|\s|-)/i;
+const estampaLimpezaRegex = /\b(T-SHIRTS|T-SHIRT|TSHIRT|MUSCLE TEE|BABY LOOK|MOLECROPPED|CROPPED|VESTIDO|BLUSA|BLUSINHA|MOLETOM|CONJUNTO|REGATA|BODY|MACAQUINHO|CALÇA|CALCA|SHORTS|SHORT|SAIA|JAQUETA|CASACO|CAMISETA|CAMISA|DTF|SILK|RELEVO|BORDADO|LISO|LISA|COM|DE|DA|DO|KIT|10|FEM|\*LD\*)\b/gi;
+const lixoTamanhoRegex = /(?:TAMANHO|TAM|COR)[:\s-]/gi;
+const numOnlyRegex = /^[0-9]+$/;
+
+// 3. Escudo Anti Catastrophic Backtracking (Protege o Ghost Tracker)
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escapa símbolos antes de jogar no Regex
+}
+
 function getChartColor(colorName) {
     let clean = String(colorName).toUpperCase().trim();
     if (colorNameMap[clean]) return colorNameMap[clean];
-    // Se for uma cor 100% nova, cria um HASH matemático para ter uma cor fixa e bonita no gráfico
     let hash = 0;
     for (let i = 0; i < clean.length; i++) { hash = clean.charCodeAt(i) + ((hash << 5) - hash); }
     return `hsl(${Math.abs(hash) % 360}, 70%, 60%)`;
 }
 
-// VARIÁVEIS DE ESTADO E DADOS
 let dbProdutosRaw = [], dbPedidosRaw = [], dbUnificada = [], dbFiltrada = [], graficos = {};
 
-// FUNÇÕES UTILITÁRIAS
 const $ = id => document.getElementById(id);
 const fmtValor = v => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v||0);
 const fmtInt = v => new Intl.NumberFormat('pt-BR').format(v||0);
@@ -417,7 +430,6 @@ function openTab(tabId, element) {
   element.classList.add('active');
 }
 
-// --- TRATOR DE CSV E EXCEL (Leitor Universal) ---
 function lerArquivo(file, callback) {
   if (!file) return;
   const ext = file.name.split('.').pop().toLowerCase();
@@ -427,15 +439,13 @@ function lerArquivo(file, callback) {
     const reader = new FileReader();
     reader.onload = e => {
       let text = e.target.result;
-      // Auto-detecta se o Excel do usuário usa Ponto e Vírgula (Brasil) ou Vírgula (EUA)
       const delimitador = text.includes(';') ? ';' : ',';
       Papa.parse(text, { 
         header: true, skipEmptyLines: 'greedy', delimiter: delimitador,
-        transformHeader: h => h ? h.trim().replace(/^"|"$/g, '') : '', // Limpa aspas quebradas do header
+        transformHeader: h => h ? h.trim().replace(/^"|"$/g, '') : '',
         complete: res => callback(res.data)
       });
     };
-    // Usa codificação Win-1252 para não quebrar ç, ã, é no CSV vindo do Excel
     reader.readAsText(file, 'windows-1252');
   } else {
     const reader = new FileReader();
@@ -445,7 +455,7 @@ function lerArquivo(file, callback) {
         const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:''});
         callback(data);
       } catch (err) {
-        alert("Erro ao ler arquivo Excel. Tente salvar o arquivo como .CSV UTF-8 ou verifique se não está corrompido.");
+        alert("Erro ao ler arquivo Excel. Tente salvar o arquivo como .CSV UTF-8.");
         callback([]);
       }
     };
@@ -453,28 +463,26 @@ function lerArquivo(file, callback) {
   }
 }
 
-// LISTENERS DE UPLOAD (Com feedback de sucesso/falha visual)
 $('fileProd').addEventListener('change', e => { 
   lerArquivo(e.target.files[0], data => { 
     dbProdutosRaw = data; 
-    $('lblProd').textContent = data.length > 0 ? `${data.length} linhas importadas` : `⚠️ Formato vazio/não reconhecido`;
+    $('lblProd').textContent = data.length > 0 ? `${data.length} linhas importadas` : `⚠️ Formato não reconhecido`;
     $('lblProd').style.color = data.length > 0 ? '#34d399' : '#f87171';
     showLoader(false); 
   }); 
-  e.target.value = ''; // Permite subir o mesmo arquivo se o usuário corrigir algo
+  e.target.value = ''; 
 });
 
 $('filePed').addEventListener('change', e => { 
   lerArquivo(e.target.files[0], data => { 
     dbPedidosRaw = data; 
-    $('lblPed').textContent = data.length > 0 ? `${data.length} linhas importadas` : `⚠️ Formato vazio/não reconhecido`;
+    $('lblPed').textContent = data.length > 0 ? `${data.length} linhas importadas` : `⚠️ Formato não reconhecido`;
     $('lblPed').style.color = data.length > 0 ? '#34d399' : '#f87171';
     showLoader(false); 
   }); 
   e.target.value = ''; 
 });
 
-// FUNÇÕES DE LIMPEZA DE DADOS FINANCEIROS E DATAS
 function limparMascaraNumero(v) {
   if(typeof v === 'number') return v;
   let s = String(v||'').replace('R$','').trim(); if(!s) return 0;
@@ -494,68 +502,61 @@ function fmtData(d) { return d ? `${String(d.getDate()).padStart(2,'0')}/${Strin
 function fmtMesAno(d) { return d ? `${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}` : ''; }
 
 // =========================================================================
-// O MOTOR DE CAÇA ABSOLUTA (EXTRAÇÃO PROFUNDA DE TEXTO E REGEX)
+// MOTOR DE CAÇA ABSOLUTA OTIMIZADO PARA ALTA PERFORMANCE
 // =========================================================================
 function extrairAtributosDaDescricao(descricao, sku) {
   let nome = String(descricao).toUpperCase().trim();
   let cor = 'N/D', tamanho = 'N/D', grupo = 'OUTROS';
   
-  // 1. Regex de Tamanho Multi-Padrão (Isolando a numeração/letra sem quebrar blusa)
-  const sizeRegex = /(?:\s|-|_|:|\b)(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|UNICO|UNICA|ÚNICO|ÚNICA|3[4-8]|4[0-8]|5[0-6])(?:$|\s|-)/i;
-  let matchTamanho = nome.match(sizeRegex);
-  
+  // 1. Extração Ultra Rápida de Tamanho (Exec invés de Match)
+  let matchTamanho = sizeRegexGlobal.exec(nome);
   if (matchTamanho) {
       tamanho = matchTamanho[1].toUpperCase();
-      nome = nome.replace(matchTamanho[0], ' '); // Retira tamanho pra não confundir extração de cor
+      nome = nome.replace(matchTamanho[0], ' '); 
   }
 
-  // 1.1 O ESMAGADOR DE TAMANHO ÚNICO (Size Unifier)
-  if (['U', 'UN', 'UNICO', 'UNICA', 'ÚNICA', 'ÚNICO', 'TM'].includes(tamanho)) {
+  // 1.1 Esmagador Otimizado
+  if (tamanho === 'U' || tamanho === 'UN' || tamanho === 'UNICO' || tamanho === 'UNICA' || tamanho === 'ÚNICA' || tamanho === 'ÚNICO' || tamanho === 'TM') {
       tamanho = 'ÚNICO';
   }
 
-  // 2. Extração de Cor - Passagem 1: Pelo Dicionário (Pesando da maior string pra menor)
+  // 2. Extração de Cor - Via Cache V8 (Sem instanciar objetos em loop)
   let tempNome = ' ' + nome + ' ';
-  for (let c of masterColors) {
-     const regex = new RegExp(`\\b${c.replace('-', '\\-')}\\b`, 'i');
-     if (tempNome.match(regex)) { 
-         cor = c; 
-         tempNome = tempNome.replace(regex, ' '); 
+  for (let i = 0; i < regexCacheColors.length; i++) {
+     if (regexCacheColors[i].regex.test(tempNome)) { 
+         cor = regexCacheColors[i].nome; 
+         tempNome = tempNome.replace(regexCacheColors[i].regex, ' '); 
          break; 
      }
   }
 
-  // 3. O DESTRINCHADOR DE HIFENS (Ghost Color Tracker - Varre a extremidade direita)
+  // 3. Destrinchador de Hifens Seguro (Ghost Color Tracker)
   if (cor === 'N/D' && nome.includes('-')) {
       let partes = nome.split('-');
-      let sufixo = partes[partes.length - 1].trim(); // Pega a string final do nome
+      let sufixo = partes[partes.length - 1].trim(); 
       
-      // Limpa lixos residuais como "Tamanho:"
-      sufixo = sufixo.replace(/(?:TAMANHO|TAM|COR)[:\s-]/gi, '').trim();
-      sufixo = sufixo.replace(sizeRegex, '').trim();
+      sufixo = sufixo.replace(lixoTamanhoRegex, '').trim();
+      sufixo = sufixo.replace(sizeRegexGlobal, '').trim();
 
-      // Se sobrou uma palavra maior que 3 letras que não é número, ele assume 100% que é a COR ÓRFÃ.
-      if (sufixo.length >= 3 && !sufixo.match(/^[0-9]+$/)) {
+      if (sufixo.length >= 3 && !numOnlyRegex.test(sufixo)) {
           cor = sufixo;
-          tempNome = tempNome.replace(new RegExp(sufixo, 'i'), ' ');
+          // Escudo V8: Usa string limpa no construtor dinâmico
+          let regexSeguro = new RegExp(escapeRegExp(sufixo), 'i');
+          tempNome = tempNome.replace(regexSeguro, ' ');
       }
   }
 
-  // 4. DECODIFICADOR DE SKU (Cracker de Siglas para salvar N/D)
+  // 4. Decodificador Direto
   if (cor === 'N/D' && sku) {
       let skuStr = String(sku).toUpperCase();
       for (let abbr in skuAbbrMap) {
-          if (skuStr.includes('-' + abbr) || skuStr.includes('_' + abbr)) {
-              cor = skuAbbrMap[abbr];
-              break;
-          }
+          if (skuStr.includes('-' + abbr) || skuStr.includes('_' + abbr)) { cor = skuAbbrMap[abbr]; break; }
       }
   }
 
-  // Tratamento da palavra restante e Limpeza final de Hifens flutuantes
   let produtoFull = tempNome.replace(/\s+/g, ' ').replace(/\s-\s/g, ' ').replace(/^[-\s:]+|[-\s:]+$/g, '').trim();
 
-  // Classificação Inteligente de Grupos
+  // Classificação IF em cascata (Mais rápido que regex aqui)
   if (produtoFull.includes('T-SHIRT') || produtoFull.includes('TSHIRT')) grupo = 'T-SHIRT';
   else if (produtoFull.includes('CROPPED') || produtoFull.includes('MOLECROPPED')) grupo = 'CROPPED';
   else if (produtoFull.includes('VESTIDO')) grupo = 'VESTIDO';
@@ -563,34 +564,29 @@ function extrairAtributosDaDescricao(descricao, sku) {
   else if (produtoFull.includes('MOLETOM')) grupo = 'MOLETOM';
   else if (produtoFull.includes('CONJUNTO')) grupo = 'CONJUNTO';
 
-  // Identificador de Arte/Estampa Livre
-  let estampa = produtoFull.replace(/\b(T-SHIRTS|T-SHIRT|TSHIRT|MUSCLE TEE|BABY LOOK|MOLECROPPED|CROPPED|VESTIDO|BLUSA|MOLETOM|CONJUNTO|REGATA|BODY|MACAQUINHO|CALÇA|CALCA|SHORTS|SHORT|SAIA|JAQUETA|CASACO|CAMISETA|CAMISA|DTF|SILK|RELEVO|BORDADO|LISO|LISA|COM|DE|DA|DO|KIT|10|FEM|\*LD\*)\b/gi, ' ').replace(/\s+/g, ' ').trim();
+  let estampa = produtoFull.replace(estampaLimpezaRegex, ' ').replace(/\s+/g, ' ').trim();
   if (!estampa || estampa === '*' || estampa === '-') estampa = 'SEM ESTAMPA / LISA';
 
-  // Fallback e Padronização de Gênero na Cor
   if (!produtoFull || produtoFull.length < 2) produtoFull = nome || 'PRODUTO NÃO IDENTIFICADO';
   if (cor !== 'N/D') cor = cor.replace('PRETA','PRETO').replace('BRANCA','BRANCO').replace('VERMELHA','VERMELHO');
 
   return { produto: produtoFull, estampa: estampa, cor: cor, tamanho: tamanho, grupo: grupo };
 }
 
-// --- NÚCLEO PROCESSADOR (CASCATA DE MATCHING) ---
 function processarBases() {
   if (!dbPedidosRaw.length) return alert('Nenhum Pedido carregado. Adicione a planilha de Pedidos de Venda.');
   showLoader(true);
   
-  // Timeout evita que a UI trave e o "Loader" não gire
   setTimeout(() => {
     const mapProdSKU = new Map(), mapProdNome = new Map();
     
-    // Varredura flexível de Cabeçalhos na Planilha de Base de Produtos (Tolerância a falhas do usuário)
     dbProdutosRaw.forEach(p => {
       let skuRaw = p['SKU'] || p['Código'] || p['ID'] || '';
       let nomeRaw = p['Produto'] || p['Nome'] || p['Descrição'] || p['Descricao'] || p['Descrição Complementar'] || '';
       
       if (!skuRaw || !nomeRaw) {
          for (let key in p) {
-            let kClean = key.toUpperCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Tira acento
+            let kClean = key.toUpperCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
             if (['SKU', 'CODIGO', 'REFERENCIA', 'ID'].includes(kClean)) skuRaw = skuRaw || p[key];
             if (['PRODUTO', 'NOME', 'DESCRICAO', 'DESCRICAOCOMPLEMENTAR', 'TITULO'].includes(kClean)) nomeRaw = nomeRaw || p[key];
          }
@@ -598,13 +594,16 @@ function processarBases() {
       
       const sku = String(skuRaw).trim().toUpperCase();
       const nomeBase = String(nomeRaw).trim().toUpperCase();
-      p._nomeBase = nomeBase; // Salva o nome puro para injetar no pedido
+      p._nomeBase = nomeBase; 
       
       if(sku) mapProdSKU.set(sku, p);
       if(nomeBase) mapProdNome.set(nomeBase, p);
     });
 
-    // Mapeamento e Fusão dos Pedidos de Venda
+    // Otimização do SKU Mestre
+    const skuCleanerRegex = /[-_.\s]?(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|UNICA|UNICO|ÚNICA|ÚNICO|[0-9]{2})$/i;
+    const tailCleanRegex = /[-_.\s]+$/;
+
     dbUnificada = dbPedidosRaw.map(ped => {
       const rawSKU = ped['SKU'] || ped['Código'] || '';
       const rawNome = ped['Produto'] || ped['Descrição'] || ped['Nome'] || '';
@@ -612,54 +611,43 @@ function processarBases() {
       const qtd = limparMascaraNumero(ped['Quantidade'] || ped['Qtd'] || 1);
       const valTotal = limparMascaraNumero(ped['Valor Total'] || ped['Total'] || ped['Faturamento'] || ped['Total Pedido']);
       
-      // Limpeza brutal do SKU do Pedido para remover o tamanho do final (Ex: 60155-GG vira 60155)
-      let skuMestre = rawSKU.toUpperCase().trim().replace(/[-_.\s]?(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|UNICA|UNICO|ÚNICA|ÚNICO|[0-9]{2})$/i, '');
-      skuMestre = skuMestre.replace(/[-_.\s]+$/, '').trim();
+      let skuMestre = rawSKU.toUpperCase().trim().replace(skuCleanerRegex, '').replace(tailCleanRegex, '').trim();
 
-      // INICIA O MOTOR DE CAÇA ABSOLUTA (IA Textual)
       const extr = extrairAtributosDaDescricao(rawNome, rawSKU);
       
-      // Sistema de Ranking de Precisão (Match)
       let matchTipo = 'SEM MATCH';
       let prodRef = mapProdSKU.get(skuMestre);
       
-      if (prodRef) matchTipo = 'SKU EXATO';
-      else if (rawNome && mapProdNome.has(rawNome.toUpperCase())) { prodRef = mapProdNome.get(rawNome.toUpperCase()); matchTipo = 'NOME'; }
-      else matchTipo = 'CAÇA ABSOLUTA';
+      if (prodRef) { matchTipo = 'SKU EXATO'; }
+      else {
+          let rnUpper = rawNome.toUpperCase();
+          if (rawNome && mapProdNome.has(rnUpper)) { prodRef = mapProdNome.get(rnUpper); matchTipo = 'NOME'; }
+          else { matchTipo = 'CAÇA ABSOLUTA'; }
+      }
 
-      // Decide qual será o Produto final verdadeiro
       let produtoFinal = (prodRef && prodRef._nomeBase) ? prodRef._nomeBase : extr.produto;
       if (produtoFinal.toUpperCase().trim().startsWith('ESTAMPA')) produtoFinal = 'ESTAMPA AVULSA';
 
       return {
-        data: dataObj, 
-        mesAno: fmtMesAno(dataObj), 
-        pedido: ped['Número pedido'] || ped['Pedido'] || ped['ID'] || '-',
-        skuOriginal: rawSKU, 
-        skuMestre: skuMestre, 
-        nomeOriginal: rawNome,
-        produtoBase: produtoFinal, 
-        estampa: extr.estampa, 
-        cor: extr.cor, 
-        tamanho: extr.tamanho, 
-        grupo: extr.grupo,
-        quantidade: qtd, 
-        valorUnitario: (qtd ? valTotal/qtd : 0), 
-        valorTotal: valTotal,
-        opStatus: ped['OP'] || ped['Status'] || ped['Fase'] || ped['Status do Pedido'] || 'Concluído', 
-        match: matchTipo
+        data: dataObj, mesAno: fmtMesAno(dataObj), pedido: ped['Número pedido'] || ped['Pedido'] || ped['ID'] || '-',
+        skuOriginal: rawSKU, skuMestre: skuMestre, nomeOriginal: rawNome,
+        produtoBase: produtoFinal, estampa: extr.estampa, cor: extr.cor, tamanho: extr.tamanho, grupo: extr.grupo,
+        quantidade: qtd, valorUnitario: (qtd ? valTotal/qtd : 0), valorTotal: valTotal,
+        opStatus: ped['OP'] || ped['Status'] || ped['Fase'] || ped['Status do Pedido'] || 'Concluído', match: matchTipo
       };
     }).filter(x => x.quantidade > 0 || x.valorTotal > 0);
 
     aplicarFiltrosGerais();
     showLoader(false);
-  }, 300); // Leve delay visual para montar DOM pesado
+  }, 100); 
 }
 
-// --- GESTOR DE FILTROS DINÂMICOS (CASCATA) ---
 function popularSelect(id, valoresDisponiveis, textoPadrao) {
   const sel = $(id), valAtual = sel.value;
-  sel.innerHTML = `<option value="">${textoPadrao}</option>` + valoresDisponiveis.map(v => `<option value="${v}">${v}</option>`).join('');
+  // Fragment rendering for selects
+  let opts = [`<option value="">${textoPadrao}</option>`];
+  for(let i=0; i<valoresDisponiveis.length; i++) opts.push(`<option value="${valoresDisponiveis[i]}">${valoresDisponiveis[i]}</option>`);
+  sel.innerHTML = opts.join('');
   if (valoresDisponiveis.includes(valAtual)) sel.value = valAtual;
 }
 
@@ -668,43 +656,42 @@ function aplicarFiltrosGerais() {
   let fim = $('dtFim').value ? new Date($('dtFim').value+'T23:59:59') : null;
   let mes = $('filtroMes').value, fp = $('fltProduto').value, fc = $('fltCor').value, ft = $('fltTamanho').value, fe = $('fltEstampa').value, fm = $('fltMatch').value;
 
-  const dadosSimulados = (ignorar) => {
-    return dbUnificada.filter(r => {
-      if (ini && (!r.data || r.data < ini)) return false;
-      if (fim && (!r.data || r.data > fim)) return false;
-      if (ignorar !== 'mesAno' && mes && r.mesAno !== mes) return false;
-      if (ignorar !== 'produtoBase' && fp && r.produtoBase !== fp) return false;
-      if (ignorar !== 'cor' && fc && r.cor !== fc) return false;
-      if (ignorar !== 'tamanho' && ft && r.tamanho !== ft) return false;
-      if (ignorar !== 'estampa' && fe && r.estampa !== fe) return false;
-      if (ignorar !== 'match' && fm && r.match !== fm) return false;
-      return true;
-    });
-  };
+  // Single pass Unique Extractor (Ultra fast)
+  let setMes = new Set(), setProd = new Set(), setCor = new Set(), setTam = new Set(), setEst = new Set();
+  
+  // Filter base to collect current available options
+  dbFiltrada = [];
+  for(let i=0; i<dbUnificada.length; i++) {
+      let r = dbUnificada[i];
+      let passDate = (!ini || (r.data && r.data >= ini)) && (!fim || (r.data && r.data <= fim));
+      let passMes = !mes || r.mesAno === mes;
+      let passProd = !fp || r.produtoBase === fp;
+      let passCor = !fc || r.cor === fc;
+      let passTam = !ft || r.tamanho === ft;
+      let passEst = !fe || r.estampa === fe;
+      let passMatch = !fm || r.match === fm;
 
-  const obterUnicos = (dados, chave) => [...new Set(dados.map(r => r[chave]).filter(Boolean))].sort();
+      // Collect available options ignoring their own filter constraints
+      if (passDate && passProd && passCor && passTam && passEst && passMatch) { setMes.add(r.mesAno); }
+      if (passDate && passMes && passCor && passTam && passEst && passMatch) { setProd.add(r.produtoBase); }
+      if (passDate && passMes && passProd && passTam && passEst && passMatch) { setCor.add(r.cor); }
+      if (passDate && passMes && passProd && passCor && passEst && passMatch) { setTam.add(r.tamanho); }
+      if (passDate && passMes && passProd && passCor && passTam && passMatch) { setEst.add(r.estampa); }
 
-  // Popula respeitando a simulação (A Cor A só aparece se o Produto B escolhido existir nela)
-  popularSelect('filtroMes', obterUnicos(dadosSimulados('mesAno'), 'mesAno'), 'Todos os Meses');
-  popularSelect('fltProduto', obterUnicos(dadosSimulados('produtoBase'), 'produtoBase'), 'Todos os Produtos');
-  popularSelect('fltCor', obterUnicos(dadosSimulados('cor'), 'cor'), 'Todas as Cores');
-  popularSelect('fltTamanho', obterUnicos(dadosSimulados('tamanho'), 'tamanho'), 'Todos os Tamanhos');
-  popularSelect('fltEstampa', obterUnicos(dadosSimulados('estampa'), 'estampa'), 'Todas as Estampas');
+      // Final Filter assignment
+      if (passDate && passMes && passProd && passCor && passTam && passEst && passMatch) {
+          dbFiltrada.push(r);
+      }
+  }
 
+  popularSelect('filtroMes', Array.from(setMes).sort(), 'Todos os Meses');
+  popularSelect('fltProduto', Array.from(setProd).sort(), 'Todos os Produtos');
+  popularSelect('fltCor', Array.from(setCor).sort(), 'Todas as Cores');
+  popularSelect('fltTamanho', Array.from(setTam).sort(), 'Todos os Tamanhos');
+  popularSelect('fltEstampa', Array.from(setEst).sort(), 'Todas as Estampas');
+
+  // Re-sync values
   mes = $('filtroMes').value; fp = $('fltProduto').value; fc = $('fltCor').value; ft = $('fltTamanho').value; fe = $('fltEstampa').value; fm = $('fltMatch').value;
-
-  // Filtragem Final e Real
-  dbFiltrada = dbUnificada.filter(r => {
-    if (ini && (!r.data || r.data < ini)) return false;
-    if (fim && (!r.data || r.data > fim)) return false;
-    if (mes && r.mesAno !== mes) return false;
-    if (fp && r.produtoBase !== fp) return false;
-    if (fc && r.cor !== fc) return false;
-    if (ft && r.tamanho !== ft) return false;
-    if (fe && r.estampa !== fe) return false;
-    if (fm && r.match !== fm) return false;
-    return true;
-  });
 
   renderizarPainel();
 }
@@ -715,44 +702,62 @@ function limparApenasFiltros() {
   if(dbUnificada.length > 0) aplicarFiltrosGerais();
 }
 
-// Agrupadores Estatísticos Rápidos
 function agrupar(dados, chave, porFat = false) {
   const map = new Map();
-  dados.forEach(d => {
+  for(let i=0; i<dados.length; i++) {
+    const d = dados[i];
     const k = String(d[chave] || 'N/D').trim();
-    if (!map.has(k)) map.set(k, { nome: k, qtd: 0, fat: 0 });
-    map.get(k).qtd += d.quantidade; map.get(k).fat += d.valorTotal;
-  });
+    let obj = map.get(k);
+    if (!obj) { obj = { nome: k, qtd: 0, fat: 0 }; map.set(k, obj); }
+    obj.qtd += d.quantidade; obj.fat += d.valorTotal;
+  }
   return Array.from(map.values()).sort((a, b) => porFat ? b.fat - a.fat : b.qtd - a.qtd);
 }
 
 function agruparData(dados) {
   const map = new Map();
-  dados.forEach(d => {
+  for(let i=0; i<dados.length; i++) {
+    const d = dados[i];
     const k = fmtData(d.data) || 'S/ Data';
-    if (!map.has(k)) map.set(k, { dataOri: d.data, nome: k, qtd: 0, fat: 0 });
-    map.get(k).qtd += d.quantidade; map.get(k).fat += d.valorTotal;
-  });
+    let obj = map.get(k);
+    if (!obj) { obj = { dataOri: d.data, nome: k, qtd: 0, fat: 0 }; map.set(k, obj); }
+    obj.qtd += d.quantidade; obj.fat += d.valorTotal;
+  }
   return Array.from(map.values()).sort((a,b) => (a.dataOri||0) - (b.dataOri||0));
 }
 
-// Disparador Universal de Filtros
 document.querySelectorAll('.trigger-filter').forEach(el => { el.addEventListener('change', () => { if(dbUnificada.length) aplicarFiltrosGerais(); }); });
 
-// --- CONSTRUTORES DE INTERFACE E GRÁFICOS ---
+// =========================================================================
+// TURBO RENDERIZAÇÃO DE TABELA (Mata o Congelamento do Navegador)
+// =========================================================================
 function renderTable(id, cols, dados) {
   const thead = `<tr>${cols.map(c => `<th>${c.label}</th>`).join('')}</tr>`;
-  const tbody = !dados.length ? `<tr><td colspan="${cols.length}" style="text-align:center; padding: 20px;">Sem dados disponíveis para a visualização</td></tr>` : 
-    dados.map(row => `<tr>${cols.map(c => {
-      let v = c.fmt ? c.fmt(row[c.key], row) : (row[c.key]||'-');
-      if(c.tag && v !== '-') v = `<span class="tag ${c.tag(v)}">${v}</span>`;
-      return `<td>${v}</td>`;
-    }).join('')}</tr>`).join('');
-  $(id).innerHTML = `<thead>${thead}</thead><tbody>${tbody}</tbody>`;
+  let tbodyArr = [];
+  
+  if(!dados.length) {
+      tbodyArr.push(`<tr><td colspan="${cols.length}" style="text-align:center; padding: 20px;">Sem dados disponíveis para a visualização</td></tr>`);
+  } else {
+      // Loop ultra rápido baseado em Array de strings
+      for(let i=0; i<dados.length; i++) {
+          let row = dados[i];
+          let tds = [];
+          for(let j=0; j<cols.length; j++) {
+              let c = cols[j];
+              let v = c.fmt ? c.fmt(row[c.key], row) : (row[c.key]||'-');
+              if(c.tag && v !== '-') v = `<span class="tag ${c.tag(v)}">${v}</span>`;
+              tds.push(`<td>${v}</td>`);
+          }
+          tbodyArr.push(`<tr>${tds.join('')}</tr>`);
+      }
+  }
+  
+  // Renderiza no DOM 1 única vez
+  $(id).innerHTML = `<thead>${thead}</thead><tbody>${tbodyArr.join('')}</tbody>`;
 }
 
 function renderChart(id, tipo, rotulos, valores, label, extra={}) {
-  if (graficos[id]) graficos[id].destroy(); // Destrói antigo se existir
+  if (graficos[id]) graficos[id].destroy(); 
   const ctx = $(id).getContext('2d');
   
   if(tipo === 'line') {
@@ -774,7 +779,7 @@ function renderChart(id, tipo, rotulos, valores, label, extra={}) {
     data: { labels: rotulos, datasets: [{ label: label, data: valores, ...extra }] }, 
     options: { 
       responsive: true, maintainAspectRatio: false, 
-      animation: { duration: 1500, easing: 'easeOutQuart' },
+      animation: { duration: 1000, easing: 'easeOutQuart' }, // Reduced animation time slightly for perf
       plugins: { legend: { display: tipo === 'pie' || tipo === 'doughnut' || tipo === 'polarArea', position: 'right', labels: { color: '#cbd5e1', padding: 20 } } }, 
       scales: tipo === 'pie' || tipo === 'doughnut' || tipo === 'polarArea' ? {} : { 
         x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false } }, 
@@ -784,7 +789,6 @@ function renderChart(id, tipo, rotulos, valores, label, extra={}) {
   });
 }
 
-// Botões dinâmicos de carga da Tabela Base
 function renderBaseAnalitica(lim) {
   renderTable('tblBaseUnificada', [
     {label:'Data', key:'data', fmt: v => fmtData(v)}, {label:'Pedido', key:'pedido'}, {label:'SKU/Ref', key:'skuOriginal'},
@@ -795,13 +799,13 @@ function renderBaseAnalitica(lim) {
   ], dbFiltrada.slice(0, lim));
 }
 
-// RENDERIZAÇÃO MASSIVA DA DASHBOARD (Coração Visual)
 function renderizarPainel() {
   const limit = parseInt($('limiteListas').value) || 20;
   const rows = dbFiltrada;
   
-  const pecas = rows.reduce((s, r) => s + r.quantidade, 0);
-  const fat = rows.reduce((s, r) => s + r.valorTotal, 0);
+  let pecas = 0, fat = 0;
+  for(let i=0; i<rows.length; i++) { pecas += rows[i].quantidade; fat += rows[i].valorTotal; }
+
   $('kpiLinhas').textContent = fmtInt(rows.length); 
   $('kpiPecas').textContent = fmtInt(pecas);
   $('kpiFat').textContent = fmtValor(fat); 
@@ -810,15 +814,17 @@ function renderizarPainel() {
   const qtdProdutosUnicos = new Set(rows.map(r=>r.produtoBase)).size;
   $('kpiMix').textContent = fmtInt(qtdProdutosUnicos);
 
-  // Diagnósticos Inteligentes
-  const dSku=rows.filter(r=>r.match==='SKU EXATO').length, 
-        dNome=rows.filter(r=>r.match==='NOME').length, 
-        dRegex=rows.filter(r=>r.match==='CAÇA ABSOLUTA').length, 
-        dSem=rows.filter(r=>r.match==='SEM MATCH').length;
+  let dSku=0, dNome=0, dRegex=0, dSem=0;
+  for(let i=0; i<rows.length; i++){
+      if(rows[i].match==='SKU EXATO') dSku++;
+      else if(rows[i].match==='NOME') dNome++;
+      else if(rows[i].match==='CAÇA ABSOLUTA') dRegex++;
+      else dSem++;
+  }
+  
   $('diagSku').textContent = fmtInt(dSku); $('diagNome').textContent = fmtInt(dNome); 
   $('diagRegex').textContent = fmtInt(dRegex); $('diagSem').textContent = fmtInt(dSem);
 
-  // Rankings e Agrupamentos
   const rankProd = agrupar(rows, 'produtoBase', true); 
   const rankGrupo = agrupar(rows, 'grupo', false); 
   const rankEst = agrupar(rows, 'estampa', false);     
@@ -827,12 +833,10 @@ function renderizarPainel() {
   const rankOP = agrupar(rows, 'opStatus', false);
   const trend = agruparData(rows);
 
-  // Disparo dos Gráficos via Chart.js
   renderChart('chartEvolucao', 'line', trend.map(x=>x.nome), trend.map(x=>x.fat), 'Faturamento (R$)', {});
   renderChart('chartTopProdsVisao', 'polarArea', rankGrupo.slice(0, 7).map(x=>x.nome), rankGrupo.slice(0, 7).map(x=>x.qtd), 'Peças', { backgroundColor: colorPalette.map(c=> c+'cc'), borderWidth: 0 });
   renderChart('chartTopProds', 'bar', rankProd.slice(0, 10).map(x=>x.nome), rankProd.slice(0, 10).map(x=>x.fat), 'Faturamento (R$)', { backgroundColor: '#3b82f6', borderRadius: 6, indexAxis: 'y' });
   
-  // Gráfico Doughnut de Cores (Pintura Inteligente Dinâmica via getChartColor)
   const topCores = rankCor.slice(0, 15);
   const labelsCores = topCores.map(x => x.nome);
   const dataCores = topCores.map(x => x.qtd);
@@ -846,7 +850,6 @@ function renderizarPainel() {
   renderChart('chartEstampas', 'bar', rankEst.slice(0, 15).map(x=>x.nome), rankEst.slice(0, 15).map(x=>x.qtd), 'Volume', { backgroundColor: '#8b5cf6', borderRadius: 6, indexAxis: 'y' });
   renderChart('chartMatch', 'doughnut', ['SKU Exato','Nome Exato','Caça Absoluta (IA)','Falha / Não Reconhecido'], [dSku, dNome, dRegex, dSem], 'Qualidade', { backgroundColor: ['#10b981','#06b6d4','#f59e0b','#ef4444'], borderWidth: 0, cutout: '65%' });
 
-  // Tabelas Completas Renderizadas
   const tblOpts = (arr) => arr.slice(0, limit).map((r,i)=>({...r, pos:i+1}));
   const colsRank = [{label:'Pos',key:'pos'}, {label:'Item Identificado',key:'nome'}, {label:'Volume Físico',key:'qtd',fmt:fmtInt}, {label:'Faturamento',key:'fat',fmt:fmtValor}];
   
@@ -857,7 +860,16 @@ function renderizarPainel() {
   renderTable('tblOP', [{label:'Status Operacional',key:'nome'}, {label:'Volume',key:'qtd',fmt:fmtInt}, {label:'Faturamento',key:'fat',fmt:fmtValor}], tblOpts(rankOP));
   
   renderTable('tblDicionario', [{label:'Código Base (SKU)', key:'SKU'}, {label:'Produto Master Identificado', key:'_nomeBase'}], dbProdutosRaw.slice(0, limit));
-  renderTable('tblOrfaos', [{label:'Pedido ID', key:'pedido'}, {label:'SKU Original', key:'skuOriginal'}, {label:'Descrição (Suja da Planilha)', key:'nomeOriginal'}, {label:'Cor Extraída (IA)', key:'cor'}, {label:'Tam Extraído (IA)', key:'tamanho'}], rows.filter(r=>r.match==='CAÇA ABSOLUTA' || r.match==='SEM MATCH').slice(0, limit));
+  
+  // Auditing Table Optimization
+  let arrOrfaos = [];
+  for(let i=0; i<rows.length; i++) {
+      if(rows[i].match === 'CAÇA ABSOLUTA' || rows[i].match === 'SEM MATCH') {
+          arrOrfaos.push(rows[i]);
+          if(arrOrfaos.length >= limit) break;
+      }
+  }
+  renderTable('tblOrfaos', [{label:'Pedido ID', key:'pedido'}, {label:'SKU Original', key:'skuOriginal'}, {label:'Descrição (Suja da Planilha)', key:'nomeOriginal'}, {label:'Cor Extraída (IA)', key:'cor'}, {label:'Tam Extraído (IA)', key:'tamanho'}], arrOrfaos);
 
   renderBaseAnalitica(100);
 }
