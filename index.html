@@ -139,8 +139,8 @@
 
 <div id="loader">
   <div class="spinner"></div>
-  <h2 style="margin-top: 25px; color: white; font-family: 'Outfit'; font-size: 24px;">Processando Inteligência...</h2>
-  <p style="color: var(--text-muted); margin-top: 5px;">Construindo painéis analíticos.</p>
+  <h2 style="margin-top: 25px; color: white; font-family: 'Outfit'; font-size: 24px;">Processando Inteligência Profunda...</h2>
+  <p style="color: var(--text-muted); margin-top: 5px;">Executando Deep Parsing e Reconstruindo Base.</p>
 </div>
 
 <div class="container">
@@ -317,23 +317,32 @@ const colorPalette = [
   '#14b8a6', '#d946ef', '#f43f5e', '#eab308', '#0ea5e9'
 ];
 
+// MEGA DICIONÁRIO DE CORES EXPANDIDO (Mais de 80 mapeamentos reais)
 const colorNameMap = {
   'PRETO': '#000000', 'BRANCO': '#f8fafc', 'OFF WHITE': '#f1f5f9', 'AZUL MARINHO': '#1e3a8a',
   'AZUL CLARO': '#7dd3fc', 'AZUL BEBE': '#bfdbfe', 'AZUL': '#3b82f6', 
   'ROSA BEBE': '#fbcfe8', 'ROSA': '#f472b6', 'VERMELHO': '#ef4444', 
-  'VERDE BANDEIRA': '#15803d', 'VERDE LIMA': '#bef264', 'VERDE MUSGO': '#4d7c0f', 'VERDE MILITAR': '#4d7c0f', 'VERDE': '#10b981',
-  'AMARELO CANARIO': '#fef08a', 'AMARELO': '#facc15', 
+  'VERDE BANDEIRA': '#15803d', 'VERDE LIMA': '#bef264', 'VERDE MUSGO': '#4d7c0f', 'VERDE MILITAR': '#4d7c0f', 
+  'VERDE ESMERALDA': '#047857', 'VERDE': '#10b981', 'AMARELO CANARIO': '#fef08a', 'AMARELO': '#facc15', 
   'LILÁS': '#c084fc', 'LILAS': '#c084fc', 'ROXO': '#a855f7', 'BEGE': '#fef08a',
   'NUDE': '#ffedd5', 'CINZA': '#94a3b8', 'MESCLA': '#cbd5e1', 'BORDO': '#7f1d1d',
-  'VINHO': '#831843', 'CARAMELO': '#d97706', 'CAQUI': '#b45309', 'PINK': '#db2777',
+  'VINHO': '#831843', 'CARAMELO': '#d97706', 'CAQUI': '#b45309', 'CÁQUI': '#b45309', 'PINK': '#db2777',
   'CHUMBO': '#334155', 'AREIA': '#fef3c7', 'MOSTARDA': '#ca8a04', 'TERRACOTA': '#c2410c',
-  'LAVANDA': '#a78bfa', 'MAGENTA': '#d946ef', 'SALMAO': '#fb923c', 'CORAL': '#f87171',
-  'MARROM': '#5D4037', 'CAPUCCINO': '#8D6E63', 'MILITAR': '#4d7c0f', 'NATURAL': '#f5f5f4',
+  'LAVANDA': '#a78bfa', 'MAGENTA': '#d946ef', 'SALMAO': '#fb923c', 'SALMÃO': '#fb923c', 'CORAL': '#f87171',
+  'MARROM': '#5D4037', 'CAPUCCINO': '#8D6E63', 'MOCACCINO': '#8D6E63', 'CACAO': '#5D4037', 'CACAU': '#5D4037',
+  'AVELA': '#D7CCC8', 'AVELÃ': '#D7CCC8', 'MILITAR': '#4d7c0f', 'NATURAL': '#f5f5f4',
   'BIC': '#1D4ED8', 'ARDOSIA': '#475569', 'LUAR': '#e2e8f0', 'DOCE VITA': '#F48FB1',
   'EXPRESSO': '#3E2723', 'INTENSO': '#b91c1c', 'ROSE': '#fda4af', 'FUCSIA': '#d946ef', 
-  'FÚCSIA': '#d946ef', 'TELHA': '#b45309', 'CRU': '#f5f5f4', 'TIE DYE': '#a855f7', 
-  'JEANS': '#3b82f6', 'NEON': '#a3e635', 'PRATA': '#cbd5e1', 'DOURADO': '#fbbf24', 'N/D': '#475569'
+  'FÚCSIA': '#d946ef', 'FUSCIA': '#d946ef', 'TELHA': '#b45309', 'CRU': '#f5f5f4', 'TIE DYE': '#a855f7', 
+  'JEANS': '#3b82f6', 'NEON': '#a3e635', 'PRATA': '#cbd5e1', 'DOURADO': '#fbbf24', 'CEREJA': '#9f1239',
+  'TIFFANY': '#2dd4bf', 'TIFANY': '#2dd4bf', 'FERRUGEM': '#b45309', 'PIMENTA': '#b91c1c', 'UVA': '#7e22ce',
+  'LIMAO': '#bef264', 'BRONZE': '#b45309', 'ESMERALDA': '#047857', 'CARMIM': '#9f1239', 'GELO': '#e2e8f0',
+  'TURQUESA': '#06b6d4', 'RUBI': '#be123c', 'N/D': '#475569'
 };
+
+// VETOR MESTRE ORDENADO (Prevenção de Sombreamento: Busca palavras maiores primeiro)
+const masterColors = Object.keys(colorNameMap).filter(k => k !== 'N/D');
+masterColors.sort((a,b) => b.length - a.length);
 
 let dbProdutosRaw = [], dbPedidosRaw = [], dbUnificada = [], dbFiltrada = [], graficos = {};
 
@@ -359,22 +368,13 @@ function lerArquivo(file, callback) {
     const reader = new FileReader();
     reader.onload = e => {
       let text = e.target.result;
-      
-      // AUTO-CORREÇÃO DO SEPARADOR (Padrão Excel Brasil)
       const delimitador = text.includes(';') ? ';' : ',';
-      
       Papa.parse(text, { 
-        header: true, 
-        skipEmptyLines: 'greedy', 
-        delimiter: delimitador,
-        transformHeader: h => h ? h.trim().replace(/^"|"$/g, '') : '', // Limpa cabeçalhos sujos
-        complete: res => {
-            if(res.data.length === 0) console.warn("Aviso: PapaParse retornou 0 linhas.");
-            callback(res.data);
-        }
+        header: true, skipEmptyLines: 'greedy', delimiter: delimitador,
+        transformHeader: h => h ? h.trim().replace(/^"|"$/g, '') : '',
+        complete: res => callback(res.data)
       });
     };
-    // PADRÃO WINDOWS-1252: Resolve o problema do Excel não ler UTF-8 e quebrar os cabeçalhos
     reader.readAsText(file, 'windows-1252');
   } else {
     const reader = new FileReader();
@@ -391,7 +391,6 @@ function lerArquivo(file, callback) {
   }
 }
 
-// ===== NOVOS LISTENERS COM FEEDBACK VISUAL E RESET =====
 $('fileProd').addEventListener('change', e => { 
   lerArquivo(e.target.files[0], data => { 
     dbProdutosRaw = data; 
@@ -399,7 +398,7 @@ $('fileProd').addEventListener('change', e => {
     $('lblProd').style.color = data.length > 0 ? '#34d399' : '#f87171';
     showLoader(false); 
   }); 
-  e.target.value = ''; // RESETA O INPUT (Permite upar o mesmo arquivo se errar)
+  e.target.value = ''; 
 });
 
 $('filePed').addEventListener('change', e => { 
@@ -409,7 +408,7 @@ $('filePed').addEventListener('change', e => {
     $('lblPed').style.color = data.length > 0 ? '#34d399' : '#f87171';
     showLoader(false); 
   }); 
-  e.target.value = ''; // RESETA O INPUT
+  e.target.value = ''; 
 });
 
 function limparMascaraNumero(v) {
@@ -428,23 +427,55 @@ function parseData(v) {
 function fmtData(d) { return d ? `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}` : ''; }
 function fmtMesAno(d) { return d ? `${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}` : ''; }
 
+// ===== MOTOR DE EXTRAÇÃO PROFUNDA (DEEP PARSING) =====
 function extrairAtributosDaDescricao(descricao) {
   let nome = String(descricao).toUpperCase().trim();
   let cor = '', tamanho = '', grupo = 'OUTROS';
   
-  const colors = ['PRETO','PRETA','BRANCO','BRANCA','OFF WHITE','OFF-WHITE','OFFWHITE','AZUL MARINHO','MARINHO','AZUL CLARO','AZUL BEBE','AZUL','ROSA BEBE','ROSA','VERMELHO','VERMELHA','VERDE BANDEIRA','VERDE LIMA','VERDE MUSGO','VERDE MILITAR','VERDE','AMARELO CANARIO','AMARELO','LILÁS','LILAS','ROXO','BEGE','NUDE','CINZA','MESCLA','BORDO','VINHO','CARAMELO','CAQUI','PINK','CHUMBO','AREIA','MOSTARDA','TERRACOTA','LAVANDA','MAGENTA','SALMAO','CORAL', 'MARROM', 'CAPUCCINO', 'MILITAR', 'BIC', 'ARDOSIA', 'LUAR', 'NATURAL', 'DOCE VITA', 'EXPRESSO', 'INTENSO', 'ROSE', 'FUCSIA', 'FÚCSIA', 'TELHA', 'CRU', 'TIE DYE', 'JEANS', 'NEON', 'PRATA', 'DOURADO'];
   const sizes = ['PP','P','M','G','GG','XG','XGG','EXG','EG','G1','G2','G3','G4','G5','G6','U','UNICO','UNICA','ÚNICO','ÚNICA','VARIADOS','VARIADAS','34','36','38','40','42','44','46','48','50','52','54','56'];
   
   let tempNome = ' ' + nome + ' ';
 
-  const tamRegex = /(?:-?\s*(?:TAMANHO|TAM|GRADE|TM|COR)[:\s-]*\s*)(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UNICO|UNICA|ÚNICO|ÚNICA|VARIADOS|VARIADAS|34|36|38|40|42|44|46|48|50|52|54|56)\b/i;
+  // 1. EXTRAÇÃO AGRESSIVA DE TAMANHO (Middle + Formats)
+  const tamRegex = /(?:-?\s*(?:TAMANHO|TAM|GRADE|TM|T|COR)[:\s-]*\s*)(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UNICO|UNICA|ÚNICO|ÚNICA|VARIADOS|VARIADAS|34|36|38|40|42|44|46|48|50|52|54|56)\b/i;
   const matchTam = tempNome.match(tamRegex);
-  if (matchTam) { tamanho = matchTam[1].toUpperCase(); tempNome = tempNome.replace(matchTam[0], ' '); } 
-  else { for (let s of sizes) { if (tempNome.match(new RegExp(`\\s-?\\s*${s}\\s`))) { tamanho = s; tempNome = tempNome.replace(new RegExp(`\\s-?\\s*${s}\\s`), ' '); break; } } }
+  if (matchTam) { 
+      tamanho = matchTam[1].toUpperCase(); 
+      tempNome = tempNome.replace(matchTam[0], ' '); 
+  } else { 
+      // 2. SCANNER DE EXTREMIDADE DE TAMANHO (Fim da frase isolado)
+      const endTamRegex = /(?:\s+|-|\|)(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|34|36|38|40|42|44|46|48|50|52|54|56)\s*$/i;
+      const matchEndTam = tempNome.match(endTamRegex);
+      if(matchEndTam) {
+          tamanho = matchEndTam[1].toUpperCase();
+          tempNome = tempNome.replace(matchEndTam[0], ' ');
+      } else {
+          // Último recurso de espaço
+          for (let s of sizes) { 
+              if (tempNome.match(new RegExp(`\\s-?\\s*${s}\\s`))) { 
+                  tamanho = s; tempNome = tempNome.replace(new RegExp(`\\s-?\\s*${s}\\s`), ' '); break; 
+              } 
+          } 
+      }
+  }
 
-  for (let c of colors) {
+  // 3. EXTRAÇÃO ORDENADA POR PESO DE COR (Previne sombras e erros de composite)
+  for (let c of masterColors) {
      const regex = new RegExp(`\\b${c.replace('-', '\\-')}\\b`, 'i');
-     if (tempNome.match(regex)) { cor = c.replace('PRETA','PRETO').replace('BRANCA','BRANCO').replace('VERMELHA','VERMELHO').replace('OFF-WHITE','OFF WHITE').replace('OFFWHITE','OFF WHITE'); tempNome = tempNome.replace(regex, ' '); break; }
+     if (tempNome.match(regex)) { 
+         cor = c.replace('PRETA','PRETO').replace('BRANCA','BRANCO').replace('VERMELHA','VERMELHO').replace('OFF-WHITE','OFF WHITE').replace('OFFWHITE','OFF WHITE'); 
+         tempNome = tempNome.replace(regex, ' '); 
+         break; 
+     }
+  }
+
+  // 4. SCANNER DE RESGATE 'COR: ABSOLUTA'
+  if (!cor || cor === 'N/D') {
+      const matchCorAbsoluta = tempNome.match(/(?:COR|CORES)[:\s-]+\s*([A-ZÀ-Ú]+(?:\s+[A-ZÀ-Ú]+)?)\b/i);
+      if (matchCorAbsoluta && matchCorAbsoluta[1].length > 2) {
+          cor = matchCorAbsoluta[1].trim();
+          tempNome = tempNome.replace(matchCorAbsoluta[0], ' ');
+      }
   }
 
   let produtoFull = tempNome.replace(/\s+/g, ' ').replace(/\s-\s/g, ' ').replace(/^[-\s:]+|[-\s:]+$/g, '').trim();
@@ -459,13 +490,9 @@ function extrairAtributosDaDescricao(descricao) {
   let estampa = produtoFull.replace(/\b(T-SHIRTS|T-SHIRT|TSHIRT|MUSCLE TEE|BABY LOOK|MOLECROPPED|CROPPED|VESTIDO|BLUSA|MOLETOM|CONJUNTO|REGATA|BODY|MACAQUINHO|CALÇA|CALCA|SHORTS|SHORT|SAIA|JAQUETA|CASACO|CAMISETA|CAMISA|DTF|SILK|RELEVO|BORDADO|LISO|LISA|COM|DE|DA|DO|KIT|10|FEM|\*LD\*)\b/gi, ' ').replace(/\s+/g, ' ').trim();
   if (!estampa || estampa === '*' || estampa === '-') estampa = 'SEM ESTAMPA / LISA';
 
-  if (!cor || cor === 'N/D') {
-    for (let c of colors) {
-       if (nome.includes(c)) {
-          cor = c.replace('PRETA','PRETO').replace('BRANCA','BRANCO').replace('VERMELHA','VERMELHO').replace('OFF-WHITE','OFF WHITE').replace('OFFWHITE','OFF WHITE');
-          break;
-       }
-    }
+  // 5. TRAVA ANTI "PRODUTO N/D" OU "PRODUTO VAZIO"
+  if (!produtoFull || produtoFull.length < 2) {
+      produtoFull = nome || 'PRODUTO NÃO IDENTIFICADO';
   }
 
   return { produto: produtoFull, estampa: estampa, cor: cor||'N/D', tamanho: tamanho||'N/D', grupo: grupo };
@@ -481,7 +508,6 @@ function processarBases() {
       let skuRaw = p['SKU'] || p['Código'] || p['Referência'] || '';
       let nomeRaw = p['Produto'] || p['Nome'] || p['Descrição'] || p['Descricao'] || '';
       
-      // Busca Dinâmica caso o cabeçalho seja diferente do esperado (Ex: " SKU ", "codigo_base")
       if (!skuRaw || !nomeRaw) {
          for (let key in p) {
             let kClean = key.toUpperCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -516,6 +542,29 @@ function processarBases() {
 
       const extr = extrairAtributosDaDescricao(rawNome);
       
+      // ===== BACKUP PROFUNDO VIA SKU =====
+      let tamanhoFinal = extr.tamanho !== 'N/D' ? extr.tamanho : (sizeFromSku || 'N/D');
+      if (tamanhoFinal === 'N/D') {
+          const ultraSkuMatch = rawSKU.toUpperCase().match(/(?:-|_|\s)(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN)\b/);
+          if (ultraSkuMatch) tamanhoFinal = ultraSkuMatch[1];
+      }
+
+      let corFinal = extr.cor;
+      if (corFinal === 'N/D') {
+          for(let c of masterColors) {
+              if (rawSKU.toUpperCase().includes(c.toUpperCase().replace(' ',''))) {
+                  corFinal = c; break;
+              }
+          }
+      }
+      if (corFinal === 'N/D') {
+          for(let c of masterColors) {
+              if (rawNome.toUpperCase().includes(c.toUpperCase())) {
+                  corFinal = c; break;
+              }
+          }
+      }
+
       let matchTipo = 'SEM MATCH';
       let prodRef = mapProdSKU.get(skuMestre);
       if (prodRef) matchTipo = 'SKU EXATO';
@@ -530,12 +579,10 @@ function processarBases() {
         produtoFinal = 'ESTAMPA (AVULSA)';
       }
 
-      let tamanhoFinal = extr.tamanho !== 'N/D' ? extr.tamanho : (sizeFromSku || 'N/D');
-
       return {
         data: dataObj, mesAno: fmtMesAno(dataObj), pedido: ped['Número pedido'] || ped['Pedido'] || '-',
         skuOriginal: rawSKU, skuMestre: skuMestre, nomeOriginal: rawNome,
-        produtoBase: produtoFinal, estampa: estampaFinal, cor: extr.cor, tamanho: tamanhoFinal, grupo: extr.grupo,
+        produtoBase: produtoFinal, estampa: estampaFinal, cor: corFinal, tamanho: tamanhoFinal, grupo: extr.grupo,
         quantidade: qtd, valorUnitario: (qtd ? valTotal/qtd : 0), valorTotal: valTotal,
         opStatus: ped['OP'] || ped['Status'] || ped['Fase'] || 'Concluído', match: matchTipo
       };
