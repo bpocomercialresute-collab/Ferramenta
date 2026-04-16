@@ -253,7 +253,7 @@
       <div class="card"><h3>Distribuição de Cores (Paleta Real)</h3><canvas id="chartCores"></canvas></div>
       <div class="card">
         <h3>Ranking Completo: Paleta de Cores</h3>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Mapeamento rigoroso baseado em dicionário têxtil.</p>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Mapeamento rigoroso baseado em dicionário têxtil. Cores não mapeadas são indicadas com (?)</p>
         <div class="table-responsive"><table id="tblCores"></table></div>
       </div>
     </div>
@@ -317,7 +317,7 @@ const colorPalette = [
   '#14b8a6', '#d946ef', '#f43f5e', '#eab308', '#0ea5e9'
 ];
 
-// MEGA DICIONÁRIO DE CORES EXPANDIDO (Mais de 80 mapeamentos reais)
+// MEGA DICIONÁRIO DE CORES EXPANDIDO
 const colorNameMap = {
   'PRETO': '#000000', 'BRANCO': '#f8fafc', 'OFF WHITE': '#f1f5f9', 'AZUL MARINHO': '#1e3a8a',
   'AZUL CLARO': '#7dd3fc', 'AZUL BEBE': '#bfdbfe', 'AZUL': '#3b82f6', 
@@ -340,7 +340,6 @@ const colorNameMap = {
   'TURQUESA': '#06b6d4', 'RUBI': '#be123c', 'N/D': '#475569'
 };
 
-// VETOR MESTRE ORDENADO (Prevenção de Sombreamento: Busca palavras maiores primeiro)
 const masterColors = Object.keys(colorNameMap).filter(k => k !== 'N/D');
 masterColors.sort((a,b) => b.length - a.length);
 
@@ -358,7 +357,6 @@ function openTab(tabId, element) {
   element.classList.add('active');
 }
 
-// ===== SISTEMA DE LEITURA DE ARQUIVO ATUALIZADO (TRATOR DE CSV) =====
 function lerArquivo(file, callback) {
   if (!file) return;
   const ext = file.name.split('.').pop().toLowerCase();
@@ -427,7 +425,6 @@ function parseData(v) {
 function fmtData(d) { return d ? `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}` : ''; }
 function fmtMesAno(d) { return d ? `${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}` : ''; }
 
-// ===== MOTOR DE EXTRAÇÃO PROFUNDA (DEEP PARSING) =====
 function extrairAtributosDaDescricao(descricao) {
   let nome = String(descricao).toUpperCase().trim();
   let cor = '', tamanho = '', grupo = 'OUTROS';
@@ -436,21 +433,18 @@ function extrairAtributosDaDescricao(descricao) {
   
   let tempNome = ' ' + nome + ' ';
 
-  // 1. EXTRAÇÃO AGRESSIVA DE TAMANHO (Middle + Formats)
   const tamRegex = /(?:-?\s*(?:TAMANHO|TAM|GRADE|TM|T|COR)[:\s-]*\s*)(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UNICO|UNICA|ÚNICO|ÚNICA|VARIADOS|VARIADAS|34|36|38|40|42|44|46|48|50|52|54|56)\b/i;
   const matchTam = tempNome.match(tamRegex);
   if (matchTam) { 
       tamanho = matchTam[1].toUpperCase(); 
       tempNome = tempNome.replace(matchTam[0], ' '); 
   } else { 
-      // 2. SCANNER DE EXTREMIDADE DE TAMANHO (Fim da frase isolado)
       const endTamRegex = /(?:\s+|-|\|)(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|34|36|38|40|42|44|46|48|50|52|54|56)\s*$/i;
       const matchEndTam = tempNome.match(endTamRegex);
       if(matchEndTam) {
           tamanho = matchEndTam[1].toUpperCase();
           tempNome = tempNome.replace(matchEndTam[0], ' ');
       } else {
-          // Último recurso de espaço
           for (let s of sizes) { 
               if (tempNome.match(new RegExp(`\\s-?\\s*${s}\\s`))) { 
                   tamanho = s; tempNome = tempNome.replace(new RegExp(`\\s-?\\s*${s}\\s`), ' '); break; 
@@ -459,7 +453,11 @@ function extrairAtributosDaDescricao(descricao) {
       }
   }
 
-  // 3. EXTRAÇÃO ORDENADA POR PESO DE COR (Previne sombras e erros de composite)
+  // ==== NOVO: ESMAGADOR DE TAMANHOS (Força matematicamente o ÚNICO) ====
+  if (['U', 'UN', 'UNICO', 'UNICA', 'ÚNICA', 'ÚNICO', 'TM'].includes(tamanho)) {
+      tamanho = 'ÚNICO';
+  }
+
   for (let c of masterColors) {
      const regex = new RegExp(`\\b${c.replace('-', '\\-')}\\b`, 'i');
      if (tempNome.match(regex)) { 
@@ -469,7 +467,6 @@ function extrairAtributosDaDescricao(descricao) {
      }
   }
 
-  // 4. SCANNER DE RESGATE 'COR: ABSOLUTA'
   if (!cor || cor === 'N/D') {
       const matchCorAbsoluta = tempNome.match(/(?:COR|CORES)[:\s-]+\s*([A-ZÀ-Ú]+(?:\s+[A-ZÀ-Ú]+)?)\b/i);
       if (matchCorAbsoluta && matchCorAbsoluta[1].length > 2) {
@@ -490,7 +487,6 @@ function extrairAtributosDaDescricao(descricao) {
   let estampa = produtoFull.replace(/\b(T-SHIRTS|T-SHIRT|TSHIRT|MUSCLE TEE|BABY LOOK|MOLECROPPED|CROPPED|VESTIDO|BLUSA|MOLETOM|CONJUNTO|REGATA|BODY|MACAQUINHO|CALÇA|CALCA|SHORTS|SHORT|SAIA|JAQUETA|CASACO|CAMISETA|CAMISA|DTF|SILK|RELEVO|BORDADO|LISO|LISA|COM|DE|DA|DO|KIT|10|FEM|\*LD\*)\b/gi, ' ').replace(/\s+/g, ' ').trim();
   if (!estampa || estampa === '*' || estampa === '-') estampa = 'SEM ESTAMPA / LISA';
 
-  // 5. TRAVA ANTI "PRODUTO N/D" OU "PRODUTO VAZIO"
   if (!produtoFull || produtoFull.length < 2) {
       produtoFull = nome || 'PRODUTO NÃO IDENTIFICADO';
   }
@@ -534,7 +530,6 @@ function processarBases() {
       const skuMatch = rawSKU.toUpperCase().trim().match(/[-_.\s]?(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|UNICA|UNICO|ÚNICA|ÚNICO|[0-9]{2})$/i);
       if (skuMatch) {
           sizeFromSku = skuMatch[1].toUpperCase();
-          if (sizeFromSku === 'UN' || sizeFromSku === 'UNICO' || sizeFromSku === 'UNICA' || sizeFromSku === 'ÚNICA' || sizeFromSku === 'ÚNICO') sizeFromSku = 'U';
       }
 
       let skuMestre = rawSKU.toUpperCase().trim().replace(/[-_.\s]?(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|UNICA|UNICO|ÚNICA|ÚNICO|[0-9]{2})$/i, '');
@@ -542,11 +537,15 @@ function processarBases() {
 
       const extr = extrairAtributosDaDescricao(rawNome);
       
-      // ===== BACKUP PROFUNDO VIA SKU =====
       let tamanhoFinal = extr.tamanho !== 'N/D' ? extr.tamanho : (sizeFromSku || 'N/D');
       if (tamanhoFinal === 'N/D') {
           const ultraSkuMatch = rawSKU.toUpperCase().match(/(?:-|_|\s)(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN)\b/);
           if (ultraSkuMatch) tamanhoFinal = ultraSkuMatch[1];
+      }
+      
+      // ==== REFORÇO NO ESMAGADOR DE TAMANHOS ====
+      if (['U', 'UN', 'UNICO', 'UNICA', 'ÚNICA', 'ÚNICO', 'TM'].includes(tamanhoFinal)) {
+          tamanhoFinal = 'ÚNICO';
       }
 
       let corFinal = extr.cor;
@@ -562,6 +561,22 @@ function processarBases() {
               if (rawNome.toUpperCase().includes(c.toUpperCase())) {
                   corFinal = c; break;
               }
+          }
+      }
+
+      // ==== NOVO: RASTREADOR DE CORES FANTASMAS (Muda de N/D para "N/D (? PALAVRA)") ====
+      if (corFinal === 'N/D') {
+          let pedacosNome = rawNome.trim().split(/[\s_/-]+/);
+          let palavraFantasma = pedacosNome[pedacosNome.length - 1];
+          
+          // Se a última palavra for o tamanho (Ex: P, M, G), o rastreador pega a penúltima
+          if (['PP','P','M','G','GG','XG','XGG','EXG','EG','G1','G2','G3','G4','G5','G6','U','UN','UNICO','UNICA','ÚNICO','ÚNICA'].includes(String(palavraFantasma).toUpperCase())) {
+              palavraFantasma = pedacosNome[pedacosNome.length - 2];
+          }
+          
+          // Se encontrou uma palavra provável, injeta no gráfico!
+          if (palavraFantasma && palavraFantasma.length > 2 && !palavraFantasma.match(/^[0-9]+$/)) {
+              corFinal = 'N/D (? ' + palavraFantasma.toUpperCase() + ')';
           }
       }
 
