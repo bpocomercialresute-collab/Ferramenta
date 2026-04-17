@@ -736,6 +736,20 @@
 </div>
 
 <script>
+// =================================================================================
+// ⚡ HYPER-DRIVE ENGINE v6.0 — Motor de Otimização e Extração de IA
+// =================================================================================
+// Arquitetura de alta performance projetada para ZERO travamento de navegador:
+//   • Mapeamento O(1) de cabeçalhos executado 1x fora dos loops principais
+//   • Cache V8 de Regex mestre pré-compilado globalmente (fim do loop de cores)
+//   • Hierarquia de Match: SKU Exato → Nome Exato → Caça Absoluta → Sem Match
+//   • Esmagador de Tamanhos Únicos (U/UN/UNICA/UNICO/TM → ÚNICO)
+//   • Destrinchador de Hífens (último token = cor quando regex falha)
+//   • Decodificador de SKU por siglas (PRT/OFF/BCO/VML/etc)
+//   • Geração Dinâmica de Cores via HSL Hash (cores novas, sempre determinísticas)
+//   • Single-pass de filtragem em cascata para dezenas de milhares de linhas
+// =================================================================================
+
 // ==========================================
 // CONFIGURAÇÕES GLOBAIS DE DESIGN (Chart.js)
 // ==========================================
@@ -841,58 +855,102 @@ const colorNameMap = {
 // ==========================================
 const skuAbbrMap = { 
   'PRT': 'PRETO', 
+  'PTO': 'PRETO',
   'BCO': 'BRANCO', 
+  'BRC': 'BRANCO',
   'OFF': 'OFF WHITE', 
+  'OFW': 'OFF WHITE',
   'MRN': 'AZUL MARINHO', 
+  'MAR': 'AZUL MARINHO',
   'VML': 'VERMELHO', 
+  'VRM': 'VERMELHO',
   'AMR': 'AMARELO', 
-  'RS': 'ROSA', 
+  'AML': 'AMARELO',
+  'RS':  'ROSA', 
+  'ROS': 'ROSA',
   'AZL': 'AZUL', 
+  'AZU': 'AZUL',
   'VRD': 'VERDE', 
+  'VDE': 'VERDE',
   'CIN': 'CINZA', 
-  'BGE': 'BEGE' 
+  'CNZ': 'CINZA',
+  'BGE': 'BEGE',
+  'MRR': 'MARROM',
+  'MAR2': 'MARROM',
+  'LIL': 'LILÁS',
+  'ROX': 'ROXO',
+  'VNH': 'VINHO',
+  'VIN': 'VINHO',
+  'PNK': 'PINK',
+  'NUD': 'NUDE',
+  'CRM': 'CREME'
 };
 
 // Paleta de Cores de Gráficos (Fallback)
 const colorPalette = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1', '#14b8a6', '#d946ef', '#f43f5e', '#eab308', '#0ea5e9'];
 
 // =================================================================================
-// 🚀 OTIMIZAÇÃO V8 CORE: COMPILAÇÃO GLOBAL DE REGEX
+// 🚀 CACHE V8 CORE: COMPILAÇÃO GLOBAL ÚNICA DE TODAS AS REGEX
 // =================================================================================
-// Esta parte roda 1 única vez para não travar o navegador quando for ler 10 mil linhas.
+// Executado UMA VEZ no boot. Nunca dentro de loop. Fim do catastrophic backtracking.
+// =================================================================================
 function escapeRegExp(string) { 
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
+  return String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
 }
 
+// Ordena cores da MAIS LONGA para a mais curta (evita "AZUL" comer "AZUL MARINHO")
 const masterColors = Object.keys(colorNameMap)
   .filter(k => k !== 'N/D')
-  .sort((a,b) => b.length - a.length); // Ordena da string maior para a menor
+  .sort((a, b) => b.length - a.length);
 
-// Cria a String gigantesca de cores para buscar de forma rápida
 const colorPattern = masterColors.map(c => escapeRegExp(c)).join('|');
 
-// O Motor V8 Principal: 1 Única Regra para encontrar qualquer cor existente no texto
-const masterColorRegex = new RegExp(`(?:^|\\s|-|_|:)(${colorPattern})(?=$|\\s|-|_|:)`, 'i');
+// Regex mestre GLOBAL — 1 única compilação, reutilizada em todas as N linhas
+const MASTER_COLOR_REGEX = new RegExp(`(?:^|\\s|-|_|:|\\|)(${colorPattern})(?=$|\\s|-|_|:|\\|)`, 'i');
 
-const sizeRegexGlobal = /(?:\s|-|_|:|\b)(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|UNICO|UNICA|ÚNICO|ÚNICA|34|36|38|40|42|44|46|48|50|52|54|56)(?:$|\s|-)/i;
-const estampaLimpezaRegex = /\b(T-SHIRTS|T-SHIRT|TSHIRT|MUSCLE TEE|BABY LOOK|MOLECROPPED|CROPPED|VESTIDO|BLUSA|BLUSINHA|MOLETOM|CONJUNTO|REGATA|BODY|MACAQUINHO|CALÇA|CALCA|SHORTS|SHORT|SAIA|JAQUETA|CASACO|CAMISETA|CAMISA|DTF|SILK|RELEVO|BORDADO|LISO|LISA|COM|DE|DA|DO|KIT|10|FEM|\*LD\*)\b/gi;
-const lixoTamanhoRegex = /(?:TAMANHO|TAM|COR)[:\s-]/gi;
-const numOnlyRegex = /^[0-9]+$/;
+// Regex de tamanhos - compilada uma única vez
+const SIZE_REGEX_GLOBAL = /(?:\s|-|_|:|\|)(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|UNICO|UNICA|ÚNICO|ÚNICA|TM|34|36|38|40|42|44|46|48|50|52|54|56)(?:$|\s|-|_|:|\|)/i;
+
+// Regex de limpeza de palavras comuns na descrição (para isolar estampa)
+const ESTAMPA_LIMPEZA_REGEX = /\b(T-SHIRTS?|TSHIRTS?|MUSCLE TEE|BABY LOOK|MOLECROPPED|CROPPED|VESTIDO|BLUSAS?|BLUSINHA|MOLETOM|CONJUNTO|REGATA|BODY|MACAQUINHO|CAL[ÇC]A|SHORTS?|SAIA|JAQUETA|CASACO|CAMISETA|CAMISA|DTF|SILK|RELEVO|BORDADO|LISO|LISA|COM|DE|DA|DO|KIT|FEM|\*LD\*)\b/gi;
+
+// Regex de lixo de tamanho
+const LIXO_TAMANHO_REGEX = /(?:TAMANHO|TAM|COR)[:\s-]+/gi;
+
+// Regex para detectar strings apenas numéricas
+const NUM_ONLY_REGEX = /^[0-9]+$/;
+
+// Regex de limpeza de sufixo do SKU (tamanhos concatenados)
+const SKU_CLEANER_REGEX = /[-_.\s]?(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|UNICA|UNICO|ÚNICA|ÚNICO|TM|[0-9]{2})$/i;
+const TAIL_CLEAN_REGEX = /[-_.\s]+$/;
+
+// Tamanhos que são todos mapeados para ÚNICO (Set = lookup O(1))
+const TAMANHOS_UNICOS_SET = new Set(['U', 'UN', 'UNICO', 'UNICA', 'ÚNICA', 'ÚNICO', 'TM']);
+
+// Cache de resultados de hash de cor (evita recomputar HSL a cada render)
+const HSL_HASH_CACHE = new Map();
 
 // ==========================================
-// GERADOR DINÂMICO DE CORES HASH
+// GERADOR DINÂMICO DE CORES HASH (HSL)
 // ==========================================
-// Se uma cor nova for inventada e não estiver no dicionário, cria uma cor fixa baseada no texto.
+// Cor inventada/nova? Gera uma cor HSL determinística via hash da string.
+// Resultado é cacheado — a mesma cor sempre gera o mesmo HSL no gráfico.
+// ==========================================
 function getChartColor(colorName) {
-    let clean = String(colorName).toUpperCase().trim();
-    if (colorNameMap[clean]) return colorNameMap[clean];
-    
-    // Matemática pura de Hash
-    let hash = 0; 
-    for (let i = 0; i < clean.length; i++) {
-        hash = clean.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return `hsl(${Math.abs(hash) % 360}, 70%, 60%)`;
+  const clean = String(colorName || 'N/D').toUpperCase().trim();
+  if (colorNameMap[clean]) return colorNameMap[clean];
+  
+  if (HSL_HASH_CACHE.has(clean)) return HSL_HASH_CACHE.get(clean);
+  
+  // Hash matemático puro (djb2-like)
+  let hash = 0; 
+  for (let i = 0; i < clean.length; i++) {
+    hash = clean.charCodeAt(i) + ((hash << 5) - hash);
+    hash = hash & hash; // força 32-bit int
+  }
+  const hsl = `hsl(${Math.abs(hash) % 360}, 70%, 60%)`;
+  HSL_HASH_CACHE.set(clean, hsl);
+  return hsl;
 }
 
 // ==========================================
@@ -904,9 +962,13 @@ let dbUnificada = [];
 let dbFiltrada = []; 
 let graficos = {};
 
+// Cache de mapeamento de cabeçalhos (preenchido 1x por planilha — Otimização O(1))
+let headerMapProdutos = null;
+let headerMapPedidos = null;
+
 const $ = id => document.getElementById(id);
-const fmtValor = v => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v||0);
-const fmtInt = v => new Intl.NumberFormat('pt-BR').format(v||0);
+const fmtValor = v => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0);
+const fmtInt = v => new Intl.NumberFormat('pt-BR').format(v || 0);
 
 function showLoader(show) { 
   $('loader').style.display = show ? 'flex' : 'none'; 
@@ -917,6 +979,14 @@ function openTab(tabId, element) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); 
   $(tabId).classList.add('active'); 
   element.classList.add('active'); 
+}
+
+// ==========================================
+// NORMALIZADOR DE STRING (NFD + UPPERCASE)
+// ==========================================
+// Remove acentos e caixa — acelera comparação de cabeçalhos
+function normalizeKey(s) {
+  return String(s || '').toUpperCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
 // ==========================================
@@ -944,8 +1014,8 @@ function lerArquivo(file, callback) {
     const reader = new FileReader();
     reader.onload = e => {
       try { 
-        const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'}); 
-        callback(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:''})); 
+        const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' }); 
+        callback(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' })); 
       } catch (err) { 
         alert("Erro ao ler Excel. Tente salvar como CSV UTF-8."); 
         callback([]); 
@@ -959,6 +1029,7 @@ function lerArquivo(file, callback) {
 $('fileProd').addEventListener('change', e => { 
   lerArquivo(e.target.files[0], data => { 
     dbProdutosRaw = data; 
+    headerMapProdutos = null; // invalida cache de cabeçalhos
     $('lblProd').textContent = data.length > 0 ? `${data.length} linhas identificadas` : `⚠️ Formato incorreto`; 
     $('lblProd').style.color = data.length > 0 ? '#34d399' : '#f87171'; 
     showLoader(false); 
@@ -969,6 +1040,7 @@ $('fileProd').addEventListener('change', e => {
 $('filePed').addEventListener('change', e => { 
   lerArquivo(e.target.files[0], data => { 
     dbPedidosRaw = data; 
+    headerMapPedidos = null; // invalida cache de cabeçalhos
     $('lblPed').textContent = data.length > 0 ? `${data.length} linhas identificadas` : `⚠️ Formato incorreto`; 
     $('lblPed').style.color = data.length > 0 ? '#34d399' : '#f87171'; 
     showLoader(false); 
@@ -978,296 +1050,433 @@ $('filePed').addEventListener('change', e => {
 
 // Limpeza Profunda de Dados Formais
 function limparMascaraNumero(v) { 
-  if(typeof v === 'number') return v; 
-  let s = String(v||'').replace('R$','').trim(); 
-  if(!s) return 0; 
-  if(s.includes(',') && s.includes('.')) s = s.replace(/\./g, '').replace(',', '.'); 
-  else if(s.includes(',')) s = s.replace(',', '.'); 
+  if (typeof v === 'number') return v; 
+  let s = String(v || '').replace('R$', '').trim(); 
+  if (!s) return 0; 
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g, '').replace(',', '.'); 
+  else if (s.includes(',')) s = s.replace(',', '.'); 
   return parseFloat(s) || 0; 
 }
 
 function parseData(v) { 
-  if(!v) return null; 
-  if(v instanceof Date) return v; 
+  if (!v) return null; 
+  if (v instanceof Date) return v; 
   let s = String(v).trim(), m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})/); 
-  if(m) return new Date(+m[3],+m[2]-1,+m[1]); 
+  if (m) return new Date(+m[3], +m[2] - 1, +m[1]); 
   m = s.match(/^(\d{4})-(\d{2})-(\d{2})/); 
-  if(m) return new Date(+m[1],+m[2]-1,+m[3]); 
+  if (m) return new Date(+m[1], +m[2] - 1, +m[3]); 
   const d = new Date(s); 
   return isNaN(d) ? null : d; 
 }
 
 function fmtData(d) { 
-  return d ? `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}` : ''; 
+  return d ? `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}` : ''; 
 }
 function fmtMesAno(d) { 
-  return d ? `${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}` : ''; 
+  return d ? `${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}` : ''; 
 }
 
-// =========================================================================
-// MOTOR IA: EXTRAÇÃO DE CAÇA ABSOLUTA EXPANDIDA
-// =========================================================================
+// =================================================================================
+// 🎯 MAPEADOR O(1) DE CABEÇALHOS — EXECUTADO 1x POR PLANILHA (FORA DO LOOP)
+// =================================================================================
+// Esta é a injeção crítica pedida: descobrir quais são as colunas ANTES do loop,
+// e nunca mais tocar nos cabeçalhos durante o processamento das N linhas.
+// =================================================================================
+function mapearCabecalhosProdutos(sample) {
+  const map = { sku: 'SKU', nome: 'Produto' };
+  if (!sample) return map;
+  
+  const keys = Object.keys(sample);
+  for (let i = 0; i < keys.length; i++) {
+    const k = keys[i];
+    const kc = normalizeKey(k);
+    if (kc === 'SKU' || kc === 'CODIGO' || kc === 'REFERENCIA' || kc === 'ID') map.sku = k;
+    if (kc === 'PRODUTO' || kc === 'NOME' || kc === 'DESCRICAO' || kc === 'DESCRICAOCOMPLEMENTAR' || kc === 'TITULO') map.nome = k;
+  }
+  return map;
+}
+
+function mapearCabecalhosPedidos(sample) {
+  const map = { 
+    sku: 'SKU', nome: 'Produto', data: 'Data', 
+    qtd: 'Quantidade', total: 'Valor Total', 
+    op: 'OP', pedido: 'Número pedido' 
+  };
+  if (!sample) return map;
+  
+  const keys = Object.keys(sample);
+  for (let i = 0; i < keys.length; i++) {
+    const k = keys[i];
+    const kc = normalizeKey(k);
+    if (kc === 'SKU' || kc === 'CODIGO') map.sku = k;
+    if (kc === 'PRODUTO' || kc === 'DESCRICAO' || kc === 'NOME') map.nome = k;
+    if (kc === 'DATA' || kc === 'CRIADOEM' || kc === 'DATADOPEDIDO') map.data = k;
+    if (kc === 'QUANTIDADE' || kc === 'QTD') map.qtd = k;
+    if (kc === 'VALORTOTAL' || kc === 'TOTAL' || kc === 'FATURAMENTO' || kc === 'TOTALPEDIDO') map.total = k;
+    if (kc === 'OP' || kc === 'STATUS' || kc === 'FASE' || kc === 'STATUSDOPEDIDO') map.op = k;
+    if (kc === 'NUMEROPEDIDO' || kc === 'PEDIDO' || kc === 'ID') map.pedido = k;
+  }
+  return map;
+}
+
+// =================================================================================
+// 🧠 MOTOR IA: EXTRAÇÃO DE CAÇA ABSOLUTA (HYPER-DRIVE)
+// =================================================================================
+// Usa APENAS regex pré-compiladas globalmente. Zero compilação dentro do loop.
+// Fluxo interno:
+//   1. Extração de tamanho via SIZE_REGEX_GLOBAL
+//   2. Esmagador: U/UN/UNICA/UNICO/TM → ÚNICO (lookup O(1) via Set)
+//   3. Busca de cor via MASTER_COLOR_REGEX (1 única regex, todas as cores)
+//   4. Destrinchador de hífens: último token do nome = cor (quando 3 falha)
+//   5. Decodificador de SKU: siglas PRT/OFF/BCO/VML/etc (quando 3 e 4 falham)
+//   6. Categorização O(1) por includes
+//   7. Isolamento da estampa pelo ESTAMPA_LIMPEZA_REGEX
+// =================================================================================
 function extrairAtributosDaDescricao(descricao, sku) {
-  let nome = String(descricao).toUpperCase().trim();
+  let nome = String(descricao || '').toUpperCase().trim();
   let cor = 'N/D', tamanho = 'N/D', grupo = 'OUTROS';
   
-  // 1. Extração ultra rápida de Tamanho
-  let matchTamanho = sizeRegexGlobal.exec(nome);
-  if (matchTamanho) { 
-      tamanho = matchTamanho[1].toUpperCase(); 
-      nome = nome.replace(matchTamanho[0], ' '); 
+  if (!nome && !sku) {
+    return { produto: 'PRODUTO NÃO IDENTIFICADO', estampa: 'SEM ESTAMPA / LISA', cor, tamanho, grupo };
   }
   
-  // 2. Esmagador de Tamanho Único
-  if (['U', 'UN', 'UNICO', 'UNICA', 'ÚNICA', 'ÚNICO', 'TM'].includes(tamanho)) {
-      tamanho = 'ÚNICO';
+  // -----------------------------------------------------------------------------
+  // PASSO 1: Extração de Tamanho via regex global compilada
+  // -----------------------------------------------------------------------------
+  const matchTamanho = SIZE_REGEX_GLOBAL.exec(' ' + nome + ' ');
+  if (matchTamanho) { 
+    tamanho = matchTamanho[1].toUpperCase(); 
+    nome = nome.replace(matchTamanho[0], ' '); 
+  }
+  
+  // -----------------------------------------------------------------------------
+  // PASSO 2: ESMAGADOR DE TAMANHOS ÚNICOS (lookup O(1) via Set)
+  // -----------------------------------------------------------------------------
+  if (TAMANHOS_UNICOS_SET.has(tamanho)) {
+    tamanho = 'ÚNICO';
   }
 
   let tempNome = ' ' + nome + ' ';
   
-  // 3. Busca Imediata Compilada V8 (Cor no Dicionário Mestre)
-  let matchCor = tempNome.match(masterColorRegex);
+  // -----------------------------------------------------------------------------
+  // PASSO 3: Busca de cor pela regex MESTRE (1 única regra, compilada globalmente)
+  // -----------------------------------------------------------------------------
+  const matchCor = MASTER_COLOR_REGEX.exec(tempNome);
   if (matchCor) { 
-      cor = matchCor[1].toUpperCase(); 
-      tempNome = tempNome.replace(matchCor[0], ' '); 
+    cor = matchCor[1].toUpperCase(); 
+    tempNome = tempNome.replace(matchCor[0], ' '); 
   }
 
-  // 4. Destrinchador de Hifens (O Ghost Tracker para cores inventadas)
-  if (cor === 'N/D' && nome.includes('-')) {
-      let partes = nome.split('-'); 
-      let sufixo = partes[partes.length - 1].trim().replace(lixoTamanhoRegex, '').replace(sizeRegexGlobal, '').trim();
-      
-      if (sufixo.length >= 3 && !numOnlyRegex.test(sufixo)) { 
-          cor = sufixo; 
-          tempNome = tempNome.replace(new RegExp(escapeRegExp(sufixo), 'i'), ' '); 
-      }
+  // -----------------------------------------------------------------------------
+  // PASSO 4: DESTRINCHADOR DE HÍFENS (quebra no último hífen)
+  // -----------------------------------------------------------------------------
+  // Se a regex mestre falhou, o último token após o hífen É a cor (com alta probabilidade).
+  if (cor === 'N/D' && nome.indexOf('-') !== -1) {
+    const idxUltimoHifen = nome.lastIndexOf('-');
+    let sufixo = nome.substring(idxUltimoHifen + 1).trim();
+    
+    // Limpa do sufixo qualquer resíduo de tamanho/lixo
+    sufixo = sufixo.replace(LIXO_TAMANHO_REGEX, ' ')
+                   .replace(SIZE_REGEX_GLOBAL, ' ')
+                   .replace(/[^A-ZÀ-Úa-zà-ú\s]/gi, ' ')
+                   .replace(/\s+/g, ' ')
+                   .trim();
+    
+    // Aceita apenas se tiver 3+ chars e não for puramente numérico
+    if (sufixo.length >= 3 && !NUM_ONLY_REGEX.test(sufixo)) { 
+      cor = sufixo.toUpperCase(); 
+      tempNome = tempNome.substring(0, tempNome.lastIndexOf('-') !== -1 ? tempNome.lastIndexOf('-') : tempNome.length);
+    }
   }
 
-  // 5. Decodificador Direto de SKU
+  // -----------------------------------------------------------------------------
+  // PASSO 5: DECODIFICADOR DE SKU (siglas PRT / OFF / BCO / VML / etc)
+  // -----------------------------------------------------------------------------
   if (cor === 'N/D' && sku) { 
-      let skuStr = String(sku).toUpperCase(); 
-      for (let abbr in skuAbbrMap) { 
-          if (skuStr.includes('-' + abbr) || skuStr.includes('_' + abbr)) { 
-              cor = skuAbbrMap[abbr]; 
-              break; 
-          } 
+    const skuStr = String(sku).toUpperCase(); 
+    for (const abbr in skuAbbrMap) { 
+      // Checa se a sigla aparece delimitada no SKU
+      if (skuStr.indexOf('-' + abbr) !== -1 || 
+          skuStr.indexOf('_' + abbr) !== -1 || 
+          skuStr.endsWith(abbr)) { 
+        cor = skuAbbrMap[abbr]; 
+        break; 
       } 
+    } 
   }
 
-  // 6. Limpeza Mestre do Nome do Produto
-  let produtoFull = tempNome.replace(/\s+/g, ' ').replace(/\s-\s/g, ' ').replace(/^[-\s:]+|[-\s:]+$/g, '').trim();
+  // -----------------------------------------------------------------------------
+  // PASSO 6: Limpeza Mestre do Nome do Produto
+  // -----------------------------------------------------------------------------
+  let produtoFull = tempNome
+    .replace(/\s+/g, ' ')
+    .replace(/\s-\s/g, ' ')
+    .replace(/^[-\s:]+|[-\s:]+$/g, '')
+    .trim();
 
-  // 7. Categorização IF (Alta performance)
-  if (produtoFull.includes('T-SHIRT') || produtoFull.includes('TSHIRT')) {
-      grupo = 'T-SHIRT'; 
-  } else if (produtoFull.includes('CROPPED') || produtoFull.includes('MOLECROPPED')) {
-      grupo = 'CROPPED'; 
-  } else if (produtoFull.includes('VESTIDO')) {
-      grupo = 'VESTIDO'; 
-  } else if (produtoFull.includes('BLUSA') || produtoFull.includes('BLUSINHA')) {
-      grupo = 'BLUSA'; 
-  } else if (produtoFull.includes('MOLETOM')) {
-      grupo = 'MOLETOM'; 
-  } else if (produtoFull.includes('CONJUNTO')) {
-      grupo = 'CONJUNTO';
+  // -----------------------------------------------------------------------------
+  // PASSO 7: Categorização IF (cadeia de includes - alta performance)
+  // -----------------------------------------------------------------------------
+  if (produtoFull.indexOf('T-SHIRT') !== -1 || produtoFull.indexOf('TSHIRT') !== -1) {
+    grupo = 'T-SHIRT'; 
+  } else if (produtoFull.indexOf('CROPPED') !== -1 || produtoFull.indexOf('MOLECROPPED') !== -1) {
+    grupo = 'CROPPED'; 
+  } else if (produtoFull.indexOf('VESTIDO') !== -1) {
+    grupo = 'VESTIDO'; 
+  } else if (produtoFull.indexOf('BLUSA') !== -1 || produtoFull.indexOf('BLUSINHA') !== -1) {
+    grupo = 'BLUSA'; 
+  } else if (produtoFull.indexOf('MOLETOM') !== -1) {
+    grupo = 'MOLETOM'; 
+  } else if (produtoFull.indexOf('CONJUNTO') !== -1) {
+    grupo = 'CONJUNTO';
+  } else if (produtoFull.indexOf('REGATA') !== -1) {
+    grupo = 'REGATA';
+  } else if (produtoFull.indexOf('BODY') !== -1) {
+    grupo = 'BODY';
+  } else if (produtoFull.indexOf('SHORT') !== -1) {
+    grupo = 'SHORTS';
+  } else if (produtoFull.indexOf('CALÇA') !== -1 || produtoFull.indexOf('CALCA') !== -1) {
+    grupo = 'CALÇA';
+  } else if (produtoFull.indexOf('SAIA') !== -1) {
+    grupo = 'SAIA';
   }
 
-  // 8. Separação da Estampa Criativa
-  let estampa = produtoFull.replace(estampaLimpezaRegex, ' ').replace(/\s+/g, ' ').trim();
+  // -----------------------------------------------------------------------------
+  // PASSO 8: Isolamento da Estampa Criativa
+  // -----------------------------------------------------------------------------
+  // Reseta lastIndex da regex global para não pular matches entre chamadas
+  ESTAMPA_LIMPEZA_REGEX.lastIndex = 0;
+  let estampa = produtoFull.replace(ESTAMPA_LIMPEZA_REGEX, ' ').replace(/\s+/g, ' ').trim();
   if (!estampa || estampa === '*' || estampa === '-') estampa = 'SEM ESTAMPA / LISA';
 
-  // 9. Fechamento Analítico
+  // -----------------------------------------------------------------------------
+  // PASSO 9: Fechamento Analítico + Normalização de gênero
+  // -----------------------------------------------------------------------------
   if (!produtoFull || produtoFull.length < 2) produtoFull = nome || 'PRODUTO NÃO IDENTIFICADO';
-  if (cor !== 'N/D') cor = cor.replace('PRETA','PRETO').replace('BRANCA','BRANCO').replace('VERMELHA','VERMELHO');
+  if (cor !== 'N/D') {
+    cor = cor.replace('PRETA', 'PRETO').replace('BRANCA', 'BRANCO').replace('VERMELHA', 'VERMELHO');
+  }
 
   return { 
-      produto: produtoFull, 
-      estampa: estampa, 
-      cor: cor, 
-      tamanho: tamanho, 
-      grupo: grupo 
+    produto: produtoFull, 
+    estampa: estampa, 
+    cor: cor, 
+    tamanho: tamanho, 
+    grupo: grupo 
   };
 }
 
-// =========================================================================
-// OTIMIZAÇÃO O(1): MAPA DINÂMICO DE CABEÇALHOS (Resolveu o vazamento de memória)
-// =========================================================================
+// =================================================================================
+// ⚙️ PROCESSADOR PRINCIPAL — ARQUITETURA SINGLE-PASS O(N)
+// =================================================================================
+// Estrutura de execução:
+//   FASE 1: Mapeamento O(1) dos cabeçalhos (1x, antes do loop)
+//   FASE 2: Indexação da Base de Produtos em 2 Maps (SKU e Nome) — lookup O(1)
+//   FASE 3: Single-pass nos Pedidos aplicando hierarquia de match
+//   FASE 4: Dispara filtros e renderização
+// =================================================================================
 function processarBases() {
   if (!dbPedidosRaw.length) return alert('É necessário carregar um arquivo de Pedidos de Venda antes de processar.');
   
   showLoader(true);
   
-  // Executa em Background via Timeout para renderizar a tela de loading antes de travar processador
+  // Executa em Background via Timeout para pintar a tela de loading antes do trabalho pesado
   setTimeout(() => {
-    const mapProdSKU = new Map(), mapProdNome = new Map();
-    
-    // ---- FASE 1: Detecção O(1) dos Cabeçalhos Dinâmicos (Para Produtos Base) ----
-    let pSkuKey = 'SKU', pNomeKey = 'Produto';
-    
-    if(dbProdutosRaw.length > 0) {
-        let keys = Object.keys(dbProdutosRaw[0]);
-        for(let k of keys) {
-            let kClean = k.toUpperCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            if(['SKU', 'CODIGO', 'REFERENCIA', 'ID'].includes(kClean)) pSkuKey = k;
-            if(['PRODUTO', 'NOME', 'DESCRICAO', 'DESCRICAOCOMPLEMENTAR', 'TITULO'].includes(kClean)) pNomeKey = k;
-        }
-    }
-
-    // ---- FASE 2: Detecção O(1) dos Cabeçalhos Dinâmicos (Para Pedidos de Venda) ----
-    let vSkuKey = 'SKU', vNomeKey = 'Produto', vDataKey = 'Data', vQtdKey = 'Quantidade', vTotalKey = 'Valor Total', vOpKey = 'OP', vPedKey = 'Número pedido';
-    
-    if (dbPedidosRaw.length > 0) {
-        let keys = Object.keys(dbPedidosRaw[0]);
-        for(let k of keys) {
-            let kClean = k.toUpperCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            if(['SKU', 'CODIGO'].includes(kClean)) vSkuKey = k;
-            if(['PRODUTO', 'DESCRICAO', 'NOME'].includes(kClean)) vNomeKey = k;
-            if(['DATA', 'CRIADOEM', 'DATADOPEDIDO'].includes(kClean)) vDataKey = k;
-            if(['QUANTIDADE', 'QTD'].includes(kClean)) vQtdKey = k;
-            if(['VALORTOTAL', 'TOTAL', 'FATURAMENTO', 'TOTALPEDIDO'].includes(kClean)) vTotalKey = k;
-            if(['OP', 'STATUS', 'FASE', 'STATUSDOPEDIDO'].includes(kClean)) vOpKey = k;
-            if(['NUMEROPEDIDO', 'PEDIDO', 'ID'].includes(kClean)) vPedKey = k;
-        }
-    }
-
-    // ---- FASE 3: Indexação e Criação de Dicionários Virtuais da Base de Produtos ----
-    for(let i=0; i<dbProdutosRaw.length; i++) {
-      let p = dbProdutosRaw[i];
-      let skuRaw = p[pSkuKey] || ''; 
-      let nomeRaw = p[pNomeKey] || '';
+    try {
+      // ------------------------------------------------------------------------
+      // FASE 1: MAPEAMENTO O(1) DOS CABEÇALHOS (uma única vez, fora dos loops)
+      // ------------------------------------------------------------------------
+      const mapProdCols = mapearCabecalhosProdutos(dbProdutosRaw[0]);
+      const mapPedCols  = mapearCabecalhosPedidos(dbPedidosRaw[0]);
+      headerMapProdutos = mapProdCols;
+      headerMapPedidos  = mapPedCols;
       
-      const sku = String(skuRaw).trim().toUpperCase(); 
-      const nomeBase = String(nomeRaw).trim().toUpperCase();
-      p._nomeBase = nomeBase; 
-      
-      if(sku) mapProdSKU.set(sku, p);
-      if(nomeBase) mapProdNome.set(nomeBase, p);
-    }
+      const pSkuKey = mapProdCols.sku;
+      const pNomeKey = mapProdCols.nome;
+      const vSkuKey = mapPedCols.sku;
+      const vNomeKey = mapPedCols.nome;
+      const vDataKey = mapPedCols.data;
+      const vQtdKey = mapPedCols.qtd;
+      const vTotalKey = mapPedCols.total;
+      const vOpKey = mapPedCols.op;
+      const vPedKey = mapPedCols.pedido;
 
-    // Regras de Limpeza Estrutural para o Motor O(1)
-    const skuCleanerRegex = /[-_.\s]?(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|UNICA|UNICO|ÚNICA|ÚNICO|[0-9]{2})$/i;
-    const tailCleanRegex = /[-_.\s]+$/;
+      // ------------------------------------------------------------------------
+      // FASE 2: INDEXAÇÃO DA BASE DE PRODUTOS EM 2 DICIONÁRIOS (Map = O(1) lookup)
+      // ------------------------------------------------------------------------
+      const mapProdSKU = new Map();
+      const mapProdNome = new Map();
+      const nProd = dbProdutosRaw.length;
+      
+      for (let i = 0; i < nProd; i++) {
+        const p = dbProdutosRaw[i];
+        const skuRaw = p[pSkuKey] || ''; 
+        const nomeRaw = p[pNomeKey] || '';
+        
+        const sku = String(skuRaw).trim().toUpperCase(); 
+        const nomeBase = String(nomeRaw).trim().toUpperCase();
+        
+        // Atributo virtual para reuso no render (evita recomputar toUpperCase na UI)
+        p._nomeBase = nomeBase; 
+        p._SKU = sku;
+        
+        if (sku) mapProdSKU.set(sku, p);
+        if (nomeBase) mapProdNome.set(nomeBase, p);
+      }
 
-    // ---- FASE 4: Processamento Massivo dos Pedidos (Cruzamento com Inteligência) ----
-    dbUnificada = [];
-    
-    for(let i = 0; i < dbPedidosRaw.length; i++) {
-      let ped = dbPedidosRaw[i];
-      const rawSKU = ped[vSkuKey] || ''; 
-      const rawNome = ped[vNomeKey] || '';
-      const qtd = limparMascaraNumero(ped[vQtdKey] || 1); 
-      const valTotal = limparMascaraNumero(ped[vTotalKey]);
+      // ------------------------------------------------------------------------
+      // FASE 3: SINGLE-PASS NOS PEDIDOS — APLICAÇÃO DA HIERARQUIA DE MATCH
+      // ------------------------------------------------------------------------
+      // Hierarquia:
+      //   1º SKU Exato       → match direto no Map por SKU
+      //   2º Nome Exato      → match direto no Map por nome
+      //   3º Caça Absoluta   → extração IA via regex pré-compiladas
+      //   4º Sem Match       → só existe se extrairAtributos também falhar
+      // ------------------------------------------------------------------------
+      const novaUnificada = new Array(dbPedidosRaw.length);
+      let writeIdx = 0;
+      const nPed = dbPedidosRaw.length;
       
-      // Ignora linhas sem valor agregado para relatório
-      if (qtd <= 0 && valTotal <= 0) continue;
+      for (let i = 0; i < nPed; i++) {
+        const ped = dbPedidosRaw[i];
+        const rawSKU = ped[vSkuKey] || ''; 
+        const rawNome = ped[vNomeKey] || '';
+        const qtd = limparMascaraNumero(ped[vQtdKey] || 1); 
+        const valTotal = limparMascaraNumero(ped[vTotalKey]);
+        
+        // Descarta linhas totalmente vazias
+        if (qtd <= 0 && valTotal <= 0) continue;
 
-      const dataObj = parseData(ped[vDataKey]);
-      
-      // Corta resíduos estéticos de quem digitou o pedido errado
-      let skuMestre = rawSKU.toUpperCase().trim().replace(skuCleanerRegex, '').replace(tailCleanRegex, '').trim();
+        const dataObj = parseData(ped[vDataKey]);
+        
+        // Limpeza estrutural do SKU (tira sufixo de tamanho)
+        const skuMestre = String(rawSKU)
+          .toUpperCase()
+          .trim()
+          .replace(SKU_CLEANER_REGEX, '')
+          .replace(TAIL_CLEAN_REGEX, '')
+          .trim();
 
-      // INJEÇÃO DA CAÇA ABSOLUTA
-      const extr = extrairAtributosDaDescricao(rawNome, rawSKU);
-      
-      let matchTipo = 'SEM MATCH';
-      let prodRef = mapProdSKU.get(skuMestre);
-      
-      // Avaliação de Qualidade (Auditoria de Casamento - Match)
-      if (prodRef) { 
+        // Injeção da Caça Absoluta (sempre roda para ter fallback)
+        const extr = extrairAtributosDaDescricao(rawNome, rawSKU);
+        
+        // ---- HIERARQUIA DE MATCH ----
+        let matchTipo = 'SEM MATCH';
+        let prodRef = null;
+        
+        // 1º SKU Exato
+        if (skuMestre && mapProdSKU.has(skuMestre)) { 
+          prodRef = mapProdSKU.get(skuMestre);
           matchTipo = 'SKU EXATO'; 
-      } else {
-          let rnUpper = rawNome.toUpperCase();
-          if (rawNome && mapProdNome.has(rnUpper)) { 
-              prodRef = mapProdNome.get(rnUpper); 
-              matchTipo = 'NOME'; 
-          } else { 
-              matchTipo = 'CAÇA ABSOLUTA'; 
+        } else {
+          // 2º Nome Exato
+          const rnUpper = String(rawNome).toUpperCase().trim();
+          if (rnUpper && mapProdNome.has(rnUpper)) { 
+            prodRef = mapProdNome.get(rnUpper); 
+            matchTipo = 'NOME'; 
+          } else if (extr.produto && extr.produto !== 'PRODUTO NÃO IDENTIFICADO') { 
+            // 3º Caça Absoluta (extração IA conseguiu recuperar algo)
+            matchTipo = 'CAÇA ABSOLUTA'; 
+          } else {
+            // 4º Sem Match (todas as estratégias falharam)
+            matchTipo = 'SEM MATCH';
           }
-      }
+        }
 
-      // Aplica a sobreposição de Nome Inteligente
-      let produtoFinal = (prodRef && prodRef._nomeBase) ? prodRef._nomeBase : extr.produto;
-      if (produtoFinal.toUpperCase().trim().startsWith('ESTAMPA')) {
+        // Aplica o nome da base se disponível, senão usa o extraído
+        let produtoFinal = (prodRef && prodRef._nomeBase) ? prodRef._nomeBase : extr.produto;
+        if (produtoFinal && produtoFinal.toUpperCase().trim().startsWith('ESTAMPA')) {
           produtoFinal = 'ESTAMPA AVULSA';
+        }
+
+        // Constrói o registro unificado (Master Table)
+        novaUnificada[writeIdx++] = {
+          data: dataObj, 
+          mesAno: fmtMesAno(dataObj), 
+          pedido: ped[vPedKey] || '-',
+          skuOriginal: rawSKU, 
+          skuMestre: skuMestre, 
+          nomeOriginal: rawNome,
+          produtoBase: produtoFinal, 
+          estampa: extr.estampa, 
+          cor: extr.cor, 
+          tamanho: extr.tamanho, 
+          grupo: extr.grupo,
+          quantidade: qtd, 
+          valorUnitario: (qtd ? valTotal / qtd : 0), 
+          valorTotal: valTotal,
+          opStatus: ped[vOpKey] || 'Concluído', 
+          match: matchTipo
+        };
       }
+      
+      // Trima o array na posição exata (remove os slots não usados)
+      novaUnificada.length = writeIdx;
+      dbUnificada = novaUnificada;
 
-      // Constrói a Master Table Memory
-      dbUnificada.push({
-        data: dataObj, 
-        mesAno: fmtMesAno(dataObj), 
-        pedido: ped[vPedKey] || '-',
-        skuOriginal: rawSKU, 
-        skuMestre: skuMestre, 
-        nomeOriginal: rawNome,
-        produtoBase: produtoFinal, 
-        estampa: extr.estampa, 
-        cor: extr.cor, 
-        tamanho: extr.tamanho, 
-        grupo: extr.grupo,
-        quantidade: qtd, 
-        valorUnitario: (qtd ? valTotal/qtd : 0), 
-        valorTotal: valTotal,
-        opStatus: ped[vOpKey] || 'Concluído', 
-        match: matchTipo
-      });
+      aplicarFiltrosGerais();
+    } catch (err) {
+      console.error('[HYPER-DRIVE] Erro no processamento:', err);
+      alert('Erro durante o processamento: ' + err.message);
+    } finally {
+      showLoader(false);
     }
-
-    aplicarFiltrosGerais();
-    showLoader(false);
-  }, 100); // 100ms de delay para pintar a interface de loading.
+  }, 100);
 }
 
 // ==========================================
-// FILTRAGEM MULTICASCATA DINÂMICA
+// FILTRAGEM MULTICASCATA DINÂMICA (single-pass)
 // ==========================================
 function popularSelect(id, vals, padrao) {
-  let opts = [`<option value="">${padrao}</option>`];
-  for(let i = 0; i < vals.length; i++) {
-      opts.push(`<option value="${vals[i]}">${vals[i]}</option>`);
+  const el = $(id);
+  const valorAtual = el.value;
+  
+  const opts = [`<option value="">${padrao}</option>`];
+  for (let i = 0; i < vals.length; i++) {
+    opts.push(`<option value="${vals[i]}">${vals[i]}</option>`);
   }
-  $(id).innerHTML = opts.join(''); 
-  if (vals.includes($(id).value)) $(id).value = $(id).value;
+  el.innerHTML = opts.join(''); 
+  if (vals.includes(valorAtual)) el.value = valorAtual;
 }
 
 function aplicarFiltrosGerais() {
-  let ini = $('dtIni').value ? new Date($('dtIni').value+'T00:00:00') : null; 
-  let fim = $('dtFim').value ? new Date($('dtFim').value+'T23:59:59') : null;
-  let mes = $('filtroMes').value, 
-      fp = $('fltProduto').value, 
-      fc = $('fltCor').value, 
-      ft = $('fltTamanho').value, 
-      fe = $('fltEstampa').value, 
-      fm = $('fltMatch').value;
+  const ini = $('dtIni').value ? new Date($('dtIni').value + 'T00:00:00') : null; 
+  const fim = $('dtFim').value ? new Date($('dtFim').value + 'T23:59:59') : null;
+  const mes = $('filtroMes').value;
+  const fp = $('fltProduto').value; 
+  const fc = $('fltCor').value; 
+  const ft = $('fltTamanho').value; 
+  const fe = $('fltEstampa').value; 
+  const fm = $('fltMatch').value;
 
-  let sMes = new Set(), 
-      sProd = new Set(), 
-      sCor = new Set(), 
-      sTam = new Set(), 
-      sEst = new Set();
+  const sMes = new Set(), sProd = new Set(), sCor = new Set(), sTam = new Set(), sEst = new Set();
   
-  dbFiltrada = [];
+  const novaFiltrada = [];
+  const n = dbUnificada.length;
   
-  // Single-pass de Filtragem Extremamente Veloz (Sustenta Milhões de Registros na RAM)
-  for(let i=0; i < dbUnificada.length; i++) {
-      let r = dbUnificada[i];
-      let pDt = (!ini || (r.data && r.data >= ini)) && (!fim || (r.data && r.data <= fim));
-      let pMs = !mes || r.mesAno === mes; 
-      let pPr = !fp || r.produtoBase === fp; 
-      let pCr = !fc || r.cor === fc;
-      let pTm = !ft || r.tamanho === ft; 
-      let pEs = !fe || r.estampa === fe; 
-      let pMt = !fm || r.match === fm;
+  // Single-pass: uma única varredura computa TODAS as 5 cascatas + a lista filtrada
+  for (let i = 0; i < n; i++) {
+    const r = dbUnificada[i];
+    const pDt = (!ini || (r.data && r.data >= ini)) && (!fim || (r.data && r.data <= fim));
+    const pMs = !mes || r.mesAno === mes; 
+    const pPr = !fp || r.produtoBase === fp; 
+    const pCr = !fc || r.cor === fc;
+    const pTm = !ft || r.tamanho === ft; 
+    const pEs = !fe || r.estampa === fe; 
+    const pMt = !fm || r.match === fm;
 
-      // Colhe opções simuladas de "E SE" na Cascata
-      if (pDt && pPr && pCr && pTm && pEs && pMt) sMes.add(r.mesAno);
-      if (pDt && pMs && pCr && pTm && pEs && pMt) sProd.add(r.produtoBase);
-      if (pDt && pMs && pPr && pTm && pEs && pMt) sCor.add(r.cor);
-      if (pDt && pMs && pPr && pCr && pEs && pMt) sTam.add(r.tamanho);
-      if (pDt && pMs && pPr && pCr && pTm && pMt) sEst.add(r.estampa);
+    // Colhe opções simuladas de "E SE" na Cascata
+    if (pDt && pPr && pCr && pTm && pEs && pMt) sMes.add(r.mesAno);
+    if (pDt && pMs && pCr && pTm && pEs && pMt) sProd.add(r.produtoBase);
+    if (pDt && pMs && pPr && pTm && pEs && pMt) sCor.add(r.cor);
+    if (pDt && pMs && pPr && pCr && pEs && pMt) sTam.add(r.tamanho);
+    if (pDt && pMs && pPr && pCr && pTm && pMt) sEst.add(r.estampa);
 
-      // Adiciona linha de fato na base de Relatórios
-      if (pDt && pMs && pPr && pCr && pTm && pEs && pMt) dbFiltrada.push(r);
+    // Adiciona linha de fato na base de Relatórios
+    if (pDt && pMs && pPr && pCr && pTm && pEs && pMt) novaFiltrada.push(r);
   }
+  
+  dbFiltrada = novaFiltrada;
 
   // Preenche os selects da interface do usuário de forma ordenada
   popularSelect('filtroMes', Array.from(sMes).sort(), 'Todos os Meses'); 
@@ -1280,61 +1489,64 @@ function aplicarFiltrosGerais() {
 }
 
 function limparApenasFiltros() { 
-    $('dtIni').value=''; 
-    $('dtFim').value=''; 
-    $('filtroMes').value=''; 
-    $('fltProduto').value=''; 
-    $('fltCor').value=''; 
-    $('fltTamanho').value=''; 
-    $('fltEstampa').value=''; 
-    $('fltMatch').value=''; 
-    
-    if(dbUnificada.length > 0) aplicarFiltrosGerais(); 
+  $('dtIni').value = ''; 
+  $('dtFim').value = ''; 
+  $('filtroMes').value = ''; 
+  $('fltProduto').value = ''; 
+  $('fltCor').value = ''; 
+  $('fltTamanho').value = ''; 
+  $('fltEstampa').value = ''; 
+  $('fltMatch').value = ''; 
+  
+  if (dbUnificada.length > 0) aplicarFiltrosGerais(); 
 }
 
 // Disparador Universal
 document.querySelectorAll('.trigger-filter').forEach(el => { 
-    el.addEventListener('change', () => { 
-        if(dbUnificada.length) aplicarFiltrosGerais(); 
-    }); 
+  el.addEventListener('change', () => { 
+    if (dbUnificada.length) aplicarFiltrosGerais(); 
+  }); 
 });
 
 // ==========================================
-// FUNÇÕES MATEMÁTICAS / AGRUPAMENTO
+// FUNÇÕES MATEMÁTICAS / AGRUPAMENTO (O(N))
 // ==========================================
 function agrupar(dados, chave, porFat = false) { 
-    const map = new Map(); 
+  const map = new Map(); 
+  const n = dados.length;
+  
+  for (let i = 0; i < n; i++) { 
+    const d = dados[i]; 
+    const k = String(d[chave] || 'N/D').trim(); 
     
-    for(let i=0; i<dados.length; i++) { 
-        const d = dados[i]; 
-        const k = String(d[chave] || 'N/D').trim(); 
-        
-        let obj = map.get(k); 
-        if (!obj) { 
-            obj = { nome: k, qtd: 0, fat: 0 }; 
-            map.set(k, obj); 
-        } 
-        obj.qtd += d.quantidade; 
-        obj.fat += d.valorTotal; 
+    let obj = map.get(k); 
+    if (!obj) { 
+      obj = { nome: k, qtd: 0, fat: 0 }; 
+      map.set(k, obj); 
     } 
-    return Array.from(map.values()).sort((a, b) => porFat ? b.fat - a.fat : b.qtd - a.qtd); 
+    obj.qtd += d.quantidade; 
+    obj.fat += d.valorTotal; 
+  } 
+  return Array.from(map.values()).sort((a, b) => porFat ? b.fat - a.fat : b.qtd - a.qtd); 
 }
 
 function agruparData(dados) { 
-    const map = new Map(); 
-    for(let i=0; i<dados.length; i++) { 
-        const d = dados[i]; 
-        const k = fmtData(d.data) || 'S/ Data'; 
-        
-        let obj = map.get(k); 
-        if (!obj) { 
-            obj = { dataOri: d.data, nome: k, qtd: 0, fat: 0 }; 
-            map.set(k, obj); 
-        } 
-        obj.qtd += d.quantidade; 
-        obj.fat += d.valorTotal; 
+  const map = new Map(); 
+  const n = dados.length;
+  
+  for (let i = 0; i < n; i++) { 
+    const d = dados[i]; 
+    const k = fmtData(d.data) || 'S/ Data'; 
+    
+    let obj = map.get(k); 
+    if (!obj) { 
+      obj = { dataOri: d.data, nome: k, qtd: 0, fat: 0 }; 
+      map.set(k, obj); 
     } 
-    return Array.from(map.values()).sort((a,b) => (a.dataOri||0) - (b.dataOri||0)); 
+    obj.qtd += d.quantidade; 
+    obj.fat += d.valorTotal; 
+  } 
+  return Array.from(map.values()).sort((a, b) => (a.dataOri || 0) - (b.dataOri || 0)); 
 }
 
 // ==========================================
@@ -1342,114 +1554,124 @@ function agruparData(dados) {
 // ==========================================
 function renderTable(id, cols, dados) {
   const thead = `<tr>${cols.map(c => `<th>${c.label}</th>`).join('')}</tr>`;
-  let tbodyArr = [];
+  const tbodyArr = [];
   
-  if(!dados.length) { 
-      tbodyArr.push(`<tr><td colspan="${cols.length}" style="text-align:center; padding: 20px;">Sem dados Analíticos</td></tr>`); 
+  if (!dados.length) { 
+    tbodyArr.push(`<tr><td colspan="${cols.length}" style="text-align:center; padding: 20px;">Sem dados Analíticos</td></tr>`); 
   } else {
-      for(let i=0; i<dados.length; i++) {
-          let row = dados[i]; 
-          let tds = [];
-          
-          for(let j=0; j<cols.length; j++) {
-              let c = cols[j]; 
-              let v = c.fmt ? c.fmt(row[c.key], row) : (row[c.key]||'-');
-              
-              if(c.tag && v !== '-') {
-                  v = `<span class="tag ${c.tag(v)}">${v}</span>`; 
-              }
-              tds.push(`<td>${v}</td>`);
-          }
-          tbodyArr.push(`<tr>${tds.join('')}</tr>`);
+    for (let i = 0; i < dados.length; i++) {
+      const row = dados[i]; 
+      const tds = [];
+      
+      for (let j = 0; j < cols.length; j++) {
+        const c = cols[j]; 
+        let v = c.fmt ? c.fmt(row[c.key], row) : (row[c.key] || '-');
+        
+        if (c.tag && v !== '-') {
+          v = `<span class="tag ${c.tag(v)}">${v}</span>`; 
+        }
+        tds.push(`<td>${v}</td>`);
       }
+      tbodyArr.push(`<tr>${tds.join('')}</tr>`);
+    }
   }
   
   $(id).innerHTML = `<thead>${thead}</thead><tbody>${tbodyArr.join('')}</tbody>`;
 }
 
-function renderChart(id, tipo, rotulos, valores, label, extra={}) {
-  if (graficos[id]) graficos[id].destroy(); 
+function renderChart(id, tipo, rotulos, valores, label, extra = {}) {
+  // Destruição segura (evita memory leak de gráficos velhos no DOM)
+  if (graficos[id]) {
+    try { graficos[id].destroy(); } catch(e) { /* silencia se já foi destruído */ }
+    graficos[id] = null;
+  }
+  
   const ctx = $(id).getContext('2d');
   
   // Customização Profunda para Curva de Crescimento
-  if(tipo === 'line') { 
-      extra.backgroundColor = ctx.createLinearGradient(0,0,0,400); 
-      extra.backgroundColor.addColorStop(0, 'rgba(59, 130, 246, 0.5)'); 
-      extra.backgroundColor.addColorStop(1, 'rgba(59, 130, 246, 0.0)'); 
-      extra.borderColor = '#3b82f6'; 
-      extra.fill = true; 
-      extra.tension = 0.4; 
-      extra.pointBackgroundColor = '#0f172a'; 
-      extra.pointBorderColor = '#3b82f6'; 
-      extra.pointBorderWidth = 2; 
-      extra.pointRadius = 4; 
+  if (tipo === 'line') { 
+    extra.backgroundColor = ctx.createLinearGradient(0, 0, 0, 400); 
+    extra.backgroundColor.addColorStop(0, 'rgba(59, 130, 246, 0.5)'); 
+    extra.backgroundColor.addColorStop(1, 'rgba(59, 130, 246, 0.0)'); 
+    extra.borderColor = '#3b82f6'; 
+    extra.fill = true; 
+    extra.tension = 0.4; 
+    extra.pointBackgroundColor = '#0f172a'; 
+    extra.pointBorderColor = '#3b82f6'; 
+    extra.pointBorderWidth = 2; 
+    extra.pointRadius = 4; 
   }
   
   graficos[id] = new Chart(ctx, { 
-      type: tipo, 
-      data: { labels: rotulos, datasets: [{ label: label, data: valores, ...extra }] }, 
-      options: { 
-          responsive: true, 
-          maintainAspectRatio: false, 
-          animation: { duration: 800, easing: 'easeOutQuart' }, 
-          plugins: { 
-              legend: { 
-                  display: tipo === 'pie' || tipo === 'doughnut' || tipo === 'polarArea', 
-                  position: 'right', 
-                  labels: { color: '#cbd5e1', padding: 20 } 
-              } 
-          }, 
-          scales: tipo === 'pie' || tipo === 'doughnut' || tipo === 'polarArea' ? {} : { 
-              x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false } }, 
-              y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false } } 
-          } 
+    type: tipo, 
+    data: { labels: rotulos, datasets: [{ label: label, data: valores, ...extra }] }, 
+    options: { 
+      responsive: true, 
+      maintainAspectRatio: false, 
+      animation: { duration: 800, easing: 'easeOutQuart' }, 
+      plugins: { 
+        legend: { 
+          display: tipo === 'pie' || tipo === 'doughnut' || tipo === 'polarArea', 
+          position: 'right', 
+          labels: { color: '#cbd5e1', padding: 20 } 
+        } 
+      }, 
+      scales: tipo === 'pie' || tipo === 'doughnut' || tipo === 'polarArea' ? {} : { 
+        x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false } }, 
+        y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false } } 
       } 
+    } 
   });
 }
 
 // Expansor de Dados Unificado (Pode ser invocado por botões da interface)
 function renderBaseAnalitica(lim) { 
-    renderTable('tblBaseUnificada', [ 
-        {label:'Data', key:'data', fmt: v => fmtData(v)}, 
-        {label:'Pedido', key:'pedido'}, 
-        {label:'SKU Original/Ref', key:'skuOriginal'}, 
-        {label:'Produto Base Identificado', key:'produtoBase'}, 
-        {label:'Detalhe Arte/Estampa', key:'estampa'}, 
-        {label:'Cor Mapeada', key:'cor', tag: v=>v==='N/D'?'bad':colorNameMap[v]?'good':'neutral'}, 
-        {label:'Tamanho Mapeado', key:'tamanho'}, 
-        {label:'Peças Físicas', key:'quantidade', fmt: fmtInt}, 
-        {label:'Faturamento Global', key:'valorTotal', fmt: fmtValor}, 
-        {label:'Qualidade do Match (IA)', key:'match', tag: v => v==='SKU EXATO'?'good':v==='NOME'?'good':v==='SEM MATCH'?'bad':'warn'} 
-    ], dbFiltrada.slice(0, lim)); 
+  renderTable('tblBaseUnificada', [ 
+    { label: 'Data', key: 'data', fmt: v => fmtData(v) }, 
+    { label: 'Pedido', key: 'pedido' }, 
+    { label: 'SKU Original/Ref', key: 'skuOriginal' }, 
+    { label: 'Produto Base Identificado', key: 'produtoBase' }, 
+    { label: 'Detalhe Arte/Estampa', key: 'estampa' }, 
+    { label: 'Cor Mapeada', key: 'cor', tag: v => v === 'N/D' ? 'bad' : colorNameMap[v] ? 'good' : 'neutral' }, 
+    { label: 'Tamanho Mapeado', key: 'tamanho' }, 
+    { label: 'Peças Físicas', key: 'quantidade', fmt: fmtInt }, 
+    { label: 'Faturamento Global', key: 'valorTotal', fmt: fmtValor }, 
+    { label: 'Qualidade do Match (IA)', key: 'match', tag: v => v === 'SKU EXATO' ? 'good' : v === 'NOME' ? 'good' : v === 'SEM MATCH' ? 'bad' : 'warn' } 
+  ], dbFiltrada.slice(0, lim)); 
 }
 
 // Construção e Pintura de toda a Dashboard
 function renderizarPainel() {
   const limit = parseInt($('limiteListas').value) || 20; 
   const rows = dbFiltrada;
+  const n = rows.length;
   
+  // Single-pass de KPIs + auditoria de match (uma varredura só, não 5)
   let pecas = 0, fat = 0; 
-  for(let i=0; i<rows.length; i++) { 
-      pecas += rows[i].quantidade; 
-      fat += rows[i].valorTotal; 
+  let dSku = 0, dNome = 0, dRegex = 0, dSem = 0;
+  const mixSet = new Set();
+  
+  for (let i = 0; i < n; i++) { 
+    const r = rows[i];
+    pecas += r.quantidade; 
+    fat += r.valorTotal; 
+    mixSet.add(r.produtoBase);
+    
+    const m = r.match;
+    if (m === 'SKU EXATO') dSku++; 
+    else if (m === 'NOME') dNome++; 
+    else if (m === 'CAÇA ABSOLUTA') dRegex++; 
+    else dSem++; 
   }
   
-  // Atualiza Componentes KPI (Cima)
-  $('kpiLinhas').textContent = fmtInt(rows.length); 
+  // Atualiza KPIs (topo)
+  $('kpiLinhas').textContent = fmtInt(n); 
   $('kpiPecas').textContent = fmtInt(pecas); 
   $('kpiFat').textContent = fmtValor(fat); 
-  $('kpiTicket').textContent = fmtValor(rows.length ? fat/rows.length : 0);
-  $('kpiMix').textContent = fmtInt(new Set(rows.map(r=>r.produtoBase)).size);
+  $('kpiTicket').textContent = fmtValor(n ? fat / n : 0);
+  $('kpiMix').textContent = fmtInt(mixSet.size);
 
-  // Auditoria Contínua da Precisão
-  let dSku=0, dNome=0, dRegex=0, dSem=0;
-  for(let i=0; i<rows.length; i++){ 
-      if(rows[i].match==='SKU EXATO') dSku++; 
-      else if(rows[i].match==='NOME') dNome++; 
-      else if(rows[i].match==='CAÇA ABSOLUTA') dRegex++; 
-      else dSem++; 
-  }
-  
+  // Atualiza KPIs de auditoria
   $('diagSku').textContent = fmtInt(dSku); 
   $('diagNome').textContent = fmtInt(dNome); 
   $('diagRegex').textContent = fmtInt(dRegex); 
@@ -1464,30 +1686,74 @@ function renderizarPainel() {
   const rankOP = agrupar(rows, 'opStatus', false); 
   const trend = agruparData(rows);
 
-  // Chama a plotagem universal de Todos os Gráficos de Inteligência
-  renderChart('chartEvolucao', 'line', trend.map(x=>x.nome), trend.map(x=>x.fat), 'Faturamento Diário Consolidado (R$)', {});
-  renderChart('chartTopProdsVisao', 'polarArea', rankGrupo.slice(0, 7).map(x=>x.nome), rankGrupo.slice(0, 7).map(x=>x.qtd), 'Volume Distribuído', { backgroundColor: colorPalette.map(c=> c+'cc'), borderWidth: 0 });
-  renderChart('chartTopProds', 'bar', rankProd.slice(0, 10).map(x=>x.nome), rankProd.slice(0, 10).map(x=>x.fat), 'Receita Bruta Acumulada (R$)', { backgroundColor: '#3b82f6', borderRadius: 6, indexAxis: 'y' });
+  // --- GRÁFICOS ---
+  renderChart('chartEvolucao', 'line', trend.map(x => x.nome), trend.map(x => x.fat), 'Faturamento Diário Consolidado (R$)', {});
   
-  // Mágica das Cores: Ele cria bolinhas com a COR REAL do pedido
-  renderChart('chartCores', 'doughnut', rankCor.slice(0, 15).map(x => x.nome), rankCor.slice(0, 15).map(x => x.qtd), 'Volume Adquirido', { 
-      backgroundColor: rankCor.slice(0, 15).map(x => x.nome).map(cor => getChartColor(cor)), 
+  // Grupo mestre usa hash dinâmico também (para categorias inventadas)
+  const gruposTop = rankGrupo.slice(0, 7);
+  renderChart('chartTopProdsVisao', 'polarArea', 
+    gruposTop.map(x => x.nome), 
+    gruposTop.map(x => x.qtd), 
+    'Volume Distribuído', 
+    { 
+      backgroundColor: gruposTop.map((_, i) => colorPalette[i % colorPalette.length] + 'cc'), 
+      borderWidth: 0 
+    }
+  );
+  
+  renderChart('chartTopProds', 'bar', 
+    rankProd.slice(0, 10).map(x => x.nome), 
+    rankProd.slice(0, 10).map(x => x.fat), 
+    'Receita Bruta Acumulada (R$)', 
+    { backgroundColor: '#3b82f6', borderRadius: 6, indexAxis: 'y' }
+  );
+  
+  // 🎨 CORES DINÂMICAS: Se a cor não está no dicionário mestre, getChartColor 
+  // gera HSL via hash determinístico — cor sempre igual para a mesma string.
+  const coresTop = rankCor.slice(0, 15);
+  renderChart('chartCores', 'doughnut', 
+    coresTop.map(x => x.nome), 
+    coresTop.map(x => x.qtd), 
+    'Volume Adquirido', 
+    { 
+      backgroundColor: coresTop.map(x => getChartColor(x.nome)), 
       borderWidth: 2, 
       borderColor: '#0f172a', 
       cutout: '70%' 
-  });
+    }
+  );
   
-  renderChart('chartTamanhos', 'bar', rankTam.map(x=>x.nome), rankTam.map(x=>x.qtd), 'Frequência do Gradeamento', { backgroundColor: colorPalette.slice(0, rankTam.length), borderRadius: 6 });
-  renderChart('chartEstampas', 'bar', rankEst.slice(0, 15).map(x=>x.nome), rankEst.slice(0, 15).map(x=>x.qtd), 'Interesse Volume', { backgroundColor: '#8b5cf6', borderRadius: 6, indexAxis: 'y' });
-  renderChart('chartMatch', 'doughnut', ['Motor Identificador Exato (SKU)','Motor Baseado em Nomes Lógicos','Inteligência Artificial Ativada (Caça)','Erro de Base / Texto Corrompido'], [dSku, dNome, dRegex, dSem], 'Qualidade Estrutural', { backgroundColor: ['#10b981','#06b6d4','#f59e0b','#ef4444'], borderWidth: 0, cutout: '65%' });
+  renderChart('chartTamanhos', 'bar', 
+    rankTam.map(x => x.nome), 
+    rankTam.map(x => x.qtd), 
+    'Frequência do Gradeamento', 
+    { 
+      backgroundColor: rankTam.map((_, i) => colorPalette[i % colorPalette.length]), 
+      borderRadius: 6 
+    }
+  );
+  
+  renderChart('chartEstampas', 'bar', 
+    rankEst.slice(0, 15).map(x => x.nome), 
+    rankEst.slice(0, 15).map(x => x.qtd), 
+    'Interesse Volume', 
+    { backgroundColor: '#8b5cf6', borderRadius: 6, indexAxis: 'y' }
+  );
+  
+  renderChart('chartMatch', 'doughnut', 
+    ['Motor Identificador Exato (SKU)', 'Motor Baseado em Nomes Lógicos', 'Inteligência Artificial Ativada (Caça)', 'Erro de Base / Texto Corrompido'], 
+    [dSku, dNome, dRegex, dSem], 
+    'Qualidade Estrutural', 
+    { backgroundColor: ['#10b981', '#06b6d4', '#f59e0b', '#ef4444'], borderWidth: 0, cutout: '65%' }
+  );
 
-  // Disparo dos Layouts de Tabela Analíticos
-  const tblOpts = (arr) => arr.slice(0, limit).map((r,i)=>({...r, pos:i+1}));
+  // --- TABELAS ---
+  const tblOpts = (arr) => arr.slice(0, limit).map((r, i) => ({ ...r, pos: i + 1 }));
   const colsRank = [
-      {label:'Posicionamento Rank',key:'pos'}, 
-      {label:'Item Identificado no Motor',key:'nome'}, 
-      {label:'Volume Físico Transferido',key:'qtd',fmt:fmtInt}, 
-      {label:'Impacto de Faturamento',key:'fat',fmt:fmtValor}
+    { label: 'Posicionamento Rank', key: 'pos' }, 
+    { label: 'Item Identificado no Motor', key: 'nome' }, 
+    { label: 'Volume Físico Transferido', key: 'qtd', fmt: fmtInt }, 
+    { label: 'Impacto de Faturamento', key: 'fat', fmt: fmtValor }
   ];
   
   renderTable('tblProdutos', colsRank, tblOpts(rankProd)); 
@@ -1496,31 +1762,33 @@ function renderizarPainel() {
   renderTable('tblTamanhos', colsRank, tblOpts(rankTam)); 
   
   renderTable('tblOP', [
-      {label:'Módulo de Operação / Fase',key:'nome'}, 
-      {label:'Quantitativo Unitário',key:'qtd',fmt:fmtInt}, 
-      {label:'Faturamento Atrelado (R$)',key:'fat',fmt:fmtValor}
+    { label: 'Módulo de Operação / Fase', key: 'nome' }, 
+    { label: 'Quantitativo Unitário', key: 'qtd', fmt: fmtInt }, 
+    { label: 'Faturamento Atrelado (R$)', key: 'fat', fmt: fmtValor }
   ], tblOpts(rankOP)); 
   
+  // Dicionário usa os campos virtuais _SKU e _nomeBase que foram pré-computados na FASE 2
   renderTable('tblDicionario', [
-      {label:'Código de Referência Identificado (SKU)', key:'SKU'}, 
-      {label:'Assinatura Base Capturada pelo Motor', key:'_nomeBase'}
+    { label: 'Código de Referência Identificado (SKU)', key: '_SKU' }, 
+    { label: 'Assinatura Base Capturada pelo Motor', key: '_nomeBase' }
   ], dbProdutosRaw.slice(0, limit));
   
-  // Auditoria da Caça Absoluta
-  let arrOrfaos = []; 
-  for(let i=0; i<rows.length; i++) { 
-      if(rows[i].match === 'CAÇA ABSOLUTA' || rows[i].match === 'SEM MATCH') { 
-          arrOrfaos.push(rows[i]); 
-          if(arrOrfaos.length >= limit) break; 
-      } 
+  // Auditoria da Caça Absoluta (single-pass com early exit no limite)
+  const arrOrfaos = []; 
+  for (let i = 0; i < n; i++) { 
+    const r = rows[i];
+    if (r.match === 'CAÇA ABSOLUTA' || r.match === 'SEM MATCH') { 
+      arrOrfaos.push(r); 
+      if (arrOrfaos.length >= limit) break; 
+    } 
   }
   
   renderTable('tblOrfaos', [
-      {label:'Identificador de Transação (Pedido)', key:'pedido'}, 
-      {label:'Assinatura de SKU Fornecida', key:'skuOriginal'}, 
-      {label:'Texto Sujo Recuperado da Base', key:'nomeOriginal'}, 
-      {label:'Cor Salva pela IA', key:'cor'}, 
-      {label:'Tamanho Salvo pela IA', key:'tamanho'}
+    { label: 'Identificador de Transação (Pedido)', key: 'pedido' }, 
+    { label: 'Assinatura de SKU Fornecida', key: 'skuOriginal' }, 
+    { label: 'Texto Sujo Recuperado da Base', key: 'nomeOriginal' }, 
+    { label: 'Cor Salva pela IA', key: 'cor' }, 
+    { label: 'Tamanho Salvo pela IA', key: 'tamanho' }
   ], arrOrfaos);
 
   // Auto-inicia a Master Table com 100 linhas limitadas de preview
@@ -1531,55 +1799,64 @@ function renderizarPainel() {
 // AÇÕES E COMANDOS ESPECIAIS (Apagar / Baixar)
 // ==========================================
 function limparTudo() { 
-    dbProdutosRaw=[]; 
-    dbPedidosRaw=[]; 
-    dbUnificada=[]; 
-    dbFiltrada=[]; 
-    graficos={}; 
-    
-    $('fileProd').value=''; 
-    $('filePed').value=''; 
-    
-    $('lblProd').textContent='Clique ou arraste a planilha (.csv, .xlsx)'; 
-    $('lblProd').style.color='var(--text-muted)'; 
-    $('lblPed').textContent='Clique ou arraste a planilha (.csv, .xlsx)'; 
-    $('lblPed').style.color='var(--text-muted)'; 
-    
-    limparApenasFiltros(); 
-    
-    document.querySelectorAll('.value').forEach(el => el.textContent = el.textContent.includes('R$') ? 'R$ 0,00' : '0'); 
-    ['tblProdutos','tblCores','tblTamanhos','tblEstampas','tblOP','tblDicionario','tblBaseUnificada','tblOrfaos'].forEach(id => $(id).innerHTML = ''); 
+  dbProdutosRaw = []; 
+  dbPedidosRaw = []; 
+  dbUnificada = []; 
+  dbFiltrada = []; 
+  headerMapProdutos = null;
+  headerMapPedidos = null;
+  
+  // Destruição segura de todos os gráficos
+  for (const k in graficos) {
+    if (graficos[k]) {
+      try { graficos[k].destroy(); } catch(e) { /* noop */ }
+    }
+  }
+  graficos = {}; 
+  
+  $('fileProd').value = ''; 
+  $('filePed').value = ''; 
+  
+  $('lblProd').textContent = 'Clique ou arraste a planilha (.csv, .xlsx)'; 
+  $('lblProd').style.color = 'var(--text-muted)'; 
+  $('lblPed').textContent = 'Clique ou arraste a planilha (.csv, .xlsx)'; 
+  $('lblPed').style.color = 'var(--text-muted)'; 
+  
+  limparApenasFiltros(); 
+  
+  document.querySelectorAll('.value').forEach(el => el.textContent = el.textContent.includes('R$') ? 'R$ 0,00' : '0'); 
+  ['tblProdutos', 'tblCores', 'tblTamanhos', 'tblEstampas', 'tblOP', 'tblDicionario', 'tblBaseUnificada', 'tblOrfaos'].forEach(id => $(id).innerHTML = ''); 
 }
 
 function exportarCSV() { 
-    if (!dbFiltrada.length) {
-        return alert('Operação Negada: O motor ainda não extraiu ou construiu dados válidos para exportação.');
-    } 
-    
-    const rows = dbFiltrada.map(r => ({ 
-        Data_Fechamento: fmtData(r.data), 
-        Periodo_Mensal: r.mesAno, 
-        ID_Pedido_Transacao: r.pedido, 
-        Identificador_Mestre_SKU: r.skuMestre, 
-        Dado_Original_Suio_SKU: r.skuOriginal, 
-        Produto_Isolado_Pela_Engine: r.produtoBase, 
-        Caracteristica_Estampa_Mapeada: r.estampa, 
-        Paleta_de_Cor_Recuperada: r.cor, 
-        Dimensao_Tamanho_Convertido: r.tamanho, 
-        Massa_Volume_Unidades: r.quantidade, 
-        Media_Unitaria: r.valorUnitario, 
-        VGL_Total_R$: r.valorTotal, 
-        Fase_Operacional_Fisica: r.opStatus, 
-        Qualidade_do_Tratamento_IA: r.match 
-    })); 
-    
-    const csv = Papa.unparse(rows, { delimiter: ';' }); 
-    const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' }); 
-    const link = document.createElement("a"); 
-    
-    link.href = URL.createObjectURL(blob); 
-    link.download = "Extração_Analítica_Master_Relatorios_Base.csv"; 
-    link.click(); 
+  if (!dbFiltrada.length) {
+    return alert('Operação Negada: O motor ainda não extraiu ou construiu dados válidos para exportação.');
+  } 
+  
+  const rows = dbFiltrada.map(r => ({ 
+    Data_Fechamento: fmtData(r.data), 
+    Periodo_Mensal: r.mesAno, 
+    ID_Pedido_Transacao: r.pedido, 
+    Identificador_Mestre_SKU: r.skuMestre, 
+    Dado_Original_Suio_SKU: r.skuOriginal, 
+    Produto_Isolado_Pela_Engine: r.produtoBase, 
+    Caracteristica_Estampa_Mapeada: r.estampa, 
+    Paleta_de_Cor_Recuperada: r.cor, 
+    Dimensao_Tamanho_Convertido: r.tamanho, 
+    Massa_Volume_Unidades: r.quantidade, 
+    Media_Unitaria: r.valorUnitario, 
+    VGL_Total_R$: r.valorTotal, 
+    Fase_Operacional_Fisica: r.opStatus, 
+    Qualidade_do_Tratamento_IA: r.match 
+  })); 
+  
+  const csv = Papa.unparse(rows, { delimiter: ';' }); 
+  const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' }); 
+  const link = document.createElement("a"); 
+  
+  link.href = URL.createObjectURL(blob); 
+  link.download = "Extração_Analítica_Master_Relatorios_Base.csv"; 
+  link.click(); 
 }
 </script>
 
