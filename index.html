@@ -252,16 +252,6 @@
       max-width: 620px; margin-bottom: var(--s-10); line-height: 1.6;
     }
     .hero-actions { display: flex; gap: var(--s-3); margin-bottom: var(--s-16); }
-    .hero-stats {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: var(--s-8); padding: var(--s-6) 0;
-      border-top: 1px solid var(--border-subtle);
-    }
-    .hero-stat-value { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
-    .hero-stat-label {
-      font-size: 12px; color: var(--text-tertiary);
-      text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500;
-    }
     
     /* ============================================================
        BUTTONS
@@ -529,9 +519,48 @@
     /* Grid excel-like */
     .sheet-container {
       max-height: 480px;
-      overflow: auto;
+      overflow-x: auto;
+      overflow-y: auto;
       background: var(--surface-0);
+      position: relative;
+      /* Scrollbar mais visível que o padrão do body */
+      scrollbar-width: auto;
     }
+    .sheet-container::-webkit-scrollbar { width: 12px; height: 12px; }
+    .sheet-container::-webkit-scrollbar-track { background: var(--surface-1); }
+    .sheet-container::-webkit-scrollbar-thumb {
+      background: var(--surface-4);
+      border-radius: 8px;
+      border: 2px solid var(--surface-1);
+    }
+    .sheet-container::-webkit-scrollbar-thumb:hover { background: var(--brand-red); }
+    .sheet-container::-webkit-scrollbar-corner { background: var(--surface-1); }
+    
+    /* Wrapper que mostra sombras indicadoras "tem mais à direita / à esquerda" */
+    .sheet-viewport {
+      position: relative;
+    }
+    .sheet-viewport::before,
+    .sheet-viewport::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 12px; /* respeita a scrollbar */
+      width: 32px;
+      pointer-events: none;
+      z-index: 20;
+      opacity: 0;
+      transition: opacity var(--dur-fast) var(--ease-out);
+    }
+    .sheet-viewport::before {
+      left: 0;
+      background: linear-gradient(to right, rgba(5,9,26,0.9), transparent);
+    }
+    .sheet-viewport::after {
+      right: 0;
+      background: linear-gradient(to left, rgba(5,9,26,0.9), transparent);
+    }
+    .sheet-viewport[data-can-scroll-left="true"]::before { opacity: 1; }
+    .sheet-viewport[data-can-scroll-right="true"]::after { opacity: 1; }
     
     .sheet-grid {
       display: grid;
@@ -674,6 +703,134 @@
       color: var(--text-tertiary);
     }
     .mapping-footer-hint svg { width: 14px; height: 14px; stroke-width: 2; color: var(--text-tertiary); }
+    
+    /* Toolbar acima do grid: toggle "só mapeadas" + "ignorar restante" */
+    .mapping-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--s-3);
+      padding: var(--s-3) var(--s-6);
+      background: var(--surface-1);
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+    }
+    .mapping-toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
+      flex-wrap: wrap;
+    }
+    .mapping-toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--s-2);
+      flex-wrap: wrap;
+    }
+    
+    /* Toggle pill */
+    .pill-group {
+      display: inline-flex;
+      background: var(--surface-2);
+      border: 1px solid var(--border-default);
+      border-radius: var(--r-md);
+      padding: 3px;
+      gap: 2px;
+    }
+    .pill {
+      padding: 5px 12px;
+      border-radius: calc(var(--r-md) - 3px);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      user-select: none;
+      transition: all var(--dur-fast) var(--ease-out);
+      background: transparent;
+      border: 0;
+      font-family: inherit;
+    }
+    .pill:hover { color: var(--text-primary); }
+    .pill.active {
+      background: var(--brand-red);
+      color: #fff;
+    }
+    
+    /* Coluna explicitamente marcada como "ignorada" (ficou dimmed) */
+    .sheet-header-cell.col-ignored {
+      opacity: 0.35;
+      background: var(--surface-1) !important;
+      border-top: 3px solid transparent !important;
+    }
+    .sheet-cell.col-ignored {
+      opacity: 0.25;
+      background: var(--surface-1) !important;
+    }
+    
+    /* Estado "só mapeadas" — esconde colunas não mapeadas */
+    .sheet-grid[data-view="mapped-only"] .col-unmapped {
+      display: none;
+    }
+    
+    /* Status info — "X de Y colunas mapeadas" */
+    .mapping-status {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s-2);
+      font-size: 12.5px;
+      color: var(--text-secondary);
+    }
+    .mapping-status-num {
+      font-weight: 700;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+    .mapping-status-num.warn { color: var(--warning); }
+    .mapping-status-num.ok { color: var(--success); }
+    
+    /* ============================================================
+       🎯 STICKY ACTION BAR — sempre visível no step de mapeamento
+       ============================================================ */
+    .sticky-actions {
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 30;
+      background: rgba(10, 18, 40, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border-default);
+      border-radius: var(--r-lg) var(--r-lg) 0 0;
+      padding: var(--s-4) var(--s-5);
+      margin-top: var(--s-5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--s-4);
+      flex-wrap: wrap;
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.35);
+    }
+    .sticky-actions-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .sticky-actions-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .sticky-actions-sub {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+    .sticky-actions-right {
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
+      flex-wrap: wrap;
+    }
     
     /* Legenda dos roles */
     .role-legend {
@@ -991,24 +1148,6 @@
           </button>
           <button class="btn btn-ghost btn-lg" data-nav="view-app">Ir direto para Análise</button>
         </div>
-        <div class="hero-stats">
-          <div>
-            <div class="hero-stat-value" data-count="11" data-suffix="+">0</div>
-            <div class="hero-stat-label">Tipos de dado</div>
-          </div>
-          <div>
-            <div class="hero-stat-value" data-count="78" data-suffix="+">0</div>
-            <div class="hero-stat-label">Cores mapeadas</div>
-          </div>
-          <div>
-            <div class="hero-stat-value" data-count="100" data-suffix="%">0</div>
-            <div class="hero-stat-label">Processamento local</div>
-          </div>
-          <div>
-            <div class="hero-stat-value" data-count="0" data-prefix="v" data-suffix=".0">0</div>
-            <div class="hero-stat-label">Versão atual</div>
-          </div>
-        </div>
       </section>
     </div>
     
@@ -1154,14 +1293,37 @@
           
           <div class="role-legend" id="roleLegend"></div>
           
-          <div class="sheet-container">
-            <div class="sheet-grid" id="sheetGridPed"></div>
+          <div class="mapping-toolbar">
+            <div class="mapping-toolbar-left">
+              <span class="mapping-status">
+                <span class="mapping-status-num" id="mapStatusPed">0</span>
+                de
+                <span class="mapping-status-num" id="mapTotalPed">0</span>
+                colunas mapeadas
+              </span>
+            </div>
+            <div class="mapping-toolbar-right">
+              <div class="pill-group">
+                <button class="pill active" data-view="all" onclick="setGridView('pedidos','all',this)">Todas as colunas</button>
+                <button class="pill" data-view="mapped-only" onclick="setGridView('pedidos','mapped-only',this)">Só mapeadas</button>
+              </div>
+              <button class="btn btn-sm" onclick="ignorarRestante('pedidos')" title="Marca todas as colunas não mapeadas como ignoradas">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                Ignorar restante
+              </button>
+            </div>
+          </div>
+          
+          <div class="sheet-viewport" id="viewportPed">
+            <div class="sheet-container" id="containerPed">
+              <div class="sheet-grid" id="sheetGridPed"></div>
+            </div>
           </div>
           
           <div class="mapping-footer">
             <div class="mapping-footer-hint">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-              <span>Colunas marcadas como "personalizada" viram rankings próprios no relatório.</span>
+              <span>Colunas marcadas como "personalizada" viram rankings próprios no relatório. Role lateralmente para ver mais colunas.</span>
             </div>
           </div>
         </div>
@@ -1193,24 +1355,51 @@
               </div>
             </div>
           </div>
-          <div class="sheet-container">
-            <div class="sheet-grid" id="sheetGridProd"></div>
+          <div class="mapping-toolbar">
+            <div class="mapping-toolbar-left">
+              <span class="mapping-status">
+                <span class="mapping-status-num" id="mapStatusProd">0</span>
+                de
+                <span class="mapping-status-num" id="mapTotalProd">0</span>
+                colunas mapeadas
+              </span>
+            </div>
+            <div class="mapping-toolbar-right">
+              <div class="pill-group">
+                <button class="pill active" data-view="all" onclick="setGridView('produtos','all',this)">Todas as colunas</button>
+                <button class="pill" data-view="mapped-only" onclick="setGridView('produtos','mapped-only',this)">Só mapeadas</button>
+              </div>
+              <button class="btn btn-sm" onclick="ignorarRestante('produtos')" title="Marca todas as colunas não mapeadas como ignoradas">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                Ignorar restante
+              </button>
+            </div>
+          </div>
+          
+          <div class="sheet-viewport" id="viewportProd">
+            <div class="sheet-container" id="containerProd">
+              <div class="sheet-grid" id="sheetGridProd"></div>
+            </div>
           </div>
         </div>
         
-        <div style="display:flex; justify-content:space-between; gap: var(--s-3); margin-top: var(--s-5);">
-          <button class="btn btn-ghost" onclick="goToUpload()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            Voltar
-          </button>
-          <div style="display:flex; gap: var(--s-3);">
+        <div class="sticky-actions">
+          <div class="sticky-actions-info">
+            <div class="sticky-actions-title" id="stickyTitle">Aguardando mapeamento</div>
+            <div class="sticky-actions-sub" id="stickySub">Marque ao menos uma coluna para continuar</div>
+          </div>
+          <div class="sticky-actions-right">
+            <button class="btn btn-ghost" onclick="goToUpload()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              Voltar
+            </button>
             <button class="btn" onclick="autoMapping()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/><circle cx="12" cy="12" r="10"/></svg>
               Sugestão automática
             </button>
-            <button class="btn btn-primary" id="btnConfirmMapping" onclick="confirmarMapeamento()">
-              Gerar relatórios
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"/></svg>
+            <button class="btn btn-primary btn-lg" id="btnConfirmMapping" onclick="confirmarMapeamento()">
+              Finalizar parametrização
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
             </button>
           </div>
         </div>
@@ -1327,6 +1516,7 @@ function animateCounters() {
 setTimeout(animateCounters, 300);
 
 // Toast
+
 function toast(msg, type = 'info', duration = 3500) {
   const t = document.createElement('div');
   t.className = `toast ${type}`;
@@ -1372,6 +1562,16 @@ const state = {
   mapping: {
     pedidos: {},
     produtos: {}
+  },
+  // Colunas explicitamente ignoradas pelo botão "Ignorar restante"
+  explicitIgnored: {
+    pedidos: new Set(),
+    produtos: new Set()
+  },
+  // Modo de visualização do grid: 'all' ou 'mapped-only'
+  gridView: {
+    pedidos: 'all',
+    produtos: 'all'
   },
   // Nome customizado de cada coluna CUSTOM (header → label visível)
   customNames: {},
@@ -1448,6 +1648,8 @@ function processarArquivoCarregado(data, fileName, kind) {
   state[kind].sample = sample;
   state[kind].fileName = fileName;
   state.mapping[kind] = {}; // reset mapping
+  state.explicitIgnored[kind] = new Set(); // reset ignored
+  state.gridView[kind] = 'all'; // reset view
   
   // UI: marca zone como loaded
   const zone = $(kind === 'pedidos' ? 'zonePed' : 'zoneProd');
@@ -1537,6 +1739,9 @@ function renderSheetGrid(kind, containerId) {
   // Grid template: 1 col para row number + N colunas de dado
   container.style.gridTemplateColumns = `48px repeat(${cols}, 150px)`;
   
+  // Set de colunas explicitamente ignoradas (botão "ignorar restante")
+  const ignoredSet = state.explicitIgnored[kind] || new Set();
+  
   // Letra da coluna (A, B, C, ... AA, AB, ...)
   const colLetter = (n) => {
     let s = '';
@@ -1549,17 +1754,24 @@ function renderSheetGrid(kind, containerId) {
   
   let html = '';
   
-  // Header row (row 0 = row number header + headers)
+  // Header row
   html += `<div class="sheet-header-cell row-num">#</div>`;
   d.headers.forEach((header, idx) => {
     const currentRole = state.mapping[kind][header] || 'IGNORAR';
+    const isUnmapped = currentRole === 'IGNORAR';
+    const isIgnoredExplicit = ignoredSet.has(header);
+    const cls = [
+      isUnmapped ? 'col-unmapped' : '',
+      isIgnoredExplicit ? 'col-ignored' : ''
+    ].filter(Boolean).join(' ');
+    
     const roleOptions = Object.keys(ROLES).map(r => 
       `<option value="${r}" ${r === currentRole ? 'selected' : ''}>${ROLES[r].label}</option>`
     ).join('');
     
     html += `
-      <div class="sheet-header-cell" data-role="${currentRole !== 'IGNORAR' ? currentRole : ''}" data-col="${idx}" data-header="${escapeAttr(header)}">
-        <div class="sheet-col-letter">Coluna ${colLetter(idx)}</div>
+      <div class="sheet-header-cell ${cls}" data-role="${currentRole !== 'IGNORAR' ? currentRole : ''}" data-col="${idx}" data-header="${escapeAttr(header)}">
+        <div class="sheet-col-letter">Coluna ${colLetter(idx)}${isIgnoredExplicit ? ' · ignorada' : ''}</div>
         <div class="sheet-col-name" title="${escapeAttr(header)}">${escapeHtml(header)}</div>
         <select class="role-select" data-kind="${kind}" data-header="${escapeAttr(header)}" onchange="onRoleChange(this)">
           ${roleOptions}
@@ -1568,19 +1780,100 @@ function renderSheetGrid(kind, containerId) {
     `;
   });
   
-  // Data rows (primeiras 50)
+  // Data rows
   d.sample.forEach((row, rowIdx) => {
     html += `<div class="sheet-cell row-num">${rowIdx + 1}</div>`;
     d.headers.forEach(header => {
       const currentRole = state.mapping[kind][header] || 'IGNORAR';
+      const isUnmapped = currentRole === 'IGNORAR';
+      const isIgnoredExplicit = ignoredSet.has(header);
+      const cls = [
+        isUnmapped ? 'col-unmapped' : '',
+        isIgnoredExplicit ? 'col-ignored' : ''
+      ].filter(Boolean).join(' ');
       const val = row[header];
       const display = (val === null || val === undefined || val === '') ? '—' : String(val);
       const truncated = display.length > 40 ? display.substring(0, 40) + '…' : display;
-      html += `<div class="sheet-cell" data-role="${currentRole !== 'IGNORAR' ? currentRole : ''}" title="${escapeAttr(display)}">${escapeHtml(truncated)}</div>`;
+      html += `<div class="sheet-cell ${cls}" data-role="${currentRole !== 'IGNORAR' ? currentRole : ''}" title="${escapeAttr(display)}">${escapeHtml(truncated)}</div>`;
     });
   });
   
   container.innerHTML = html;
+  
+  // Aplica view mode salvo (all / mapped-only)
+  const view = state.gridView[kind] || 'all';
+  container.dataset.view = view;
+  
+  // Atualiza sombras indicadoras de scroll (tem mais conteúdo fora)
+  setTimeout(() => updateScrollIndicators(kind), 50);
+}
+
+// Indicadores de scroll horizontal (sombra nas bordas)
+function updateScrollIndicators(kind) {
+  const vpId = kind === 'pedidos' ? 'viewportPed' : 'viewportProd';
+  const cId = kind === 'pedidos' ? 'containerPed' : 'containerProd';
+  const vp = $(vpId);
+  const c = $(cId);
+  if (!vp || !c) return;
+  const maxScroll = c.scrollWidth - c.clientWidth;
+  vp.dataset.canScrollLeft = (c.scrollLeft > 4) ? 'true' : 'false';
+  vp.dataset.canScrollRight = (c.scrollLeft < maxScroll - 4) ? 'true' : 'false';
+}
+
+// Alternar visualização "todas" vs "só mapeadas"
+function setGridView(kind, view, btnEl) {
+  state.gridView[kind] = view;
+  const container = $(kind === 'pedidos' ? 'containerPed' : 'containerProd');
+  if (container) {
+    // Aplica no próprio grid (via CSS seletor sheet-grid[data-view])
+    const grid = container; // o próprio container tem a grid
+    grid.dataset.view = view;
+  }
+  // Sync dos pills
+  const parent = btnEl.closest('.pill-group');
+  if (parent) {
+    parent.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    btnEl.classList.add('active');
+  }
+  // Atualiza sombras (com novo conteúdo visível)
+  setTimeout(() => updateScrollIndicators(kind), 50);
+}
+
+// Ignorar restante: marca explicitamente todas as colunas não mapeadas como "ignoradas"
+function ignorarRestante(kind) {
+  const unmapped = state[kind].headers.filter(h => !state.mapping[kind][h]);
+  if (!unmapped.length) {
+    toast('Não há colunas a ignorar — todas já foram tratadas', 'info', 3000);
+    return;
+  }
+  unmapped.forEach(h => state.explicitIgnored[kind].add(h));
+  // Já ativa o modo "só mapeadas" para limpar a view
+  state.gridView[kind] = 'mapped-only';
+  renderSheetGrid(kind, kind === 'pedidos' ? 'sheetGridPed' : 'sheetGridProd');
+  // Sync do pill
+  const toolbar = $(kind === 'pedidos' ? 'mappingPedSection' : 'mappingProdSection').querySelector('.pill-group');
+  if (toolbar) {
+    toolbar.querySelectorAll('.pill').forEach(p => {
+      p.classList.toggle('active', p.dataset.view === 'mapped-only');
+    });
+  }
+  updateMappedCount();
+  toast(`${unmapped.length} coluna${unmapped.length > 1 ? 's' : ''} ignorada${unmapped.length > 1 ? 's' : ''}`, 'success');
+}
+
+// Registra listeners de scroll nos containers (chamado depois do render inicial)
+function bindScrollIndicators() {
+  ['pedidos','produtos'].forEach(k => {
+    const c = $(k === 'pedidos' ? 'containerPed' : 'containerProd');
+    if (c && !c._scrollBound) {
+      c.addEventListener('scroll', () => updateScrollIndicators(k), { passive: true });
+      c._scrollBound = true;
+    }
+  });
+  window.addEventListener('resize', () => {
+    updateScrollIndicators('pedidos');
+    updateScrollIndicators('produtos');
+  });
 }
 
 function renderMappingUI() {
@@ -1605,6 +1898,7 @@ function renderMappingUI() {
   }
   
   updateMappedCount();
+  bindScrollIndicators();
 }
 
 function onRoleChange(selectEl) {
@@ -1617,12 +1911,15 @@ function onRoleChange(selectEl) {
   if (newRole === 'IGNORAR') {
     delete state.mapping[kind][header];
   } else {
+    // Se atribuiu papel real, remove do "ignorado explicitamente" (caso estivesse lá)
+    state.explicitIgnored[kind].delete(header);
+    
     // Se role é unique e já está sendo usado, limpa o outro
     if (ROLES[newRole].unique) {
       for (const h in state.mapping[kind]) {
         if (state.mapping[kind][h] === newRole && h !== header) {
           delete state.mapping[kind][h];
-          toast(`"${newRole}" reatribuído de "${h}" para "${header}"`, 'info', 2500);
+          toast(`"${ROLES[newRole].label}" reatribuído de "${h}" para "${header}"`, 'info', 2500);
           break;
         }
       }
@@ -1636,20 +1933,65 @@ function onRoleChange(selectEl) {
 }
 
 function updateMappedCount() {
+  // Pedidos
   const pedMapped = Object.keys(state.mapping.pedidos).length;
+  const pedTotal = state.pedidos.headers.length;
   $('mappingPedMapped').textContent = pedMapped;
+  if ($('mapStatusPed')) {
+    $('mapStatusPed').textContent = pedMapped;
+    $('mapStatusPed').className = 'mapping-status-num ' + (pedMapped === 0 ? 'warn' : 'ok');
+  }
+  if ($('mapTotalPed')) $('mapTotalPed').textContent = pedTotal;
   
+  // Produtos (se houver)
   if (state.produtos.raw.length) {
     const prodMapped = Object.keys(state.mapping.produtos).length;
+    const prodTotal = state.produtos.headers.length;
     $('mappingProdMapped').textContent = prodMapped;
+    if ($('mapStatusProd')) {
+      $('mapStatusProd').textContent = prodMapped;
+      $('mapStatusProd').className = 'mapping-status-num ' + (prodMapped === 0 ? 'warn' : 'ok');
+    }
+    if ($('mapTotalProd')) $('mapTotalProd').textContent = prodTotal;
   }
   
-  // Desabilita "Gerar relatórios" se não tiver nem mesmo um mapeamento mínimo
+  // Sticky actions — libera o botão com pelo menos 1 coluna mapeada
   const btn = $('btnConfirmMapping');
-  const hasMinimum = Object.values(state.mapping.pedidos).some(r => 
-    ['SKU', 'PRODUTO', 'VALOR', 'QTD'].includes(r)
-  );
-  btn.disabled = !hasMinimum;
+  const hasAny = pedMapped > 0;
+  btn.disabled = !hasAny;
+  
+  // Mensagem contextual do sticky
+  const title = $('stickyTitle');
+  const sub = $('stickySub');
+  if (!title || !sub) return;
+  
+  if (!hasAny) {
+    title.textContent = 'Aguardando mapeamento';
+    title.style.color = 'var(--text-primary)';
+    sub.textContent = 'Marque ao menos uma coluna na planilha de pedidos para continuar.';
+    sub.style.color = 'var(--text-tertiary)';
+  } else {
+    // Verifica se tem pelo menos um campo "quantitativo" (Valor ou Qtd)
+    const hasQuant = Object.values(state.mapping.pedidos).some(r => r === 'VALOR' || r === 'QTD');
+    const hasIdent = Object.values(state.mapping.pedidos).some(r => r === 'SKU' || r === 'PRODUTO');
+    
+    title.textContent = `${pedMapped} coluna${pedMapped > 1 ? 's' : ''} mapeada${pedMapped > 1 ? 's' : ''}`;
+    title.style.color = 'var(--success)';
+    
+    if (!hasIdent && !hasQuant) {
+      sub.textContent = 'Dica: mapear Produto/SKU e Valor/Qtd deixa os relatórios mais completos.';
+      sub.style.color = 'var(--warning)';
+    } else if (!hasIdent) {
+      sub.textContent = 'Dica: marcar uma coluna de Produto ou SKU habilita o ranking de itens.';
+      sub.style.color = 'var(--warning)';
+    } else if (!hasQuant) {
+      sub.textContent = 'Dica: marcar uma coluna de Valor ou Quantidade habilita KPIs de faturamento.';
+      sub.style.color = 'var(--warning)';
+    } else {
+      sub.textContent = 'Tudo certo — você pode finalizar e gerar os relatórios.';
+      sub.style.color = 'var(--text-tertiary)';
+    }
+  }
 }
 
 function escapeHtml(s) {
@@ -1827,9 +2169,9 @@ function extrairAtributos(nome, sku) {
 }
 
 function confirmarMapeamento() {
-  const minimum = Object.values(state.mapping.pedidos).some(r => ['SKU', 'PRODUTO', 'VALOR', 'QTD'].includes(r));
-  if (!minimum) {
-    toast('Mapeie pelo menos SKU, Produto, Valor ou Quantidade para continuar', 'warn', 4500);
+  const mappedCount = Object.keys(state.mapping.pedidos).length;
+  if (mappedCount === 0) {
+    toast('Marque ao menos uma coluna na planilha de pedidos', 'warn', 4000);
     return;
   }
   
@@ -2484,6 +2826,8 @@ function limparTudo() {
   state.produtos = { raw: [], headers: [], sample: [], fileName: '' };
   state.pedidos = { raw: [], headers: [], sample: [], fileName: '' };
   state.mapping = { pedidos: {}, produtos: {} };
+  state.explicitIgnored = { pedidos: new Set(), produtos: new Set() };
+  state.gridView = { pedidos: 'all', produtos: 'all' };
   state.unified = [];
   state.filtered = [];
   state.activeFilters = {};
