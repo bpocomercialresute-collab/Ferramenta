@@ -15,861 +15,695 @@
   
   <style>
     /* ============================================================
-       DESIGN TOKENS — Sistema centralizado RESUTE
+       DESIGN TOKENS
        ============================================================ */
     :root {
-      /* Brand */
-      --brand-navy: #0a1430;
-      --brand-navy-2: #0f1d47;
-      --brand-navy-3: #1a2a5c;
-      --brand-red: #c8102e;
-      --brand-red-2: #e43550;
+      --brand-navy: #0a1430; --brand-navy-2: #0f1d47; --brand-navy-3: #1a2a5c;
+      --brand-red: #c8102e; --brand-red-2: #e43550;
       --brand-red-soft: rgba(200, 16, 46, 0.12);
+      --surface-0: #05091a; --surface-1: #0a1228; --surface-2: #0f1935;
+      --surface-3: #152143; --surface-4: #1c2b58;
+      --border-subtle: rgba(255,255,255,0.06);
+      --border-default: rgba(255,255,255,0.1);
+      --border-strong: rgba(255,255,255,0.16);
+      --border-brand: rgba(200,16,46,0.35);
+      --text-primary: #f5f7fb; --text-secondary: #b4bed4;
+      --text-tertiary: #7a869f; --text-disabled: #4a5671;
+      --success: #10b981; --success-soft: rgba(16,185,129,0.12);
+      --warning: #f59e0b; --warning-soft: rgba(245,158,11,0.12);
+      --danger: #ef4444; --danger-soft: rgba(239,68,68,0.12);
+      --info: #3b82f6; --info-soft: rgba(59,130,246,0.12);
       
-      /* Surfaces (4 níveis de profundidade) */
-      --surface-0: #05091a;
-      --surface-1: #0a1228;
-      --surface-2: #0f1935;
-      --surface-3: #152143;
-      --surface-4: #1c2b58;
+      --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:20px;
+      --s-6:24px; --s-8:32px; --s-10:40px; --s-12:48px; --s-16:64px;
       
-      /* Borders */
-      --border-subtle: rgba(255, 255, 255, 0.06);
-      --border-default: rgba(255, 255, 255, 0.1);
-      --border-strong: rgba(255, 255, 255, 0.16);
-      --border-brand: rgba(200, 16, 46, 0.35);
+      --r-sm:6px; --r-md:8px; --r-lg:12px; --r-xl:16px;
       
-      /* Text */
-      --text-primary: #f5f7fb;
-      --text-secondary: #b4bed4;
-      --text-tertiary: #7a869f;
-      --text-disabled: #4a5671;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.25);
+      --shadow-md: 0 4px 12px rgba(0,0,0,.3);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,.4);
+      --shadow-brand: 0 8px 24px rgba(200,16,46,.25);
       
-      /* Status */
-      --success: #10b981;
-      --success-soft: rgba(16, 185, 129, 0.12);
-      --warning: #f59e0b;
-      --warning-soft: rgba(245, 158, 11, 0.12);
-      --danger: #ef4444;
-      --danger-soft: rgba(239, 68, 68, 0.12);
-      --info: #3b82f6;
-      --info-soft: rgba(59, 130, 246, 0.12);
+      --ease-out: cubic-bezier(0.16,1,0.3,1);
+      --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+      --dur-fast: 150ms; --dur-base: 240ms; --dur-slow: 400ms;
       
-      /* Espaçamento (8px grid) */
-      --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 20px; 
-      --s-6: 24px; --s-8: 32px; --s-10: 40px; --s-12: 48px; --s-16: 64px;
-      
-      /* Radius */
-      --r-sm: 6px; --r-md: 8px; --r-lg: 12px; --r-xl: 16px;
-      
-      /* Sombras */
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.25);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
-      --shadow-lg: 0 12px 32px rgba(0,0,0,0.4);
-      --shadow-brand: 0 8px 24px rgba(200, 16, 46, 0.25);
-      
-      /* Motion */
-      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-      --dur-fast: 150ms;
-      --dur-base: 240ms;
-      --dur-slow: 400ms;
-      
-      /* Layout */
       --sidebar-w: 248px;
       --sidebar-w-collapsed: 72px;
       --topbar-h: 64px;
+      
+      /* Cores de roles (para pintar colunas mapeadas) */
+      --role-data: #3b82f6;
+      --role-pedido: #8b5cf6;
+      --role-sku: #c8102e;
+      --role-produto: #ec4899;
+      --role-qtd: #f59e0b;
+      --role-valor: #10b981;
+      --role-cor: #14b8a6;
+      --role-tamanho: #f97316;
+      --role-estampa: #a855f7;
+      --role-status: #64748b;
+      --role-custom: #06b6d4;
     }
     
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
     
     html, body {
-      background: var(--surface-0);
-      color: var(--text-primary);
+      background: var(--surface-0); color: var(--text-primary);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 14px;
-      line-height: 1.5;
-      overflow-x: hidden;
+      font-size: 14px; line-height: 1.5; overflow-x: hidden;
     }
-    
-    body {
-      min-height: 100vh;
-      display: flex;
-    }
-    
-    /* Ambient background - muito sutil */
+    body { min-height: 100vh; display: flex; }
     body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
+      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background: 
-        radial-gradient(ellipse 80% 60% at 85% 10%, rgba(200, 16, 46, 0.08), transparent 60%),
-        radial-gradient(ellipse 70% 50% at 10% 90%, rgba(26, 42, 92, 0.4), transparent 60%);
+        radial-gradient(ellipse 80% 60% at 85% 10%, rgba(200,16,46,0.08), transparent 60%),
+        radial-gradient(ellipse 70% 50% at 10% 90%, rgba(26,42,92,0.4), transparent 60%);
     }
     
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 10px; height: 10px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { 
-      background: var(--surface-3); 
-      border-radius: 10px; 
-      border: 2px solid var(--surface-0); 
-    }
+    ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 10px; border: 2px solid var(--surface-0); }
     ::-webkit-scrollbar-thumb:hover { background: var(--surface-4); }
     
-    /* Seleção */
     ::selection { background: var(--brand-red); color: #fff; }
     
     /* ============================================================
-       TIPOGRAFIA
-       ============================================================ */
-    .t-display {
-      font-family: 'Instrument Serif', serif;
-      font-weight: 400;
-      letter-spacing: -0.02em;
-    }
-    
-    /* ============================================================
-       SIDEBAR — Minimalista, colapsável
+       SIDEBAR
        ============================================================ */
     .sidebar {
-      width: var(--sidebar-w);
-      height: 100vh;
+      width: var(--sidebar-w); height: 100vh;
       background: var(--surface-1);
       border-right: 1px solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 0; left: 0;
-      z-index: 50;
+      display: flex; flex-direction: column;
+      padding: 0;
+      position: fixed; top: 0; left: 0; z-index: 50;
       transition: width var(--dur-base) var(--ease-out);
     }
-    
     .sidebar-header {
-      padding: var(--s-5) var(--s-5);
-      height: var(--topbar-h);
-      display: flex;
-      align-items: center;
-      gap: var(--s-3);
+      padding: var(--s-5); height: var(--topbar-h);
+      display: flex; align-items: center; gap: var(--s-3);
       border-bottom: 1px solid var(--border-subtle);
     }
-    
-    .sidebar-logo {
-      height: 28px;
-      flex-shrink: 0;
-    }
-    
+    .sidebar-logo { height: 28px; flex-shrink: 0; }
     .sidebar-brand {
-      font-weight: 700;
-      font-size: 13px;
-      letter-spacing: 0.08em;
-      color: var(--text-primary);
-      text-transform: uppercase;
-      white-space: nowrap;
-      overflow: hidden;
-      opacity: 1;
-      transition: opacity var(--dur-fast) var(--ease-out);
+      font-weight: 700; font-size: 13px; letter-spacing: 0.08em;
+      color: var(--text-primary); text-transform: uppercase;
+      white-space: nowrap; overflow: hidden;
     }
-    .sidebar-brand span {
-      color: var(--brand-red);
-      margin-left: 2px;
-    }
+    .sidebar-brand span { color: var(--brand-red); margin-left: 2px; }
     
     .sidebar-nav {
-      padding: var(--s-5) var(--s-3);
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      gap: var(--s-1);
+      padding: var(--s-5) var(--s-3); flex-grow: 1;
+      display: flex; flex-direction: column; gap: var(--s-1);
       overflow-y: auto;
     }
-    
     .nav-section {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
+      font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--text-tertiary);
       padding: var(--s-4) var(--s-3) var(--s-2);
     }
-    
     .nav-item {
-      display: flex;
-      align-items: center;
-      gap: var(--s-3);
-      padding: var(--s-3) var(--s-3);
-      border-radius: var(--r-md);
-      color: var(--text-secondary);
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 13.5px;
+      display: flex; align-items: center; gap: var(--s-3);
+      padding: var(--s-3); border-radius: var(--r-md);
+      color: var(--text-secondary); cursor: pointer;
+      font-weight: 500; font-size: 13.5px;
       transition: all var(--dur-fast) var(--ease-out);
-      position: relative;
-      user-select: none;
+      position: relative; user-select: none;
     }
-    
-    .nav-item:hover {
-      background: var(--surface-2);
-      color: var(--text-primary);
-    }
-    
-    .nav-item.active {
-      background: var(--surface-3);
-      color: var(--text-primary);
-    }
-    
+    .nav-item:hover { background: var(--surface-2); color: var(--text-primary); }
+    .nav-item.active { background: var(--surface-3); color: var(--text-primary); }
     .nav-item.active::before {
-      content: "";
-      position: absolute;
-      left: -12px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 3px;
-      height: 18px;
-      background: var(--brand-red);
-      border-radius: 0 3px 3px 0;
+      content: ""; position: absolute; left: -12px; top: 50%;
+      transform: translateY(-50%); width: 3px; height: 18px;
+      background: var(--brand-red); border-radius: 0 3px 3px 0;
     }
-    
-    .nav-item svg {
-      width: 18px;
-      height: 18px;
-      flex-shrink: 0;
-      stroke-width: 1.8;
-    }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; stroke-width: 1.8; }
     
     .sidebar-footer {
       padding: var(--s-4) var(--s-5);
       border-top: 1px solid var(--border-subtle);
-      font-size: 11px;
-      color: var(--text-tertiary);
-      display: flex;
-      align-items: center;
-      gap: var(--s-2);
+      font-size: 11px; color: var(--text-tertiary);
+      display: flex; align-items: center; gap: var(--s-2);
     }
-    
     .sidebar-footer-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 8px var(--success);
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--success); box-shadow: 0 0 8px var(--success);
       animation: pulseDot 2s ease-in-out infinite;
     }
-    
-    @keyframes pulseDot {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
+    @keyframes pulseDot { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
     
     /* ============================================================
        TOPBAR
        ============================================================ */
     .topbar {
-      position: sticky;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 40;
+      position: sticky; top: 0; left: 0; right: 0; z-index: 40;
       height: var(--topbar-h);
-      background: rgba(10, 18, 40, 0.85);
+      background: rgba(10,18,40,0.85);
       backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-subtle);
       padding: 0 var(--s-8);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       gap: var(--s-6);
     }
-    
     .breadcrumb {
-      display: flex;
-      align-items: center;
-      gap: var(--s-2);
-      font-size: 13px;
-      color: var(--text-secondary);
+      display: flex; align-items: center; gap: var(--s-2);
+      font-size: 13px; color: var(--text-secondary);
     }
-    
-    .breadcrumb-sep {
-      color: var(--text-disabled);
-    }
-    
-    .breadcrumb-current {
-      color: var(--text-primary);
-      font-weight: 600;
-    }
-    
-    .topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: var(--s-3);
-    }
-    
+    .breadcrumb-sep { color: var(--text-disabled); }
+    .breadcrumb-current { color: var(--text-primary); font-weight: 600; }
+    .topbar-actions { display: flex; align-items: center; gap: var(--s-3); }
     .topbar-search {
-      background: var(--surface-2);
-      border: 1px solid var(--border-default);
-      border-radius: var(--r-md);
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      gap: var(--s-2);
-      color: var(--text-tertiary);
-      font-size: 12.5px;
+      background: var(--surface-2); border: 1px solid var(--border-default);
+      border-radius: var(--r-md); padding: 8px 12px;
+      display: flex; align-items: center; gap: var(--s-2);
+      color: var(--text-tertiary); font-size: 12.5px;
       min-width: 280px;
-      transition: border-color var(--dur-fast) var(--ease-out);
     }
-    
-    .topbar-search:hover {
-      border-color: var(--border-strong);
-    }
-    
-    .topbar-search svg {
-      width: 14px;
-      height: 14px;
-      stroke-width: 2;
-      color: var(--text-tertiary);
-    }
-    
+    .topbar-search svg { width: 14px; height: 14px; stroke-width: 2; color: var(--text-tertiary); }
     .topbar-search kbd {
-      margin-left: auto;
-      padding: 2px 6px;
-      background: var(--surface-3);
-      border: 1px solid var(--border-default);
-      border-radius: 4px;
-      font-size: 10px;
-      color: var(--text-secondary);
-      font-family: 'Inter';
-      font-weight: 600;
+      margin-left: auto; padding: 2px 6px;
+      background: var(--surface-3); border: 1px solid var(--border-default);
+      border-radius: 4px; font-size: 10px; color: var(--text-secondary);
+      font-family: 'Inter'; font-weight: 600;
     }
-    
     .topbar-user {
-      display: flex;
-      align-items: center;
-      gap: var(--s-3);
+      display: flex; align-items: center; gap: var(--s-3);
       padding: 6px 10px 6px 6px;
-      background: var(--surface-2);
-      border: 1px solid var(--border-default);
-      border-radius: 20px;
-      cursor: pointer;
-      transition: border-color var(--dur-fast) var(--ease-out);
+      background: var(--surface-2); border: 1px solid var(--border-default);
+      border-radius: 20px; cursor: pointer;
     }
-    
-    .topbar-user:hover {
-      border-color: var(--border-strong);
-    }
-    
     .avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
+      width: 28px; height: 28px; border-radius: 50%;
       background: linear-gradient(135deg, var(--brand-red), var(--brand-red-2));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 12px;
-      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 12px; color: #fff;
     }
-    
-    .topbar-user-name {
-      font-size: 12.5px;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
+    .topbar-user-name { font-size: 12.5px; font-weight: 600; }
     
     /* ============================================================
-       MAIN LAYOUT
+       MAIN
        ============================================================ */
     .main {
-      margin-left: var(--sidebar-w);
-      flex: 1;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      z-index: 1;
+      margin-left: var(--sidebar-w); flex: 1; min-height: 100vh;
+      display: flex; flex-direction: column;
+      position: relative; z-index: 1;
     }
+    .content { padding: var(--s-8); flex: 1; }
     
-    .content {
-      padding: var(--s-8);
-      flex: 1;
-    }
-    
-    /* ============================================================
-       PAGE VIEWS (transições entre áreas)
-       ============================================================ */
-    .page-view {
-      display: none;
-      animation: pageEnter var(--dur-slow) var(--ease-out);
-    }
-    .page-view.active {
-      display: block;
-    }
-    
+    .page-view { display: none; animation: pageEnter var(--dur-slow) var(--ease-out); }
+    .page-view.active { display: block; }
     @keyframes pageEnter {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     
     /* ============================================================
-       HOME HERO — Editorial, sóbrio
+       HERO
        ============================================================ */
-    .hero {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: var(--s-16) var(--s-4);
-    }
-    
+    .hero { max-width: 1100px; margin: 0 auto; padding: var(--s-16) var(--s-4); }
     .hero-kicker {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--s-2);
-      font-size: 11.5px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--brand-red-2);
+      display: inline-flex; align-items: center; gap: var(--s-2);
+      font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--brand-red-2);
       padding: 6px 12px;
       border: 1px solid var(--border-brand);
-      border-radius: 20px;
-      background: var(--brand-red-soft);
+      border-radius: 20px; background: var(--brand-red-soft);
       margin-bottom: var(--s-6);
     }
-    
     .hero-kicker-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
+      width: 6px; height: 6px; border-radius: 50%;
       background: var(--brand-red);
       animation: pulseDot 1.8s ease-in-out infinite;
     }
-    
     .hero-title {
       font-size: clamp(40px, 6vw, 72px);
-      line-height: 1.05;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      color: var(--text-primary);
-      margin-bottom: var(--s-5);
-      max-width: 900px;
+      line-height: 1.05; font-weight: 700;
+      letter-spacing: -0.03em; color: var(--text-primary);
+      margin-bottom: var(--s-5); max-width: 900px;
     }
-    
     .hero-title .italic {
       font-family: 'Instrument Serif', serif;
-      font-weight: 400;
-      font-style: italic;
-      color: var(--brand-red-2);
-      letter-spacing: -0.01em;
+      font-weight: 400; font-style: italic;
+      color: var(--brand-red-2); letter-spacing: -0.01em;
     }
-    
     .hero-subtitle {
-      font-size: 17px;
-      color: var(--text-secondary);
-      max-width: 620px;
-      margin-bottom: var(--s-10);
-      line-height: 1.6;
+      font-size: 17px; color: var(--text-secondary);
+      max-width: 620px; margin-bottom: var(--s-10); line-height: 1.6;
     }
-    
-    .hero-actions {
-      display: flex;
-      gap: var(--s-3);
-      align-items: center;
-      margin-bottom: var(--s-16);
-    }
-    
+    .hero-actions { display: flex; gap: var(--s-3); margin-bottom: var(--s-16); }
     .hero-stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--s-8);
-      padding: var(--s-6) 0;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: var(--s-8); padding: var(--s-6) 0;
       border-top: 1px solid var(--border-subtle);
     }
-    
-    .hero-stat-value {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--text-primary);
-      margin-bottom: 2px;
-    }
-    
+    .hero-stat-value { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
     .hero-stat-label {
-      font-size: 12px;
-      color: var(--text-tertiary);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-weight: 500;
+      font-size: 12px; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500;
     }
     
     /* ============================================================
-       BOTÕES
+       BUTTONS
        ============================================================ */
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: var(--s-2);
-      padding: 10px 16px;
-      border-radius: var(--r-md);
-      border: 1px solid transparent;
-      font-family: inherit;
-      font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all var(--dur-fast) var(--ease-out);
-      user-select: none;
-      white-space: nowrap;
-      background: var(--surface-2);
-      color: var(--text-primary);
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: var(--s-2); padding: 10px 16px;
+      border-radius: var(--r-md); border: 1px solid transparent;
+      font-family: inherit; font-weight: 600; font-size: 13px;
+      cursor: pointer; transition: all var(--dur-fast) var(--ease-out);
+      user-select: none; white-space: nowrap;
+      background: var(--surface-2); color: var(--text-primary);
       border-color: var(--border-default);
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
+    .btn:hover { border-color: var(--border-strong); background: var(--surface-3); }
+    .btn:active { transform: translateY(0.5px); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn svg { width: 15px; height: 15px; stroke-width: 2; }
+    .btn-primary { background: var(--brand-red); border-color: var(--brand-red); color: #fff; }
+    .btn-primary:hover { background: var(--brand-red-2); border-color: var(--brand-red-2); box-shadow: var(--shadow-brand); }
+    .btn-lg { padding: 14px 22px; font-size: 14px; }
+    .btn-sm { padding: 6px 11px; font-size: 12px; }
+    .btn-ghost { background: transparent; border-color: transparent; color: var(--text-secondary); }
+    .btn-ghost:hover { background: var(--surface-2); color: var(--text-primary); }
+    .btn-danger { background: transparent; color: var(--danger); border-color: rgba(239,68,68,0.3); }
+    .btn-danger:hover { background: var(--danger-soft); border-color: var(--danger); }
+    .btn-warning { background: transparent; color: var(--warning); border-color: rgba(245,158,11,0.3); }
+    .btn-warning:hover { background: var(--warning-soft); border-color: var(--warning); }
     
-    .btn:hover {
-      border-color: var(--border-strong);
-      background: var(--surface-3);
-    }
-    
-    .btn:active {
-      transform: translateY(0.5px);
-    }
-    
-    .btn svg {
-      width: 15px;
-      height: 15px;
-      stroke-width: 2;
-    }
-    
-    .btn-primary {
-      background: var(--brand-red);
-      border-color: var(--brand-red);
-      color: #fff;
-    }
-    .btn-primary:hover {
-      background: var(--brand-red-2);
-      border-color: var(--brand-red-2);
-      box-shadow: var(--shadow-brand);
-    }
-    
-    .btn-lg {
-      padding: 14px 22px;
-      font-size: 14px;
-    }
-    
-    .btn-ghost {
-      background: transparent;
-      border-color: transparent;
-      color: var(--text-secondary);
-    }
-    .btn-ghost:hover {
-      background: var(--surface-2);
-      color: var(--text-primary);
-    }
-    
-    .btn-danger {
-      background: transparent;
-      color: var(--danger);
-      border-color: rgba(239, 68, 68, 0.3);
-    }
-    .btn-danger:hover {
-      background: var(--danger-soft);
-      border-color: var(--danger);
-    }
-    
-    .btn-warning {
-      background: transparent;
-      color: var(--warning);
-      border-color: rgba(245, 158, 11, 0.3);
-    }
-    .btn-warning:hover {
-      background: var(--warning-soft);
-      border-color: var(--warning);
-    }
-    
-    /* Ripple effect */
     .btn::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
+      content: ""; position: absolute; inset: 0; border-radius: inherit;
       background: radial-gradient(circle at var(--rx, 50%) var(--ry, 50%), rgba(255,255,255,0.3), transparent 50%);
-      opacity: 0;
-      transition: opacity var(--dur-slow) var(--ease-out);
+      opacity: 0; transition: opacity var(--dur-slow) var(--ease-out);
       pointer-events: none;
     }
-    .btn.ripple::after {
-      opacity: 1;
-      transition: opacity 0s;
-    }
+    .btn.ripple::after { opacity: 1; transition: opacity 0s; }
     
     /* ============================================================
        PAGE HEADER
        ============================================================ */
-    .page-header {
-      margin-bottom: var(--s-8);
-      animation: pageEnter var(--dur-slow) var(--ease-out);
-    }
-    
-    .page-title {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--text-primary);
-      margin-bottom: var(--s-1);
-    }
-    
-    .page-subtitle {
-      font-size: 14px;
-      color: var(--text-tertiary);
-    }
+    .page-header { margin-bottom: var(--s-8); }
+    .page-title { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: var(--s-1); }
+    .page-subtitle { font-size: 14px; color: var(--text-tertiary); }
     
     /* ============================================================
        TOOLS GRID
        ============================================================ */
-    .tools-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: var(--s-4);
-    }
-    
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--s-4); }
     .tool-card {
       background: var(--surface-1);
       border: 1px solid var(--border-subtle);
       border-radius: var(--r-lg);
-      padding: var(--s-6);
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
+      padding: var(--s-6); cursor: pointer;
+      position: relative; overflow: hidden;
       transition: all var(--dur-base) var(--ease-out);
-      opacity: 0;
-      transform: translateY(12px);
+      opacity: 0; transform: translateY(12px);
       animation: cardFadeIn var(--dur-slow) var(--ease-out) forwards;
     }
-    
     .tool-card:nth-child(1) { animation-delay: 50ms; }
     .tool-card:nth-child(2) { animation-delay: 100ms; }
     .tool-card:nth-child(3) { animation-delay: 150ms; }
     .tool-card:nth-child(4) { animation-delay: 200ms; }
     .tool-card:nth-child(5) { animation-delay: 250ms; }
     .tool-card:nth-child(6) { animation-delay: 300ms; }
-    
-    @keyframes cardFadeIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
+    @keyframes cardFadeIn { to { opacity: 1; transform: translateY(0); } }
     .tool-card[data-status="active"]:hover {
-      border-color: var(--border-brand);
-      background: var(--surface-2);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+      border-color: var(--border-brand); background: var(--surface-2);
+      transform: translateY(-2px); box-shadow: var(--shadow-md);
     }
-    
-    .tool-card[data-status="active"]::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      padding: 1px;
-      background: linear-gradient(135deg, transparent 40%, var(--brand-red-soft) 100%);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      opacity: 0;
-      transition: opacity var(--dur-base) var(--ease-out);
-      pointer-events: none;
-    }
-    .tool-card[data-status="active"]:hover::before {
-      opacity: 1;
-    }
-    
-    .tool-card[data-status="soon"] {
-      opacity: 0.6;
-      cursor: default;
-    }
-    
+    .tool-card[data-status="soon"] { opacity: 0.6; cursor: default; }
     .tool-icon {
-      width: 40px;
-      height: 40px;
+      width: 40px; height: 40px;
       background: var(--surface-3);
       border: 1px solid var(--border-default);
       border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: var(--s-4); color: var(--brand-red-2);
+    }
+    .tool-card[data-status="active"] .tool-icon {
+      background: var(--brand-red-soft); border-color: var(--border-brand);
+    }
+    .tool-icon svg { width: 20px; height: 20px; stroke-width: 1.8; }
+    .tool-card h3 { font-size: 16px; font-weight: 600; margin-bottom: var(--s-2); letter-spacing: -0.01em; }
+    .tool-card p { color: var(--text-tertiary); font-size: 13px; line-height: 1.55; margin-bottom: var(--s-5); }
+    .tool-meta {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: var(--s-4); border-top: 1px solid var(--border-subtle);
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 9px; border-radius: 4px;
+      font-size: 10.5px; font-weight: 600;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .badge-active { background: var(--success-soft); color: var(--success); }
+    .badge-soon { background: var(--surface-3); color: var(--text-tertiary); }
+    .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .tool-arrow {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-tertiary);
+      transition: all var(--dur-fast) var(--ease-out);
+    }
+    .tool-card[data-status="active"]:hover .tool-arrow {
+      color: var(--brand-red-2); transform: translateX(3px);
+    }
+    
+    /* ============================================================
+       🎯 STEP INDICATOR — Wizard de 3 passos
+       ============================================================ */
+    .step-indicator {
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: var(--s-4);
-      color: var(--brand-red-2);
+      gap: var(--s-4);
+      margin-bottom: var(--s-8);
     }
-    .tool-card[data-status="active"] .tool-icon {
-      background: var(--brand-red-soft);
-      border-color: var(--border-brand);
+    .step {
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
     }
-    .tool-icon svg {
-      width: 20px;
-      height: 20px;
-      stroke-width: 1.8;
-    }
-    
-    .tool-card h3 {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: var(--s-2);
-      letter-spacing: -0.01em;
-    }
-    
-    .tool-card p {
+    .step-circle {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-default);
+      background: var(--surface-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700; font-size: 13px;
       color: var(--text-tertiary);
+      transition: all var(--dur-base) var(--ease-out);
+    }
+    .step.active .step-circle {
+      border-color: var(--brand-red);
+      background: var(--brand-red);
+      color: #fff;
+      box-shadow: 0 0 0 4px var(--brand-red-soft);
+    }
+    .step.done .step-circle {
+      border-color: var(--success);
+      background: var(--success);
+      color: #fff;
+    }
+    .step-label {
       font-size: 13px;
-      line-height: 1.55;
+      font-weight: 500;
+      color: var(--text-tertiary);
+    }
+    .step.active .step-label { color: var(--text-primary); font-weight: 600; }
+    .step.done .step-label { color: var(--text-secondary); }
+    .step-bar {
+      width: 60px;
+      height: 1.5px;
+      background: var(--border-default);
+      transition: background var(--dur-base);
+    }
+    .step-bar.done { background: var(--success); }
+    
+    /* ============================================================
+       UPLOAD ZONES
+       ============================================================ */
+    .upload-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: var(--s-4); margin-bottom: var(--s-5);
+    }
+    .upload-zone {
+      background: var(--surface-1);
+      border: 1.5px dashed var(--border-default);
+      border-radius: var(--r-lg);
+      padding: var(--s-6); cursor: pointer;
+      transition: all var(--dur-base) var(--ease-out);
+      display: flex; align-items: center; gap: var(--s-4);
+    }
+    .upload-zone:hover { border-color: var(--brand-red); background: var(--surface-2); transform: translateY(-1px); }
+    .upload-zone.required { border-color: rgba(200,16,46,0.3); }
+    .upload-zone.loaded { border-style: solid; border-color: var(--success); background: var(--surface-2); }
+    .upload-zone.loaded .upload-icon { background: var(--success-soft); color: var(--success); }
+    .upload-icon {
+      width: 44px; height: 44px;
+      background: var(--surface-3); border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-secondary); flex-shrink: 0;
+    }
+    .upload-zone.required .upload-icon { background: var(--brand-red-soft); color: var(--brand-red-2); }
+    .upload-icon svg { width: 22px; height: 22px; stroke-width: 1.8; }
+    .upload-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; display: flex; align-items: center; gap: var(--s-2); }
+    .upload-info h4 .tag-tiny { font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; }
+    .tag-tiny.opt { background: var(--surface-3); color: var(--text-tertiary); }
+    .tag-tiny.req { background: var(--brand-red); color: #fff; }
+    .tag-tiny.ok { background: var(--success); color: #fff; }
+    .upload-info p { font-size: 12.5px; color: var(--text-tertiary); }
+    
+    /* ============================================================
+       🌟 MAPPING INTERFACE — O coração da v10
+       ============================================================ */
+    .mapping-section {
+      background: var(--surface-1);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
       margin-bottom: var(--s-5);
+      overflow: hidden;
     }
     
-    .tool-meta {
+    .mapping-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-top: var(--s-4);
-      border-top: 1px solid var(--border-subtle);
+      padding: var(--s-5) var(--s-6);
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--surface-2);
     }
     
-    .badge {
+    .mapping-header-info {
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
+    }
+    
+    .mapping-header-icon {
+      width: 36px; height: 36px;
+      background: var(--brand-red-soft);
+      border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--brand-red-2);
+    }
+    .mapping-header-icon svg { width: 18px; height: 18px; stroke-width: 2; }
+    
+    .mapping-header h3 {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 2px;
+    }
+    .mapping-header p {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+    
+    .mapping-stats {
+      display: flex;
+      gap: var(--s-5);
+      font-size: 12px;
+    }
+    .mapping-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .mapping-stat-val {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+    .mapping-stat-lbl {
+      font-size: 10.5px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    /* Grid excel-like */
+    .sheet-container {
+      max-height: 480px;
+      overflow: auto;
+      background: var(--surface-0);
+    }
+    
+    .sheet-grid {
+      display: grid;
+      min-width: 100%;
+      width: max-content;
+    }
+    
+    /* Row de headers com dropdown de papel */
+    .sheet-header-row {
+      display: contents;
+    }
+    
+    .sheet-header-cell {
+      background: var(--surface-2);
+      border-right: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--s-3);
+      min-width: 150px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .sheet-header-cell.row-num {
+      min-width: 48px;
+      max-width: 48px;
+      background: var(--surface-3);
+      color: var(--text-tertiary);
+      font-size: 11px;
+      font-weight: 600;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .sheet-col-letter {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    
+    .sheet-col-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
+    }
+    
+    /* Dropdown de papel (role) */
+    .role-select {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--border-default);
+      background: var(--surface-3);
+      color: var(--text-secondary);
+      font-size: 11.5px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all var(--dur-fast) var(--ease-out);
+      font-weight: 500;
+    }
+    .role-select:hover { border-color: var(--border-strong); }
+    .role-select:focus { outline: none; border-color: var(--brand-red); }
+    .role-select option { background: var(--surface-3); }
+    
+    /* Estado "mapped" — coluna pintada de acordo com o papel */
+    .sheet-header-cell[data-role="DATA"] { border-top: 3px solid var(--role-data); background: color-mix(in srgb, var(--role-data) 10%, var(--surface-2)); }
+    .sheet-header-cell[data-role="PEDIDO"] { border-top: 3px solid var(--role-pedido); background: color-mix(in srgb, var(--role-pedido) 10%, var(--surface-2)); }
+    .sheet-header-cell[data-role="SKU"] { border-top: 3px solid var(--role-sku); background: color-mix(in srgb, var(--role-sku) 10%, var(--surface-2)); }
+    .sheet-header-cell[data-role="PRODUTO"] { border-top: 3px solid var(--role-produto); background: color-mix(in srgb, var(--role-produto) 10%, var(--surface-2)); }
+    .sheet-header-cell[data-role="QTD"] { border-top: 3px solid var(--role-qtd); background: color-mix(in srgb, var(--role-qtd) 10%, var(--surface-2)); }
+    .sheet-header-cell[data-role="VALOR"] { border-top: 3px solid var(--role-valor); background: color-mix(in srgb, var(--role-valor) 10%, var(--surface-2)); }
+    .sheet-header-cell[data-role="COR"] { border-top: 3px solid var(--role-cor); background: color-mix(in srgb, var(--role-cor) 10%, var(--surface-2)); }
+    .sheet-header-cell[data-role="TAMANHO"] { border-top: 3px solid var(--role-tamanho); background: color-mix(in srgb, var(--role-tamanho) 10%, var(--surface-2)); }
+    .sheet-header-cell[data-role="ESTAMPA"] { border-top: 3px solid var(--role-estampa); background: color-mix(in srgb, var(--role-estampa) 10%, var(--surface-2)); }
+    .sheet-header-cell[data-role="STATUS"] { border-top: 3px solid var(--role-status); background: color-mix(in srgb, var(--role-status) 10%, var(--surface-2)); }
+    .sheet-header-cell[data-role="CUSTOM"] { border-top: 3px solid var(--role-custom); background: color-mix(in srgb, var(--role-custom) 10%, var(--surface-2)); }
+    
+    .sheet-cell {
+      padding: 8px var(--s-3);
+      border-right: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 150px;
+      max-width: 250px;
+    }
+    .sheet-cell.row-num {
+      background: var(--surface-2);
+      color: var(--text-tertiary);
+      min-width: 48px;
+      max-width: 48px;
+      text-align: center;
+      font-weight: 500;
+      position: sticky;
+      left: 0;
+      z-index: 5;
+    }
+    
+    /* Coluna com role aplicado — sutil highlight das células */
+    .sheet-cell[data-role="DATA"] { background: rgba(59,130,246,0.04); color: var(--text-primary); }
+    .sheet-cell[data-role="PEDIDO"] { background: rgba(139,92,246,0.04); color: var(--text-primary); }
+    .sheet-cell[data-role="SKU"] { background: rgba(200,16,46,0.04); color: var(--text-primary); }
+    .sheet-cell[data-role="PRODUTO"] { background: rgba(236,72,153,0.04); color: var(--text-primary); }
+    .sheet-cell[data-role="QTD"] { background: rgba(245,158,11,0.04); color: var(--text-primary); }
+    .sheet-cell[data-role="VALOR"] { background: rgba(16,185,129,0.04); color: var(--text-primary); }
+    .sheet-cell[data-role="COR"] { background: rgba(20,184,166,0.04); color: var(--text-primary); }
+    .sheet-cell[data-role="TAMANHO"] { background: rgba(249,115,22,0.04); color: var(--text-primary); }
+    .sheet-cell[data-role="ESTAMPA"] { background: rgba(168,85,247,0.04); color: var(--text-primary); }
+    .sheet-cell[data-role="STATUS"] { background: rgba(100,116,139,0.04); color: var(--text-primary); }
+    .sheet-cell[data-role="CUSTOM"] { background: rgba(6,182,212,0.04); color: var(--text-primary); }
+    
+    /* Footer do mapping com action */
+    .mapping-footer {
+      padding: var(--s-4) var(--s-6);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface-2);
+    }
+    .mapping-footer-hint {
+      display: flex;
+      align-items: center;
+      gap: var(--s-2);
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+    .mapping-footer-hint svg { width: 14px; height: 14px; stroke-width: 2; color: var(--text-tertiary); }
+    
+    /* Legenda dos roles */
+    .role-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-2);
+      padding: var(--s-3) var(--s-6);
+      background: var(--surface-1);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .role-legend-item {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       padding: 3px 9px;
       border-radius: 4px;
-      font-size: 10.5px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: var(--surface-3);
+      border: 1px solid var(--border-subtle);
     }
-    .badge-active { background: var(--success-soft); color: var(--success); }
-    .badge-soon { background: var(--surface-3); color: var(--text-tertiary); }
-    .badge-dot {
-      width: 5px; height: 5px; border-radius: 50%; background: currentColor;
-    }
-    
-    .tool-arrow {
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-tertiary);
-      transition: all var(--dur-fast) var(--ease-out);
-    }
-    .tool-card[data-status="active"]:hover .tool-arrow {
-      color: var(--brand-red-2);
-      transform: translateX(3px);
+    .role-legend-dot {
+      width: 7px; height: 7px;
+      border-radius: 2px;
     }
     
     /* ============================================================
-       APP MODULE
+       PANEL + FILTERS + TABS + KPIs + CARDS + TABLE
        ============================================================ */
-    .module-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      flex-wrap: wrap;
-      gap: var(--s-4);
-      margin-bottom: var(--s-6);
-    }
-    
-    .toolbar-actions {
-      display: flex;
-      gap: var(--s-2);
-      flex-wrap: wrap;
-    }
-    
-    /* Upload zones */
-    .upload-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--s-4);
-      margin-bottom: var(--s-5);
-    }
-    
-    .upload-zone {
-      background: var(--surface-1);
-      border: 1.5px dashed var(--border-default);
-      border-radius: var(--r-lg);
-      padding: var(--s-6);
-      cursor: pointer;
-      transition: all var(--dur-base) var(--ease-out);
-      display: flex;
-      align-items: center;
-      gap: var(--s-4);
-    }
-    
-    .upload-zone:hover {
-      border-color: var(--brand-red);
-      background: var(--surface-2);
-      transform: translateY(-1px);
-    }
-    
-    .upload-zone.required {
-      border-color: rgba(200, 16, 46, 0.3);
-    }
-    
-    .upload-icon {
-      width: 44px;
-      height: 44px;
-      background: var(--surface-3);
-      border-radius: var(--r-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-secondary);
-      flex-shrink: 0;
-    }
-    .upload-zone.required .upload-icon {
-      background: var(--brand-red-soft);
-      color: var(--brand-red-2);
-    }
-    .upload-icon svg { width: 22px; height: 22px; stroke-width: 1.8; }
-    
-    .upload-info h4 {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 2px;
-      display: flex;
-      align-items: center;
-      gap: var(--s-2);
-    }
-    .upload-info h4 .tag-tiny {
-      font-size: 9.5px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      padding: 2px 6px;
-      border-radius: 3px;
-      text-transform: uppercase;
-    }
-    .tag-tiny.opt { background: var(--surface-3); color: var(--text-tertiary); }
-    .tag-tiny.req { background: var(--brand-red); color: #fff; }
-    
-    .upload-info p {
-      font-size: 12.5px;
-      color: var(--text-tertiary);
-    }
-    
-    /* Panel */
     .panel {
       background: var(--surface-1);
       border: 1px solid var(--border-subtle);
@@ -877,384 +711,189 @@
       padding: var(--s-5);
       margin-bottom: var(--s-5);
     }
-    
     .panel-title {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
       color: var(--text-tertiary);
       margin-bottom: var(--s-4);
-      display: flex;
-      align-items: center;
-      gap: var(--s-2);
+      display: flex; align-items: center; gap: var(--s-2);
     }
-    
     .panel-title::before {
-      content: "";
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: var(--brand-red);
+      content: ""; width: 4px; height: 4px;
+      border-radius: 50%; background: var(--brand-red);
     }
-    
     .filter-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: var(--s-3);
     }
     
-    /* Inputs */
     select, input {
-      width: 100%;
-      padding: 9px 12px;
+      width: 100%; padding: 9px 12px;
       border-radius: var(--r-md);
       border: 1px solid var(--border-default);
       background: var(--surface-2);
       color: var(--text-primary);
-      font-size: 13px;
-      font-family: inherit;
-      outline: none;
-      cursor: pointer;
-      transition: border-color var(--dur-fast) var(--ease-out), 
-                  box-shadow var(--dur-fast) var(--ease-out);
+      font-size: 13px; font-family: inherit;
+      outline: none; cursor: pointer;
+      transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
     }
+    select:hover, input:hover { border-color: var(--border-strong); }
+    select:focus, input:focus { border-color: var(--brand-red); box-shadow: 0 0 0 3px var(--brand-red-soft); }
+    select option { background: var(--surface-2); color: var(--text-primary); }
     
-    select:hover, input:hover {
-      border-color: var(--border-strong);
-    }
-    
-    select:focus, input:focus {
-      border-color: var(--brand-red);
-      box-shadow: 0 0 0 3px var(--brand-red-soft);
-    }
-    
-    select option {
-      background: var(--surface-2);
-      color: var(--text-primary);
-    }
-    
-    /* Tabs */
     .tabs {
-      display: flex;
-      gap: 2px;
+      display: flex; gap: 2px;
       border-bottom: 1px solid var(--border-subtle);
       margin-bottom: var(--s-6);
       overflow-x: auto;
-      padding-bottom: 0;
     }
-    
     .tab {
-      padding: 10px 14px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 500;
+      padding: 10px 14px; cursor: pointer;
+      font-size: 13px; font-weight: 500;
       color: var(--text-tertiary);
       border-bottom: 2px solid transparent;
       transition: all var(--dur-fast) var(--ease-out);
-      white-space: nowrap;
-      position: relative;
+      white-space: nowrap; position: relative;
       margin-bottom: -1px;
-      display: flex;
-      align-items: center;
-      gap: var(--s-2);
+      display: flex; align-items: center; gap: var(--s-2);
     }
-    
-    .tab:hover {
-      color: var(--text-primary);
-    }
-    
-    .tab.active {
-      color: var(--text-primary);
-      border-bottom-color: var(--brand-red);
-    }
-    
-    .tab svg {
-      width: 14px; height: 14px; stroke-width: 1.8;
-    }
-    
+    .tab:hover { color: var(--text-primary); }
+    .tab.active { color: var(--text-primary); border-bottom-color: var(--brand-red); }
+    .tab svg { width: 14px; height: 14px; stroke-width: 1.8; }
     .tab-content { display: none; }
-    .tab-content.active {
-      display: block;
-      animation: pageEnter var(--dur-base) var(--ease-out);
-    }
+    .tab-content.active { display: block; animation: pageEnter var(--dur-base) var(--ease-out); }
     
-    /* KPI Grid */
     .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: var(--s-3);
-      margin-bottom: var(--s-6);
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--s-3); margin-bottom: var(--s-6);
     }
-    
     .kpi {
       background: var(--surface-1);
       border: 1px solid var(--border-subtle);
       border-radius: var(--r-lg);
       padding: var(--s-5);
       transition: all var(--dur-base) var(--ease-out);
-      position: relative;
-      overflow: hidden;
     }
-    
-    .kpi:hover {
-      border-color: var(--border-strong);
-      background: var(--surface-2);
-    }
-    
+    .kpi:hover { border-color: var(--border-strong); background: var(--surface-2); }
     .kpi-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
+      font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-tertiary);
       margin-bottom: var(--s-3);
-      display: flex;
-      align-items: center;
-      gap: var(--s-2);
+      display: flex; align-items: center; gap: var(--s-2);
     }
-    
     .kpi-value {
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--text-primary);
-      line-height: 1.1;
-      font-variant-numeric: tabular-nums;
+      font-size: 26px; font-weight: 700; letter-spacing: -0.02em;
+      line-height: 1.1; font-variant-numeric: tabular-nums;
     }
-    
-    .kpi-caption {
-      font-size: 12px;
-      color: var(--text-tertiary);
-      margin-top: 4px;
-    }
-    
-    .kpi-indicator {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
+    .kpi-caption { font-size: 12px; color: var(--text-tertiary); margin-top: 4px; }
+    .kpi-indicator { width: 8px; height: 8px; border-radius: 50%; }
     .kpi-indicator.ok { background: var(--success); box-shadow: 0 0 8px var(--success); }
     .kpi-indicator.warn { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
     .kpi-indicator.bad { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
     .kpi-indicator.info { background: var(--brand-red); box-shadow: 0 0 8px var(--brand-red); }
     
-    /* Cards grid */
-    .card-row {
-      display: grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: var(--s-4);
-      margin-bottom: var(--s-5);
-    }
-    
+    .card-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: var(--s-4); margin-bottom: var(--s-5); }
     .card {
       background: var(--surface-1);
       border: 1px solid var(--border-subtle);
       border-radius: var(--r-lg);
       padding: var(--s-5);
-      transition: border-color var(--dur-base) var(--ease-out);
     }
+    .card:hover { border-color: var(--border-default); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--s-4); }
+    .card-header h3 { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+    .card-caption { font-size: 12px; color: var(--text-tertiary); margin-top: -8px; margin-bottom: var(--s-3); }
     
-    .card:hover {
-      border-color: var(--border-default);
-    }
-    
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--s-4);
-    }
-    
-    .card-header h3 {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-primary);
-      letter-spacing: -0.01em;
-    }
-    
-    .card-caption {
-      font-size: 12px;
-      color: var(--text-tertiary);
-      margin-top: -8px;
-      margin-bottom: var(--s-3);
-    }
-    
-    /* Tabela */
-    .table-wrap {
-      overflow: auto;
-      max-height: 480px;
-      border-radius: var(--r-md);
-      border: 1px solid var(--border-subtle);
-    }
-    
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      text-align: left;
-      min-width: 520px;
-    }
-    
+    .table-wrap { overflow: auto; max-height: 480px; border-radius: var(--r-md); border: 1px solid var(--border-subtle); }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; min-width: 520px; }
     th {
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      background: var(--surface-2);
-      padding: 10px 14px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      color: var(--text-tertiary);
-      text-transform: uppercase;
+      position: sticky; top: 0; z-index: 2;
+      background: var(--surface-2); padding: 10px 14px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+      color: var(--text-tertiary); text-transform: uppercase;
       border-bottom: 1px solid var(--border-default);
     }
-    
-    td {
-      padding: 11px 14px;
-      border-bottom: 1px solid var(--border-subtle);
-      font-size: 13px;
-      color: var(--text-primary);
-      font-variant-numeric: tabular-nums;
-    }
-    
+    td { padding: 11px 14px; border-bottom: 1px solid var(--border-subtle); font-size: 13px; font-variant-numeric: tabular-nums; }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: var(--surface-2); }
     
-    /* Tags em tabela */
     .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 10.5px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px; border-radius: 4px;
+      font-size: 10.5px; font-weight: 600;
+      letter-spacing: 0.02em; text-transform: uppercase;
     }
     .tag.good { background: var(--success-soft); color: var(--success); }
     .tag.warn { background: var(--warning-soft); color: var(--warning); }
     .tag.bad { background: var(--danger-soft); color: var(--danger); }
     .tag.neutral { background: var(--surface-3); color: var(--text-secondary); }
     
-    canvas {
-      max-height: 320px !important;
-      width: 100% !important;
-    }
+    canvas { max-height: 320px !important; width: 100% !important; }
     
-    /* ============================================================
-       LOADER & SKELETON
-       ============================================================ */
+    /* Loader */
     #loader {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(5, 9, 26, 0.8);
-      backdrop-filter: blur(8px);
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
+      display: none; position: fixed; inset: 0;
+      background: rgba(5,9,26,0.8); backdrop-filter: blur(8px);
+      z-index: 9999; justify-content: center; align-items: center; flex-direction: column;
     }
-    
     .loader-box {
-      background: var(--surface-1);
-      border: 1px solid var(--border-default);
-      border-radius: var(--r-lg);
-      padding: var(--s-8);
-      min-width: 280px;
-      text-align: center;
-      box-shadow: var(--shadow-lg);
+      background: var(--surface-1); border: 1px solid var(--border-default);
+      border-radius: var(--r-lg); padding: var(--s-8);
+      min-width: 280px; text-align: center; box-shadow: var(--shadow-lg);
     }
-    
-    .loader-progress {
-      width: 48px;
-      height: 48px;
-      margin: 0 auto var(--s-4);
-      position: relative;
-    }
-    
-    .loader-progress svg {
-      width: 100%;
-      height: 100%;
-      animation: rotate 1.5s linear infinite;
-    }
-    
+    .loader-progress { width: 48px; height: 48px; margin: 0 auto var(--s-4); }
+    .loader-progress svg { width: 100%; height: 100%; animation: rotate 1.5s linear infinite; }
     .loader-progress circle {
-      fill: none;
-      stroke-width: 3;
-      stroke-linecap: round;
-      stroke: var(--brand-red);
-      stroke-dasharray: 120;
-      stroke-dashoffset: 60;
+      fill: none; stroke-width: 3; stroke-linecap: round;
+      stroke: var(--brand-red); stroke-dasharray: 120; stroke-dashoffset: 60;
       transform-origin: center;
     }
+    @keyframes rotate { to { transform: rotate(360deg); } }
+    .loader-box h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .loader-box p { font-size: 12.5px; color: var(--text-tertiary); }
     
-    @keyframes rotate {
-      to { transform: rotate(360deg); }
-    }
-    
-    .loader-box h3 {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-    
-    .loader-box p {
-      font-size: 12.5px;
-      color: var(--text-tertiary);
-    }
-    
-    /* ============================================================
-       TOAST
-       ============================================================ */
+    /* Toast */
     .toast {
-      position: fixed;
-      bottom: var(--s-6);
-      right: var(--s-6);
-      background: var(--surface-2);
-      border: 1px solid var(--border-strong);
-      border-radius: var(--r-md);
-      padding: var(--s-3) var(--s-4);
+      position: fixed; bottom: var(--s-6); right: var(--s-6);
+      background: var(--surface-2); border: 1px solid var(--border-strong);
+      border-radius: var(--r-md); padding: var(--s-3) var(--s-4);
       box-shadow: var(--shadow-lg);
-      display: flex;
-      align-items: center;
-      gap: var(--s-3);
-      z-index: 10000;
-      font-size: 13px;
-      color: var(--text-primary);
+      display: flex; align-items: center; gap: var(--s-3);
+      z-index: 10000; font-size: 13px;
       animation: toastIn var(--dur-base) var(--ease-spring);
       max-width: 360px;
     }
     .toast.error { border-left: 3px solid var(--danger); }
     .toast.success { border-left: 3px solid var(--success); }
     .toast.warn { border-left: 3px solid var(--warning); }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes toastOut { to { opacity: 0; transform: translateX(20px); } }
     
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateX(20px); }
-      to { opacity: 1; transform: translateX(0); }
+    /* Empty state para dashboard */
+    .empty-state {
+      text-align: center;
+      padding: var(--s-16) var(--s-5);
+      color: var(--text-tertiary);
     }
-    
-    @keyframes toastOut {
-      to { opacity: 0; transform: translateX(20px); }
+    .empty-state-icon {
+      width: 64px; height: 64px; margin: 0 auto var(--s-5);
+      background: var(--surface-2);
+      border-radius: var(--r-lg);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-tertiary);
     }
+    .empty-state-icon svg { width: 28px; height: 28px; stroke-width: 1.5; }
+    .empty-state h3 { font-size: 16px; color: var(--text-primary); margin-bottom: var(--s-2); }
+    .empty-state p { font-size: 13px; max-width: 400px; margin: 0 auto var(--s-5); }
     
-    /* ============================================================
-       RESPONSIVE
-       ============================================================ */
     @media (max-width: 1100px) {
       .card-row { grid-template-columns: 1fr; }
       .hero-stats { grid-template-columns: repeat(2, 1fr); gap: var(--s-5); }
     }
-    
     @media (max-width: 860px) {
-      .sidebar {
-        width: var(--sidebar-w-collapsed);
-      }
-      .sidebar-brand, .nav-item span, .sidebar-footer span,
-      .nav-section { display: none; }
+      .sidebar { width: var(--sidebar-w-collapsed); }
+      .sidebar-brand, .nav-item span, .sidebar-footer span, .nav-section { display: none; }
       .nav-item { justify-content: center; }
       .sidebar-header { justify-content: center; padding: var(--s-4); }
       .main { margin-left: var(--sidebar-w-collapsed); }
@@ -1263,57 +902,41 @@
       .topbar-search kbd, .topbar-user-name { display: none; }
       .content { padding: var(--s-4); }
       .upload-grid { grid-template-columns: 1fr; }
-    }
-    
-    @media (max-width: 600px) {
-      .hero { padding: var(--s-8) var(--s-2); }
-      .hero-stats { grid-template-columns: 1fr 1fr; }
-      .breadcrumb-root { display: none; }
+      .mapping-stats { display: none; }
     }
   </style>
 </head>
 <body>
 
-<!-- ============================================================
-     SIDEBAR
-     ============================================================ -->
 <aside class="sidebar">
   <div class="sidebar-header">
     <img src="data:image/png;base64,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" alt="RESUTE" class="sidebar-logo">
     <div class="sidebar-brand">RESU<span>TE</span></div>
   </div>
-  
   <nav class="sidebar-nav">
     <div class="nav-section">Principal</div>
-    
     <div class="nav-item active" data-view="view-home">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1V9.5z"/></svg>
       <span>Início</span>
     </div>
-    
     <div class="nav-item" data-view="view-tools">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       <span>Ferramentas</span>
     </div>
-    
     <div class="nav-section">Análise</div>
-    
     <div class="nav-item" data-view="view-app">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
-      <span>Análise de Pedidos</span>
+      <span>Análise de Vendas</span>
     </div>
-    
     <div class="nav-item" style="opacity:0.5; cursor:default;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 1 1 0 7H6"/></svg>
       <span>Conciliação</span>
     </div>
-    
     <div class="nav-item" style="opacity:0.5; cursor:default;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
       <span>Precificação</span>
     </div>
   </nav>
-  
   <div class="sidebar-footer">
     <span class="sidebar-footer-dot"></span>
     <span>Sistema operacional</span>
@@ -1321,24 +944,18 @@
 </aside>
 
 <main class="main">
-  
-  <!-- ============================================================
-       TOPBAR
-       ============================================================ -->
   <header class="topbar">
     <div class="breadcrumb">
       <span class="breadcrumb-root">RESUTE</span>
       <span class="breadcrumb-sep">/</span>
       <span class="breadcrumb-current" id="breadcrumbCurrent">Início</span>
     </div>
-    
     <div class="topbar-actions">
       <div class="topbar-search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
         <span>Pesquisar no sistema…</span>
         <kbd>⌘K</kbd>
       </div>
-      
       <div class="topbar-user">
         <div class="avatar">BC</div>
         <div class="topbar-user-name">BPO Comercial</div>
@@ -1346,16 +963,9 @@
     </div>
   </header>
   
-  <!-- ============================================================
-       LOADER
-       ============================================================ -->
   <div id="loader">
     <div class="loader-box">
-      <div class="loader-progress">
-        <svg viewBox="0 0 48 48">
-          <circle cx="24" cy="24" r="20"/>
-        </svg>
-      </div>
+      <div class="loader-progress"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20"/></svg></div>
       <h3>Processando</h3>
       <p id="loaderMsg">Analisando base de dados…</p>
     </div>
@@ -1363,39 +973,28 @@
   
   <div class="content">
     
-    <!-- ============================================================
-         VIEW: INÍCIO
-         ============================================================ -->
+    <!-- VIEW: INÍCIO -->
     <div id="view-home" class="page-view active">
       <section class="hero">
-        <div class="hero-kicker">
-          <span class="hero-kicker-dot"></span>
-          Plataforma RESUTE
-        </div>
-        
+        <div class="hero-kicker"><span class="hero-kicker-dot"></span>Plataforma RESUTE</div>
         <h1 class="hero-title">
           Sistema de Gestão <span class="italic">Comercial</span><br>
           Dados que viram decisão.
         </h1>
-        
         <p class="hero-subtitle">
-          Ferramenta interna para análise de vendas, mapeamento de produtos e geração de relatórios gerenciais. Processamento local, sem envio de dados externos.
+          Plataforma universal de análise. Suba a planilha de qualquer empresa, escolha as colunas relevantes e obtenha relatórios gerenciais automaticamente.
         </p>
-        
         <div class="hero-actions">
           <button class="btn btn-primary btn-lg" data-nav="view-tools">
             Acessar Ferramentas
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </button>
-          <button class="btn btn-ghost btn-lg" data-nav="view-app">
-            Análise de Pedidos
-          </button>
+          <button class="btn btn-ghost btn-lg" data-nav="view-app">Ir direto para Análise</button>
         </div>
-        
         <div class="hero-stats">
           <div>
-            <div class="hero-stat-value" data-count="3">0</div>
-            <div class="hero-stat-label">Módulos</div>
+            <div class="hero-stat-value" data-count="11" data-suffix="+">0</div>
+            <div class="hero-stat-label">Tipos de dado</div>
           </div>
           <div>
             <div class="hero-stat-value" data-count="78" data-suffix="+">0</div>
@@ -1413,438 +1012,285 @@
       </section>
     </div>
     
-    <!-- ============================================================
-         VIEW: FERRAMENTAS
-         ============================================================ -->
+    <!-- VIEW: FERRAMENTAS -->
     <div id="view-tools" class="page-view">
       <div class="page-header">
         <h1 class="page-title">Ferramentas</h1>
         <p class="page-subtitle">Módulos disponíveis no ecossistema RESUTE.</p>
       </div>
-      
       <div class="tools-grid">
         <div class="tool-card" data-status="active" data-nav="view-app">
-          <div class="tool-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
-          </div>
-          <h3>Análise de Pedidos</h3>
-          <p>Cruza planilhas de pedidos de venda com base de produtos, identifica itens sem SKU via associação textual e gera relatórios comerciais.</p>
+          <div class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg></div>
+          <h3>Análise de Vendas</h3>
+          <p>Importe planilhas de pedidos de qualquer empresa, selecione as colunas que importam e gere relatórios consolidados automaticamente.</p>
           <div class="tool-meta">
             <span class="badge badge-active"><span class="badge-dot"></span>Disponível</span>
-            <div class="tool-arrow">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-            </div>
+            <div class="tool-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
           </div>
         </div>
-        
         <div class="tool-card" data-status="soon">
-          <div class="tool-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 1 1 0 7H6"/></svg>
-          </div>
+          <div class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 1 1 0 7H6"/></svg></div>
           <h3>Conciliação Financeira</h3>
-          <p>Mapeamento de extratos bancários contra gateways de pagamento. Identifica taxas ocultas e divergências.</p>
-          <div class="tool-meta">
-            <span class="badge badge-soon">Em breve</span>
-          </div>
+          <p>Mapeamento de extratos bancários contra gateways de pagamento.</p>
+          <div class="tool-meta"><span class="badge badge-soon">Em breve</span></div>
         </div>
-        
         <div class="tool-card" data-status="soon">
-          <div class="tool-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-          </div>
+          <div class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
           <h3>Precificação Inteligente</h3>
-          <p>Calculadora de markup com custos, impostos (Simples / Lucro Real) e taxas de marketplace.</p>
-          <div class="tool-meta">
-            <span class="badge badge-soon">Em breve</span>
-          </div>
+          <p>Calculadora de markup com custos, impostos e taxas de marketplace.</p>
+          <div class="tool-meta"><span class="badge badge-soon">Em breve</span></div>
         </div>
-        
         <div class="tool-card" data-status="soon">
-          <div class="tool-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 7L9 18l-5-5"/></svg>
-          </div>
+          <div class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 7L9 18l-5-5"/></svg></div>
           <h3>Conferência de Estoque</h3>
-          <p>Comparativo de inventário físico vs sistema, com apontamento automático de divergências por SKU.</p>
-          <div class="tool-meta">
-            <span class="badge badge-soon">Em breve</span>
-          </div>
+          <p>Comparativo físico vs sistema com apontamento automático.</p>
+          <div class="tool-meta"><span class="badge badge-soon">Em breve</span></div>
         </div>
-        
         <div class="tool-card" data-status="soon">
-          <div class="tool-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
-          </div>
+          <div class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7h18M3 12h18M3 17h18"/></svg></div>
           <h3>Controle de Comissões</h3>
-          <p>Cálculo automático de comissões por vendedor, produto e faixa de faturamento.</p>
-          <div class="tool-meta">
-            <span class="badge badge-soon">Em breve</span>
-          </div>
+          <p>Cálculo automático de comissões por vendedor.</p>
+          <div class="tool-meta"><span class="badge badge-soon">Em breve</span></div>
         </div>
-        
         <div class="tool-card" data-status="soon">
-          <div class="tool-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          </div>
+          <div class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
           <h3>Relatórios Gerenciais</h3>
-          <p>Geração de dashboards consolidados para gestão executiva e diretoria.</p>
-          <div class="tool-meta">
-            <span class="badge badge-soon">Em breve</span>
-          </div>
+          <p>Dashboards consolidados para gestão executiva.</p>
+          <div class="tool-meta"><span class="badge badge-soon">Em breve</span></div>
         </div>
       </div>
     </div>
     
-    <!-- ============================================================
-         VIEW: APP (Análise de Pedidos)
-         ============================================================ -->
+    <!-- VIEW: APP -->
     <div id="view-app" class="page-view">
       
-      <div class="module-toolbar">
-        <div class="page-header" style="margin:0;">
-          <h1 class="page-title">Análise de Pedidos</h1>
-          <p class="page-subtitle">Cruzamento de pedidos com base de produtos e extração de indicadores.</p>
+      <div class="page-header">
+        <h1 class="page-title">Análise de Vendas</h1>
+        <p class="page-subtitle">Sistema universal — adapta-se a qualquer formato de planilha.</p>
+      </div>
+      
+      <!-- Step indicator -->
+      <div class="step-indicator">
+        <div class="step active" data-step="1">
+          <div class="step-circle">1</div>
+          <div class="step-label">Upload</div>
         </div>
-        
-        <div class="toolbar-actions">
-          <button class="btn btn-primary" onclick="processarBases()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
-            Processar
-          </button>
-          <button class="btn" onclick="exportarCSV()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
-            Exportar
-          </button>
-          <button class="btn btn-ghost" onclick="window.print()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-            Imprimir
-          </button>
+        <div class="step-bar" data-bar="1"></div>
+        <div class="step" data-step="2">
+          <div class="step-circle">2</div>
+          <div class="step-label">Mapear colunas</div>
+        </div>
+        <div class="step-bar" data-bar="2"></div>
+        <div class="step" data-step="3">
+          <div class="step-circle">3</div>
+          <div class="step-label">Relatórios</div>
         </div>
       </div>
       
-      <!-- Upload zones -->
-      <div class="upload-grid">
-        <div class="upload-zone" onclick="document.getElementById('fileProd').click()">
-          <div class="upload-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <!-- STEP 1 — UPLOAD -->
+      <div id="step-upload" class="step-content">
+        <div class="upload-grid">
+          <div class="upload-zone" id="zoneProd" onclick="document.getElementById('fileProd').click()">
+            <div class="upload-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="upload-info">
+              <h4>Cadastro de Produtos <span class="tag-tiny opt" id="tagProd">Opcional</span></h4>
+              <p id="lblProd">Clique ou arraste a planilha (.csv, .xlsx)</p>
+            </div>
+            <input type="file" id="fileProd" style="display:none" accept=".csv, .xlsx, .xls">
           </div>
-          <div class="upload-info">
-            <h4>Base de Produtos <span class="tag-tiny opt">Opcional</span></h4>
-            <p id="lblProd">Clique ou arraste a planilha (.csv, .xlsx)</p>
-          </div>
-          <input type="file" id="fileProd" style="display:none" accept=".csv, .xlsx, .xls">
-        </div>
-        
-        <div class="upload-zone required" onclick="document.getElementById('filePed').click()">
-          <div class="upload-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M3 16v5h5"/><path d="M16 21h5v-5"/></svg>
-          </div>
-          <div class="upload-info">
-            <h4>Pedidos de Venda <span class="tag-tiny req">Obrigatório</span></h4>
-            <p id="lblPed">Clique ou arraste a planilha (.csv, .xlsx)</p>
-          </div>
-          <input type="file" id="filePed" style="display:none" accept=".csv, .xlsx, .xls">
-        </div>
-      </div>
-      
-      <!-- Filtros -->
-      <div class="panel">
-        <div class="panel-title">Período e limites</div>
-        <div class="filter-grid" style="margin-bottom: var(--s-5);">
-          <input type="date" id="dtIni" title="Data Inicial" class="trigger-filter">
-          <input type="date" id="dtFim" title="Data Final" class="trigger-filter">
-          <select id="filtroMes" class="trigger-filter"><option value="">Todos os meses</option></select>
-          <select id="limiteListas" class="trigger-filter">
-            <option value="10">Top 10</option>
-            <option value="20" selected>Top 20</option>
-            <option value="50">Top 50</option>
-            <option value="100">Top 100</option>
-            <option value="99999">Todos os registros</option>
-          </select>
-          <button class="btn btn-danger" onclick="limparTudo()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-            Apagar dados
-          </button>
-        </div>
-        
-        <div class="panel-title" style="margin-top: var(--s-6);">Filtros dinâmicos</div>
-        <div class="filter-grid">
-          <select id="fltProduto" class="trigger-filter"><option value="">Todos os produtos</option></select>
-          <select id="fltEstampa" class="trigger-filter"><option value="">Todas as estampas</option></select>
-          <select id="fltCor" class="trigger-filter"><option value="">Todas as cores</option></select>
-          <select id="fltTamanho" class="trigger-filter"><option value="">Todos os tamanhos</option></select>
-          <select id="fltGrupo" class="trigger-filter" style="display:none;"><option value="">Grupos</option></select>
-          <select id="fltMatch" class="trigger-filter">
-            <option value="">Todos os status</option>
-            <option value="SKU EXATO">SKU exato</option>
-            <option value="NOME">Nome exato</option>
-            <option value="BUSCA TEXTUAL">Associação textual</option>
-            <option value="SEM MATCH">Sem correspondência</option>
-          </select>
-          <button class="btn btn-warning" onclick="limparApenasFiltros()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 3H2l8 9.5V19l4 2v-8.5z"/></svg>
-            Limpar filtros
-          </button>
-        </div>
-      </div>
-      
-      <!-- Tabs -->
-      <div class="tabs">
-        <div class="tab active" data-tab="tab-resumo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><path d="M18.4 9L12 15.6 8 11.6 3 16.6"/></svg>
-          Visão geral
-        </div>
-        <div class="tab" data-tab="tab-produtos">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-          Produtos
-        </div>
-        <div class="tab" data-tab="tab-estampas">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2L12 16.8 5.7 21l2.3-7.2-6-4.4h7.6z"/></svg>
-          Estampas
-        </div>
-        <div class="tab" data-tab="tab-cores">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2a10 10 0 0 0 0 20c.26 0 .51-.01.76-.03.7-.07 1.24-.68 1.24-1.4v-0.5a2.5 2.5 0 0 1 2.5-2.5h1.5a3.5 3.5 0 0 0 3.5-3.5C21 6.5 17 2 12 2z"/></svg>
-          Cores
-        </div>
-        <div class="tab" data-tab="tab-tamanhos">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="8" width="20" height="8" rx="1"/><path d="M6 12h.01M10 12h.01M14 12h.01M18 12h.01"/></svg>
-          Tamanhos
-        </div>
-        <div class="tab" data-tab="tab-base">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
-          Base de dados
-        </div>
-        <div class="tab" data-tab="tab-orfaos">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          Auditoria
-        </div>
-      </div>
-      
-      <!-- Visão geral -->
-      <div id="tab-resumo" class="tab-content active">
-        <div class="kpi-grid">
-          <div class="kpi">
-            <div class="kpi-label"><span class="kpi-indicator info"></span>Linhas de pedido</div>
-            <div class="kpi-value" id="kpiLinhas">0</div>
-            <div class="kpi-caption">Total filtrado</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label"><span class="kpi-indicator info"></span>Volume físico</div>
-            <div class="kpi-value" id="kpiPecas">0</div>
-            <div class="kpi-caption">Peças vendidas</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label"><span class="kpi-indicator ok"></span>Faturamento</div>
-            <div class="kpi-value" id="kpiFat">R$ 0,00</div>
-            <div class="kpi-caption">Receita total</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label"><span class="kpi-indicator info"></span>Ticket médio</div>
-            <div class="kpi-value" id="kpiTicket">R$ 0,00</div>
-            <div class="kpi-caption">Por linha</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label"><span class="kpi-indicator info"></span>Mix de produtos</div>
-            <div class="kpi-value" id="kpiMix">0</div>
-            <div class="kpi-caption">Modelos únicos</div>
+          <div class="upload-zone required" id="zonePed" onclick="document.getElementById('filePed').click()">
+            <div class="upload-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M3 16v5h5"/><path d="M16 21h5v-5"/></svg>
+            </div>
+            <div class="upload-info">
+              <h4>Pedidos de Venda <span class="tag-tiny req" id="tagPed">Obrigatório</span></h4>
+              <p id="lblPed">Clique ou arraste a planilha (.csv, .xlsx)</p>
+            </div>
+            <input type="file" id="filePed" style="display:none" accept=".csv, .xlsx, .xls">
           </div>
         </div>
         
-        <div class="card-row">
-          <div class="card">
-            <div class="card-header"><h3>Curva de faturamento diário</h3></div>
-            <canvas id="chartEvolucao"></canvas>
-          </div>
-          <div class="card">
-            <div class="card-header"><h3>Composição por categoria</h3></div>
-            <canvas id="chartTopProdsVisao"></canvas>
-          </div>
+        <div style="display:flex; justify-content:flex-end; gap: var(--s-3); margin-top: var(--s-5);">
+          <button class="btn btn-ghost" onclick="limparTudo()">Apagar tudo</button>
+          <button class="btn btn-primary" id="btnGoMapping" onclick="goToMapping()" disabled>
+            Avançar para mapeamento
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
         </div>
       </div>
       
-      <!-- Produtos -->
-      <div id="tab-produtos" class="tab-content">
-        <div class="card-row">
-          <div class="card">
-            <div class="card-header"><h3>Top produtos por faturamento</h3></div>
-            <canvas id="chartTopProds"></canvas>
-          </div>
-          <div class="card">
-            <div class="card-header"><h3>Ranking de produtos</h3></div>
-            <p class="card-caption">Nome base dos produtos, separados de cor e tamanho.</p>
-            <div class="table-wrap"><table id="tblProdutos"></table></div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Estampas -->
-      <div id="tab-estampas" class="tab-content">
-        <div class="card-row">
-          <div class="card">
-            <div class="card-header"><h3>Estampas mais vendidas</h3></div>
-            <canvas id="chartEstampas"></canvas>
-          </div>
-          <div class="card">
-            <div class="card-header"><h3>Ranking de estampas</h3></div>
-            <p class="card-caption">Descrição criativa isolada do nome do produto.</p>
-            <div class="table-wrap"><table id="tblEstampas"></table></div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Cores -->
-      <div id="tab-cores" class="tab-content">
-        <div class="card-row">
-          <div class="card">
-            <div class="card-header"><h3>Distribuição por cor</h3></div>
-            <canvas id="chartCores"></canvas>
-          </div>
-          <div class="card">
-            <div class="card-header"><h3>Ranking de cores</h3></div>
-            <p class="card-caption">Cores identificadas no nome do produto ou no SKU.</p>
-            <div class="table-wrap"><table id="tblCores"></table></div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Tamanhos -->
-      <div id="tab-tamanhos" class="tab-content">
-        <div class="card-row">
-          <div class="card">
-            <div class="card-header"><h3>Distribuição da grade</h3></div>
-            <canvas id="chartTamanhos"></canvas>
-          </div>
-          <div class="card">
-            <div class="card-header"><h3>Ranking de tamanhos</h3></div>
-            <p class="card-caption">Variações de tamanho único agrupadas.</p>
-            <div class="table-wrap"><table id="tblTamanhos"></table></div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Base -->
-      <div id="tab-base" class="tab-content">
-        <div class="card-row">
-          <div class="card">
-            <div class="card-header"><h3>Status operacional</h3></div>
-            <div class="table-wrap"><table id="tblOP"></table></div>
-          </div>
-          <div class="card">
-            <div class="card-header"><h3>Cadastro de referência</h3></div>
-            <div class="table-wrap"><table id="tblDicionario"></table></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header">
-            <h3>Base consolidada</h3>
-            <div style="display:flex; gap: var(--s-2);">
-              <button class="btn btn-ghost" onclick="renderBaseAnalitica(100)">100 linhas</button>
-              <button class="btn btn-primary" onclick="renderBaseAnalitica(99999)">Todas</button>
+      <!-- STEP 2 — MAPPING -->
+      <div id="step-mapping" class="step-content" style="display:none;">
+        
+        <!-- Mapping de Pedidos (sempre) -->
+        <div class="mapping-section" id="mappingPedSection">
+          <div class="mapping-header">
+            <div class="mapping-header-info">
+              <div class="mapping-header-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M3 16v5h5"/><path d="M16 21h5v-5"/></svg>
+              </div>
+              <div>
+                <h3>Planilha de Pedidos de Venda</h3>
+                <p id="mappingPedInfo">Selecione o papel de cada coluna</p>
+              </div>
+            </div>
+            <div class="mapping-stats">
+              <div class="mapping-stat">
+                <div class="mapping-stat-val" id="mappingPedTotalCols">0</div>
+                <div class="mapping-stat-lbl">colunas</div>
+              </div>
+              <div class="mapping-stat">
+                <div class="mapping-stat-val" id="mappingPedMapped">0</div>
+                <div class="mapping-stat-lbl">mapeadas</div>
+              </div>
+              <div class="mapping-stat">
+                <div class="mapping-stat-val" id="mappingPedRows">0</div>
+                <div class="mapping-stat-lbl">linhas</div>
+              </div>
             </div>
           </div>
-          <div class="table-wrap" style="max-height: 600px;"><table id="tblBaseUnificada"></table></div>
-        </div>
-      </div>
-      
-      <!-- Auditoria -->
-      <div id="tab-orfaos" class="tab-content">
-        <div class="kpi-grid">
-          <div class="kpi">
-            <div class="kpi-label"><span class="kpi-indicator ok"></span>SKU exato</div>
-            <div class="kpi-value" id="diagSku">0</div>
-            <div class="kpi-caption">Match pelo código</div>
+          
+          <div class="role-legend" id="roleLegend"></div>
+          
+          <div class="sheet-container">
+            <div class="sheet-grid" id="sheetGridPed"></div>
           </div>
-          <div class="kpi">
-            <div class="kpi-label"><span class="kpi-indicator ok"></span>Nome exato</div>
-            <div class="kpi-value" id="diagNome">0</div>
-            <div class="kpi-caption">Match pela descrição</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label"><span class="kpi-indicator warn"></span>Extraídos do texto</div>
-            <div class="kpi-value" id="diagRegex">0</div>
-            <div class="kpi-caption">Dados lidos do nome</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label"><span class="kpi-indicator bad"></span>Sem correspondência</div>
-            <div class="kpi-value" id="diagSem">0</div>
-            <div class="kpi-caption">Não identificados</div>
+          
+          <div class="mapping-footer">
+            <div class="mapping-footer-hint">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span>Colunas marcadas como "personalizada" viram rankings próprios no relatório.</span>
+            </div>
           </div>
         </div>
         
-        <div class="card-row">
-          <div class="card">
-            <div class="card-header"><h3>Origem dos dados</h3></div>
-            <canvas id="chartMatch"></canvas>
+        <!-- Mapping de Produtos (opcional) -->
+        <div class="mapping-section" id="mappingProdSection" style="display:none;">
+          <div class="mapping-header">
+            <div class="mapping-header-info">
+              <div class="mapping-header-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </div>
+              <div>
+                <h3>Cadastro de Produtos</h3>
+                <p id="mappingProdInfo">Selecione SKU e Produto para enriquecer os dados</p>
+              </div>
+            </div>
+            <div class="mapping-stats">
+              <div class="mapping-stat">
+                <div class="mapping-stat-val" id="mappingProdTotalCols">0</div>
+                <div class="mapping-stat-lbl">colunas</div>
+              </div>
+              <div class="mapping-stat">
+                <div class="mapping-stat-val" id="mappingProdMapped">0</div>
+                <div class="mapping-stat-lbl">mapeadas</div>
+              </div>
+              <div class="mapping-stat">
+                <div class="mapping-stat-val" id="mappingProdRows">0</div>
+                <div class="mapping-stat-lbl">linhas</div>
+              </div>
+            </div>
           </div>
-          <div class="card">
-            <div class="card-header"><h3>Pedidos sem cadastro</h3></div>
-            <p class="card-caption">Pedidos com dados extraídos apenas do nome, sem match no cadastro.</p>
-            <div class="table-wrap"><table id="tblOrfaos"></table></div>
+          <div class="sheet-container">
+            <div class="sheet-grid" id="sheetGridProd"></div>
+          </div>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; gap: var(--s-3); margin-top: var(--s-5);">
+          <button class="btn btn-ghost" onclick="goToUpload()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Voltar
+          </button>
+          <div style="display:flex; gap: var(--s-3);">
+            <button class="btn" onclick="autoMapping()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/><circle cx="12" cy="12" r="10"/></svg>
+              Sugestão automática
+            </button>
+            <button class="btn btn-primary" id="btnConfirmMapping" onclick="confirmarMapeamento()">
+              Gerar relatórios
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"/></svg>
+            </button>
           </div>
         </div>
       </div>
+      
+      <!-- STEP 3 — DASHBOARD -->
+      <div id="step-dashboard" class="step-content" style="display:none;">
+        
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: var(--s-5); flex-wrap: wrap; gap: var(--s-3);">
+          <div style="display:flex; gap: var(--s-3);">
+            <button class="btn btn-ghost" onclick="goToMapping()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              Reajustar mapeamento
+            </button>
+          </div>
+          <div style="display:flex; gap: var(--s-2); flex-wrap: wrap;">
+            <button class="btn" onclick="exportarCSV()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+              Exportar CSV
+            </button>
+            <button class="btn btn-ghost" onclick="window.print()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Imprimir
+            </button>
+            <button class="btn btn-danger" onclick="limparTudo()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              Apagar
+            </button>
+          </div>
+        </div>
+        
+        <!-- Filtros -->
+        <div class="panel">
+          <div class="panel-title">Filtros</div>
+          <div class="filter-grid" id="filterGrid"></div>
+        </div>
+        
+        <!-- Tabs dinâmicas -->
+        <div class="tabs" id="dashTabs"></div>
+        
+        <!-- Conteúdo de tabs dinâmico -->
+        <div id="dashContent"></div>
+      </div>
+      
     </div>
     
   </div>
 </main>
 
 <script>
-// ============================================================
+// =============================================================================
 // NAVEGAÇÃO
-// ============================================================
+// =============================================================================
 const BREADCRUMB = {
   'view-home': 'Início',
   'view-tools': 'Ferramentas',
-  'view-app': 'Ferramentas › Análise de Pedidos'
+  'view-app': 'Ferramentas › Análise de Vendas'
 };
 
 function switchView(viewId) {
   document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById(viewId).classList.add('active');
-  
-  // Atualiza nav ativa (apenas itens com data-view igual)
-  const activeNav = document.querySelector(`.nav-item[data-view="${viewId}"]`);
-  if (activeNav) activeNav.classList.add('active');
-  
-  // Breadcrumb
+  const nav = document.querySelector(`.nav-item[data-view="${viewId}"]`);
+  if (nav) nav.classList.add('active');
   document.getElementById('breadcrumbCurrent').textContent = BREADCRUMB[viewId] || 'Início';
-  
-  // Scroll top
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Clique em nav lateral
 document.querySelectorAll('.nav-item[data-view]').forEach(item => {
   item.addEventListener('click', () => switchView(item.dataset.view));
 });
-
-// Clique em elementos com data-nav (botões hero, tool cards)
 document.querySelectorAll('[data-nav]').forEach(el => {
-  el.addEventListener('click', (e) => {
-    e.stopPropagation();
-    switchView(el.dataset.nav);
-  });
+  el.addEventListener('click', (e) => { e.stopPropagation(); switchView(el.dataset.nav); });
 });
-
-// Tool cards "active" clicáveis
 document.querySelectorAll('.tool-card[data-status="active"][data-nav]').forEach(card => {
   card.addEventListener('click', () => switchView(card.dataset.nav));
 });
 
-// Tabs internas
-document.querySelectorAll('.tab[data-tab]').forEach(tab => {
-  tab.addEventListener('click', () => {
-    const parent = tab.closest('.page-view');
-    parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    parent.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById(tab.dataset.tab).classList.add('active');
-  });
-});
-
-// ============================================================
-// RIPPLE effect nos botões
-// ============================================================
+// Ripple
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('.btn');
   if (!btn) return;
@@ -1857,9 +1303,7 @@ document.addEventListener('click', (e) => {
   setTimeout(() => btn.classList.remove('ripple'), 400);
 });
 
-// ============================================================
-// CONTADOR ANIMADO (hero stats)
-// ============================================================
+// Contador animado
 function animateCounters() {
   document.querySelectorAll('[data-count]').forEach(el => {
     const target = parseInt(el.dataset.count);
@@ -1867,15 +1311,12 @@ function animateCounters() {
     const suffix = el.dataset.suffix || '';
     const duration = 1400;
     const start = performance.now();
-    
     function tick(now) {
-      const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const current = Math.floor(target * eased);
-      el.textContent = `${prefix}${current}${suffix}`;
-      if (progress < 1) requestAnimationFrame(tick);
+      const p = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = `${prefix}${Math.floor(target * eased)}${suffix}`;
+      if (p < 1) requestAnimationFrame(tick);
       else {
-        // valor especial para o "v1.0"
         if (prefix === 'v' && target === 0) el.textContent = 'v1.0';
         else el.textContent = `${prefix}${target}${suffix}`;
       }
@@ -1883,13 +1324,9 @@ function animateCounters() {
     requestAnimationFrame(tick);
   });
 }
-
-// Dispara animação na primeira carga
 setTimeout(animateCounters, 300);
 
-// ============================================================
-// TOAST
-// ============================================================
+// Toast
 function toast(msg, type = 'info', duration = 3500) {
   const t = document.createElement('div');
   t.className = `toast ${type}`;
@@ -1907,78 +1344,45 @@ function toast(msg, type = 'info', duration = 3500) {
   }, duration);
 }
 
-// ============================================================
-// ⚡ ENGINE DE PROCESSAMENTO (lógica preservada do original)
-// ============================================================
-Chart.defaults.color = '#b4bed4';
-Chart.defaults.font.family = "'Inter', sans-serif";
-Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(10, 18, 40, 0.95)';
-Chart.defaults.plugins.tooltip.titleFont = { size: 12, family: 'Inter', weight: '600' };
-Chart.defaults.plugins.tooltip.bodyFont = { size: 12 };
-Chart.defaults.plugins.tooltip.padding = 10;
-Chart.defaults.plugins.tooltip.cornerRadius = 8;
-Chart.defaults.plugins.tooltip.borderColor = 'rgba(255,255,255,0.1)';
-Chart.defaults.plugins.tooltip.borderWidth = 1;
-Chart.defaults.plugins.tooltip.displayColors = false;
+// =============================================================================
+// 🌟 SISTEMA UNIVERSAL DE MAPEAMENTO DE COLUNAS
+// =============================================================================
 
-const colorNameMap = {
-  'PRETO': '#000000', 'BRANCO': '#f8fafc', 'OFF WHITE': '#f1f5f9', 'OFF-WHITE': '#f1f5f9', 'AZUL MARINHO': '#1e3a8a',
-  'AZUL CLARO': '#7dd3fc', 'AZUL BEBE': '#bfdbfe', 'AZUL': '#3b82f6', 'ROSA BEBE': '#fbcfe8', 'ROSA': '#f472b6', 
-  'VERMELHO': '#ef4444', 'VERDE BANDEIRA': '#15803d', 'VERDE LIMA': '#bef264', 'VERDE MUSGO': '#4d7c0f', 
-  'VERDE MILITAR': '#4d7c0f', 'VERDE ESMERALDA': '#047857', 'VERDE': '#10b981', 'AMARELO CANARIO': '#fef08a', 
-  'AMARELO': '#facc15', 'LILÁS': '#c084fc', 'LILAS': '#c084fc', 'ROXO': '#a855f7', 'BEGE': '#fef08a',
-  'NUDE': '#ffedd5', 'CINZA': '#94a3b8', 'MESCLA': '#cbd5e1', 'BORDO': '#7f1d1d', 'BORDÔ': '#7f1d1d',
-  'VINHO': '#831843', 'CARAMELO': '#d97706', 'CAQUI': '#b45309', 'CÁQUI': '#b45309', 'PINK': '#db2777',
-  'CHUMBO': '#334155', 'AREIA': '#fef3c7', 'MOSTARDA': '#ca8a04', 'TERRACOTA': '#c2410c', 'LAVANDA': '#a78bfa', 
-  'MAGENTA': '#d946ef', 'SALMAO': '#fb923c', 'SALMÃO': '#fb923c', 'CORAL': '#f87171', 'MARROM': '#5D4037', 
-  'CAPUCCINO': '#8D6E63', 'MOCACCINO': '#8D6E63', 'CACAO': '#5D4037', 'CACAU': '#5D4037', 'AVELA': '#D7CCC8', 
-  'AVELÃ': '#D7CCC8', 'MILITAR': '#4d7c0f', 'NATURAL': '#f5f5f4', 'BIC': '#1D4ED8', 'ARDOSIA': '#475569', 
-  'LUAR': '#e2e8f0', 'DOCE VITA': '#F48FB1', 'EXPRESSO': '#3E2723', 'INTENSO': '#b91c1c', 'ROSE': '#fda4af', 
-  'FUCSIA': '#d946ef', 'FÚCSIA': '#d946ef', 'FUSCIA': '#d946ef', 'TELHA': '#b45309', 'CRU': '#f5f5f4', 
-  'TIE DYE': '#a855f7', 'JEANS': '#3b82f6', 'NEON': '#a3e635', 'PRATA': '#cbd5e1', 'DOURADO': '#fbbf24', 
-  'CEREJA': '#9f1239', 'TIFFANY': '#2dd4bf', 'TIFANY': '#2dd4bf', 'FERRUGEM': '#b45309', 'PIMENTA': '#b91c1c', 
-  'UVA': '#7e22ce', 'LIMAO': '#bef264', 'BRONZE': '#b45309', 'ESMERALDA': '#047857', 'CARMIM': '#9f1239', 
-  'GELO': '#e2e8f0', 'TURQUESA': '#06b6d4', 'RUBI': '#be123c', 'N/D': '#475569'
+// Papéis (roles) disponíveis para uma coluna
+const ROLES = {
+  IGNORAR: { label: 'Ignorar', color: 'var(--text-tertiary)', unique: false },
+  DATA:    { label: 'Data', color: 'var(--role-data)', unique: true },
+  PEDIDO:  { label: 'Número do pedido', color: 'var(--role-pedido)', unique: true },
+  SKU:     { label: 'SKU / Código', color: 'var(--role-sku)', unique: true },
+  PRODUTO: { label: 'Nome do produto', color: 'var(--role-produto)', unique: true },
+  QTD:     { label: 'Quantidade', color: 'var(--role-qtd)', unique: true },
+  VALOR:   { label: 'Valor / Faturamento', color: 'var(--role-valor)', unique: true },
+  COR:     { label: 'Cor', color: 'var(--role-cor)', unique: true },
+  TAMANHO: { label: 'Tamanho', color: 'var(--role-tamanho)', unique: true },
+  ESTAMPA: { label: 'Estampa / Variante', color: 'var(--role-estampa)', unique: true },
+  STATUS:  { label: 'Status / Situação', color: 'var(--role-status)', unique: true },
+  CUSTOM:  { label: 'Dimensão personalizada', color: 'var(--role-custom)', unique: false }
 };
 
-const skuAbbrMap = { 
-  'PRT': 'PRETO', 'PTO': 'PRETO', 'BCO': 'BRANCO', 'BRC': 'BRANCO', 'OFF': 'OFF WHITE', 'OFW': 'OFF WHITE',
-  'MRN': 'AZUL MARINHO', 'MAR': 'AZUL MARINHO', 'VML': 'VERMELHO', 'VRM': 'VERMELHO', 'AMR': 'AMARELO', 'AML': 'AMARELO',
-  'RS': 'ROSA', 'ROS': 'ROSA', 'AZL': 'AZUL', 'AZU': 'AZUL', 'VRD': 'VERDE', 'VDE': 'VERDE', 'CIN': 'CINZA', 'CNZ': 'CINZA',
-  'BGE': 'BEGE', 'MRR': 'MARROM', 'LIL': 'LILÁS', 'ROX': 'ROXO', 'VNH': 'VINHO', 'VIN': 'VINHO', 'PNK': 'PINK', 'NUD': 'NUDE', 'CRM': 'CREME'
+// Estado do upload
+const state = {
+  produtos: { raw: [], headers: [], sample: [], fileName: '' },
+  pedidos: { raw: [], headers: [], sample: [], fileName: '' },
+  // Mapeamento: headerName → role
+  mapping: {
+    pedidos: {},
+    produtos: {}
+  },
+  // Nome customizado de cada coluna CUSTOM (header → label visível)
+  customNames: {},
+  // Depois de processar, os registros unificados
+  unified: [],
+  filtered: [],
+  activeDimensions: [], // lista de roles presentes (usado para montar tabs)
+  activeFilters: {} // map role → valor selecionado
 };
 
-const colorPalette = ['#c8102e', '#0a1430', '#1a2a5c', '#e43550', '#3b82f6', '#10b981', '#f59e0b', '#06b6d4', '#8b5cf6', '#f97316', '#ec4899', '#14b8a6', '#84cc16', '#eab308', '#0ea5e9'];
-
-function escapeRegExp(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
-const masterColors = Object.keys(colorNameMap).filter(k => k !== 'N/D').sort((a,b) => b.length - a.length);
-const colorPattern = masterColors.map(c => escapeRegExp(c)).join('|');
-
-const MASTER_COLOR_REGEX = new RegExp(`(?:^|\\s|-|_|:|\\|)(${colorPattern})(?=$|\\s|-|_|:|\\|)`, 'i');
-const SIZE_REGEX_GLOBAL = /(?:\s|-|_|:|\|)(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|UNICO|UNICA|ÚNICO|ÚNICA|TM|34|36|38|40|42|44|46|48|50|52|54|56)(?:$|\s|-|_|:|\|)/i;
-const ESTAMPA_LIMPEZA_REGEX = /\b(T-SHIRTS?|TSHIRTS?|MUSCLE TEE|BABY LOOK|MOLECROPPED|CROPPED|VESTIDO|BLUSAS?|BLUSINHA|MOLETOM|CONJUNTO|REGATA|BODY|MACAQUINHO|CAL[ÇC]A|SHORTS?|SAIA|JAQUETA|CASACO|CAMISETA|CAMISA|DTF|SILK|RELEVO|BORDADO|LISO|LISA|COM|DE|DA|DO|KIT|FEM|\*LD\*)\b/gi;
-const LIXO_TAMANHO_REGEX = /(?:TAMANHO|TAM|COR)[:\s-]+/gi;
-const NUM_ONLY_REGEX = /^[0-9]+$/;
-const SKU_CLEANER_REGEX = /[-_.\s]?(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|UNICA|UNICO|ÚNICA|ÚNICO|TM|[0-9]{2})$/i;
-const TAIL_CLEAN_REGEX = /[-_.\s]+$/;
-
-const TAMANHOS_UNICOS_SET = new Set(['U', 'UN', 'UNICO', 'UNICA', 'ÚNICA', 'ÚNICO', 'TM']);
-const HSL_HASH_CACHE = new Map();
-
-function getChartColor(name) {
-  const clean = String(name || 'N/D').toUpperCase().trim();
-  if (colorNameMap[clean]) return colorNameMap[clean];
-  if (HSL_HASH_CACHE.has(clean)) return HSL_HASH_CACHE.get(clean);
-  let hash = 0;
-  for (let i = 0; i < clean.length; i++) { hash = clean.charCodeAt(i) + ((hash << 5) - hash); hash = hash & hash; }
-  const hsl = `hsl(${Math.abs(hash) % 360}, 65%, 58%)`;
-  HSL_HASH_CACHE.set(clean, hsl);
-  return hsl;
-}
-
-// Estado global
-let dbProdutosRaw = [], dbPedidosRaw = [], dbUnificada = [], dbFiltrada = [], graficos = {};
-let headerMapProdutos = null, headerMapPedidos = null;
+let graficos = {};
 
 const $ = id => document.getElementById(id);
 const fmtValor = v => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0);
@@ -1993,6 +1397,9 @@ function normalizeKey(s) {
   return String(s || '').toUpperCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
+// =============================================================================
+// LEITURA DE ARQUIVO
+// =============================================================================
 function lerArquivo(file, callback) {
   if (!file) return;
   showLoader(true, 'Lendo arquivo…');
@@ -2006,7 +1413,7 @@ function lerArquivo(file, callback) {
         header: true, skipEmptyLines: 'greedy',
         delimiter: text.includes(';') ? ';' : ',',
         transformHeader: h => h ? h.trim().replace(/^"|"$/g, '') : '',
-        complete: res => callback(res.data)
+        complete: res => callback(res.data, file.name)
       });
     };
     reader.readAsText(file, 'windows-1252');
@@ -2015,41 +1422,340 @@ function lerArquivo(file, callback) {
     reader.onload = e => {
       try {
         const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
-        callback(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' }));
+        const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
+        callback(data, file.name);
       } catch (err) {
-        toast('Não foi possível ler o arquivo. Tente salvar como CSV UTF-8.', 'error');
-        callback([]);
+        toast('Não foi possível ler o arquivo. Verifique o formato.', 'error');
+        callback([], file.name);
       }
     };
     reader.readAsArrayBuffer(file);
   }
 }
 
-$('fileProd').addEventListener('change', e => {
-  lerArquivo(e.target.files[0], data => {
-    dbProdutosRaw = data;
-    headerMapProdutos = null;
-    const txt = data.length > 0 ? `${data.length.toLocaleString('pt-BR')} linhas carregadas` : 'Formato não reconhecido';
-    $('lblProd').textContent = txt;
-    $('lblProd').style.color = data.length > 0 ? 'var(--success)' : 'var(--danger)';
+function processarArquivoCarregado(data, fileName, kind) {
+  if (!data.length) {
+    toast('Arquivo vazio ou formato não reconhecido', 'error');
     showLoader(false);
-    if (data.length > 0) toast('Base de produtos carregada', 'success');
-  });
+    return;
+  }
+  
+  const headers = Object.keys(data[0]).filter(h => h && h.trim());
+  const sample = data.slice(0, 50); // primeiras 50 linhas para preview
+  
+  state[kind].raw = data;
+  state[kind].headers = headers;
+  state[kind].sample = sample;
+  state[kind].fileName = fileName;
+  state.mapping[kind] = {}; // reset mapping
+  
+  // UI: marca zone como loaded
+  const zone = $(kind === 'pedidos' ? 'zonePed' : 'zoneProd');
+  const lbl = $(kind === 'pedidos' ? 'lblPed' : 'lblProd');
+  const tag = $(kind === 'pedidos' ? 'tagPed' : 'tagProd');
+  
+  zone.classList.add('loaded');
+  lbl.textContent = `${fileName} · ${data.length.toLocaleString('pt-BR')} linhas · ${headers.length} colunas`;
+  lbl.style.color = 'var(--success)';
+  tag.textContent = 'Carregado';
+  tag.className = 'tag-tiny ok';
+  
+  updateUploadButtons();
+  showLoader(false);
+  toast(`${kind === 'pedidos' ? 'Pedidos' : 'Produtos'} carregados`, 'success');
+}
+
+$('filePed').addEventListener('change', e => {
+  lerArquivo(e.target.files[0], (data, name) => processarArquivoCarregado(data, name, 'pedidos'));
+  e.target.value = '';
+});
+$('fileProd').addEventListener('change', e => {
+  lerArquivo(e.target.files[0], (data, name) => processarArquivoCarregado(data, name, 'produtos'));
   e.target.value = '';
 });
 
-$('filePed').addEventListener('change', e => {
-  lerArquivo(e.target.files[0], data => {
-    dbPedidosRaw = data;
-    headerMapPedidos = null;
-    const txt = data.length > 0 ? `${data.length.toLocaleString('pt-BR')} linhas carregadas` : 'Formato não reconhecido';
-    $('lblPed').textContent = txt;
-    $('lblPed').style.color = data.length > 0 ? 'var(--success)' : 'var(--danger)';
-    showLoader(false);
-    if (data.length > 0) toast('Pedidos carregados — clique em Processar', 'success');
+function updateUploadButtons() {
+  const btn = $('btnGoMapping');
+  btn.disabled = state.pedidos.raw.length === 0;
+}
+
+// =============================================================================
+// WIZARD — transições entre steps
+// =============================================================================
+function setStep(stepNum) {
+  document.querySelectorAll('.step').forEach(el => {
+    const n = parseInt(el.dataset.step);
+    el.classList.remove('active', 'done');
+    if (n < stepNum) el.classList.add('done');
+    else if (n === stepNum) el.classList.add('active');
   });
-  e.target.value = '';
-});
+  document.querySelectorAll('.step-bar').forEach(el => {
+    const n = parseInt(el.dataset.bar);
+    el.classList.toggle('done', n < stepNum);
+  });
+  
+  ['step-upload', 'step-mapping', 'step-dashboard'].forEach((id, i) => {
+    $(id).style.display = (i + 1 === stepNum) ? 'block' : 'none';
+  });
+}
+
+function goToUpload() { setStep(1); }
+
+function goToMapping() {
+  if (!state.pedidos.raw.length) {
+    toast('Carregue a planilha de pedidos primeiro', 'warn');
+    return;
+  }
+  renderMappingUI();
+  setStep(2);
+}
+
+function goToDashboard() { setStep(3); }
+
+// =============================================================================
+// RENDER DA INTERFACE DE MAPEAMENTO (preview excel + dropdowns de role)
+// =============================================================================
+function renderRoleLegend() {
+  const roles = ['DATA','PEDIDO','SKU','PRODUTO','QTD','VALOR','COR','TAMANHO','ESTAMPA','STATUS','CUSTOM'];
+  const html = roles.map(r => {
+    const role = ROLES[r];
+    return `<span class="role-legend-item">
+      <span class="role-legend-dot" style="background: ${role.color};"></span>
+      ${role.label}
+    </span>`;
+  }).join('');
+  $('roleLegend').innerHTML = html;
+}
+
+function renderSheetGrid(kind, containerId) {
+  const d = state[kind];
+  if (!d.raw.length) return;
+  
+  const container = $(containerId);
+  const cols = d.headers.length;
+  
+  // Grid template: 1 col para row number + N colunas de dado
+  container.style.gridTemplateColumns = `48px repeat(${cols}, 150px)`;
+  
+  // Letra da coluna (A, B, C, ... AA, AB, ...)
+  const colLetter = (n) => {
+    let s = '';
+    while (n >= 0) {
+      s = String.fromCharCode(65 + (n % 26)) + s;
+      n = Math.floor(n / 26) - 1;
+    }
+    return s;
+  };
+  
+  let html = '';
+  
+  // Header row (row 0 = row number header + headers)
+  html += `<div class="sheet-header-cell row-num">#</div>`;
+  d.headers.forEach((header, idx) => {
+    const currentRole = state.mapping[kind][header] || 'IGNORAR';
+    const roleOptions = Object.keys(ROLES).map(r => 
+      `<option value="${r}" ${r === currentRole ? 'selected' : ''}>${ROLES[r].label}</option>`
+    ).join('');
+    
+    html += `
+      <div class="sheet-header-cell" data-role="${currentRole !== 'IGNORAR' ? currentRole : ''}" data-col="${idx}" data-header="${escapeAttr(header)}">
+        <div class="sheet-col-letter">Coluna ${colLetter(idx)}</div>
+        <div class="sheet-col-name" title="${escapeAttr(header)}">${escapeHtml(header)}</div>
+        <select class="role-select" data-kind="${kind}" data-header="${escapeAttr(header)}" onchange="onRoleChange(this)">
+          ${roleOptions}
+        </select>
+      </div>
+    `;
+  });
+  
+  // Data rows (primeiras 50)
+  d.sample.forEach((row, rowIdx) => {
+    html += `<div class="sheet-cell row-num">${rowIdx + 1}</div>`;
+    d.headers.forEach(header => {
+      const currentRole = state.mapping[kind][header] || 'IGNORAR';
+      const val = row[header];
+      const display = (val === null || val === undefined || val === '') ? '—' : String(val);
+      const truncated = display.length > 40 ? display.substring(0, 40) + '…' : display;
+      html += `<div class="sheet-cell" data-role="${currentRole !== 'IGNORAR' ? currentRole : ''}" title="${escapeAttr(display)}">${escapeHtml(truncated)}</div>`;
+    });
+  });
+  
+  container.innerHTML = html;
+}
+
+function renderMappingUI() {
+  renderRoleLegend();
+  
+  // Pedidos (sempre)
+  $('mappingPedSection').style.display = 'block';
+  $('mappingPedInfo').textContent = `${state.pedidos.fileName} — selecione o papel de cada coluna`;
+  $('mappingPedTotalCols').textContent = state.pedidos.headers.length;
+  $('mappingPedRows').textContent = fmtInt(state.pedidos.raw.length);
+  renderSheetGrid('pedidos', 'sheetGridPed');
+  
+  // Produtos (opcional)
+  if (state.produtos.raw.length) {
+    $('mappingProdSection').style.display = 'block';
+    $('mappingProdInfo').textContent = `${state.produtos.fileName} — mapeie SKU e Nome do produto`;
+    $('mappingProdTotalCols').textContent = state.produtos.headers.length;
+    $('mappingProdRows').textContent = fmtInt(state.produtos.raw.length);
+    renderSheetGrid('produtos', 'sheetGridProd');
+  } else {
+    $('mappingProdSection').style.display = 'none';
+  }
+  
+  updateMappedCount();
+}
+
+function onRoleChange(selectEl) {
+  const kind = selectEl.dataset.kind;
+  const header = selectEl.dataset.header;
+  const newRole = selectEl.value;
+  const currentRole = state.mapping[kind][header];
+  
+  // Se role é "IGNORAR", remove o mapeamento
+  if (newRole === 'IGNORAR') {
+    delete state.mapping[kind][header];
+  } else {
+    // Se role é unique e já está sendo usado, limpa o outro
+    if (ROLES[newRole].unique) {
+      for (const h in state.mapping[kind]) {
+        if (state.mapping[kind][h] === newRole && h !== header) {
+          delete state.mapping[kind][h];
+          toast(`"${newRole}" reatribuído de "${h}" para "${header}"`, 'info', 2500);
+          break;
+        }
+      }
+    }
+    state.mapping[kind][header] = newRole;
+  }
+  
+  // Re-render para atualizar cores e selects órfãos
+  renderSheetGrid(kind, kind === 'pedidos' ? 'sheetGridPed' : 'sheetGridProd');
+  updateMappedCount();
+}
+
+function updateMappedCount() {
+  const pedMapped = Object.keys(state.mapping.pedidos).length;
+  $('mappingPedMapped').textContent = pedMapped;
+  
+  if (state.produtos.raw.length) {
+    const prodMapped = Object.keys(state.mapping.produtos).length;
+    $('mappingProdMapped').textContent = prodMapped;
+  }
+  
+  // Desabilita "Gerar relatórios" se não tiver nem mesmo um mapeamento mínimo
+  const btn = $('btnConfirmMapping');
+  const hasMinimum = Object.values(state.mapping.pedidos).some(r => 
+    ['SKU', 'PRODUTO', 'VALOR', 'QTD'].includes(r)
+  );
+  btn.disabled = !hasMinimum;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+function escapeAttr(s) { return escapeHtml(s); }
+
+// =============================================================================
+// MAPEAMENTO AUTOMÁTICO (sugestão)
+// =============================================================================
+const AUTO_DETECT_RULES = {
+  DATA: ['DATA', 'DT', 'CRIADOEM', 'DATADOPEDIDO', 'DATAVENDA', 'DATAEMISSAO', 'EMISSAO', 'PEDIDOEM', 'ORDER_DATE'],
+  PEDIDO: ['NUMEROPEDIDO', 'PEDIDO', 'NUMPEDIDO', 'NROPEDIDO', 'ORDER', 'ORDERID', 'IDPEDIDO', 'NPEDIDO'],
+  SKU: ['SKU', 'CODIGO', 'COD', 'REFERENCIA', 'REF', 'ID'],
+  PRODUTO: ['PRODUTO', 'NOME', 'DESCRICAO', 'DESCRICAOCOMPLEMENTAR', 'TITULO', 'ITEM', 'NOMEPRODUTO'],
+  QTD: ['QUANTIDADE', 'QTD', 'QTDE', 'QT', 'QUANT', 'QTDVENDIDA'],
+  VALOR: ['VALORTOTAL', 'TOTAL', 'FATURAMENTO', 'TOTALPEDIDO', 'VALORBRUTO', 'VALORLIQUIDO', 'VALORVENDA', 'SUBTOTAL', 'VALOR'],
+  COR: ['COR', 'CORES'],
+  TAMANHO: ['TAMANHO', 'TAM', 'SIZE'],
+  ESTAMPA: ['ESTAMPA', 'VARIANTE', 'MODELO'],
+  STATUS: ['STATUS', 'SITUACAO', 'FASE', 'STATUSDOPEDIDO', 'STATUSPEDIDO', 'ETAPA', 'OP']
+};
+
+function autoMapping() {
+  ['pedidos', 'produtos'].forEach(kind => {
+    if (!state[kind].raw.length) return;
+    // Não apaga o que o usuário já fez — só preenche o que está vazio
+    state[kind].headers.forEach(header => {
+      if (state.mapping[kind][header]) return; // já tem role
+      const nk = normalizeKey(header);
+      for (const role in AUTO_DETECT_RULES) {
+        if (AUTO_DETECT_RULES[role].includes(nk)) {
+          // verifica se o role (se único) já foi atribuído
+          if (ROLES[role].unique) {
+            const taken = Object.values(state.mapping[kind]).includes(role);
+            if (taken) continue;
+          }
+          state.mapping[kind][header] = role;
+          break;
+        }
+      }
+    });
+    renderSheetGrid(kind, kind === 'pedidos' ? 'sheetGridPed' : 'sheetGridProd');
+  });
+  updateMappedCount();
+  toast('Mapeamento sugerido aplicado', 'success');
+}
+
+// =============================================================================
+// 🧠 PROCESSAMENTO DE DADOS (usa o mapping do usuário)
+// =============================================================================
+
+// Dicionários e regex (preservados da v9)
+const colorNameMap = {
+  'PRETO': '#000000', 'BRANCO': '#f8fafc', 'OFF WHITE': '#f1f5f9', 'OFF-WHITE': '#f1f5f9', 'AZUL MARINHO': '#1e3a8a',
+  'AZUL CLARO': '#7dd3fc', 'AZUL BEBE': '#bfdbfe', 'AZUL': '#3b82f6', 'ROSA BEBE': '#fbcfe8', 'ROSA': '#f472b6',
+  'VERMELHO': '#ef4444', 'VERDE BANDEIRA': '#15803d', 'VERDE LIMA': '#bef264', 'VERDE MUSGO': '#4d7c0f',
+  'VERDE MILITAR': '#4d7c0f', 'VERDE ESMERALDA': '#047857', 'VERDE': '#10b981', 'AMARELO CANARIO': '#fef08a',
+  'AMARELO': '#facc15', 'LILÁS': '#c084fc', 'LILAS': '#c084fc', 'ROXO': '#a855f7', 'BEGE': '#fef08a',
+  'NUDE': '#ffedd5', 'CINZA': '#94a3b8', 'MESCLA': '#cbd5e1', 'BORDO': '#7f1d1d', 'BORDÔ': '#7f1d1d',
+  'VINHO': '#831843', 'CARAMELO': '#d97706', 'CAQUI': '#b45309', 'CÁQUI': '#b45309', 'PINK': '#db2777',
+  'CHUMBO': '#334155', 'AREIA': '#fef3c7', 'MOSTARDA': '#ca8a04', 'TERRACOTA': '#c2410c', 'LAVANDA': '#a78bfa',
+  'MAGENTA': '#d946ef', 'SALMAO': '#fb923c', 'SALMÃO': '#fb923c', 'CORAL': '#f87171', 'MARROM': '#5D4037',
+  'CAPUCCINO': '#8D6E63', 'MOCACCINO': '#8D6E63', 'CACAO': '#5D4037', 'CACAU': '#5D4037', 'AVELA': '#D7CCC8',
+  'AVELÃ': '#D7CCC8', 'MILITAR': '#4d7c0f', 'NATURAL': '#f5f5f4', 'BIC': '#1D4ED8', 'ARDOSIA': '#475569',
+  'LUAR': '#e2e8f0', 'DOCE VITA': '#F48FB1', 'EXPRESSO': '#3E2723', 'INTENSO': '#b91c1c', 'ROSE': '#fda4af',
+  'FUCSIA': '#d946ef', 'FÚCSIA': '#d946ef', 'FUSCIA': '#d946ef', 'TELHA': '#b45309', 'CRU': '#f5f5f4',
+  'TIE DYE': '#a855f7', 'JEANS': '#3b82f6', 'NEON': '#a3e635', 'PRATA': '#cbd5e1', 'DOURADO': '#fbbf24',
+  'CEREJA': '#9f1239', 'TIFFANY': '#2dd4bf', 'TIFANY': '#2dd4bf', 'FERRUGEM': '#b45309', 'PIMENTA': '#b91c1c',
+  'UVA': '#7e22ce', 'LIMAO': '#bef264', 'BRONZE': '#b45309', 'ESMERALDA': '#047857', 'CARMIM': '#9f1239',
+  'GELO': '#e2e8f0', 'TURQUESA': '#06b6d4', 'RUBI': '#be123c', 'N/D': '#475569'
+};
+
+const skuAbbrMap = {
+  'PRT': 'PRETO', 'PTO': 'PRETO', 'BCO': 'BRANCO', 'BRC': 'BRANCO', 'OFF': 'OFF WHITE', 'OFW': 'OFF WHITE',
+  'MRN': 'AZUL MARINHO', 'MAR': 'AZUL MARINHO', 'VML': 'VERMELHO', 'VRM': 'VERMELHO', 'AMR': 'AMARELO', 'AML': 'AMARELO',
+  'RS': 'ROSA', 'ROS': 'ROSA', 'AZL': 'AZUL', 'AZU': 'AZUL', 'VRD': 'VERDE', 'VDE': 'VERDE', 'CIN': 'CINZA', 'CNZ': 'CINZA',
+  'BGE': 'BEGE', 'MRR': 'MARROM', 'LIL': 'LILÁS', 'ROX': 'ROXO', 'VNH': 'VINHO', 'VIN': 'VINHO', 'PNK': 'PINK', 'NUD': 'NUDE', 'CRM': 'CREME'
+};
+
+const colorPalette = ['#c8102e', '#0a1430', '#1a2a5c', '#e43550', '#3b82f6', '#10b981', '#f59e0b', '#06b6d4', '#8b5cf6', '#f97316', '#ec4899', '#14b8a6', '#84cc16', '#eab308', '#0ea5e9'];
+
+function escapeRegExp(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+const masterColors = Object.keys(colorNameMap).filter(k => k !== 'N/D').sort((a, b) => b.length - a.length);
+const colorPattern = masterColors.map(c => escapeRegExp(c)).join('|');
+const MASTER_COLOR_REGEX = new RegExp(`(?:^|\\s|-|_|:|\\|)(${colorPattern})(?=$|\\s|-|_|:|\\|)`, 'i');
+const SIZE_REGEX_GLOBAL = /(?:\s|-|_|:|\|)(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|UNICO|UNICA|ÚNICO|ÚNICA|TM|34|36|38|40|42|44|46|48|50|52|54|56)(?:$|\s|-|_|:|\|)/i;
+const TAMANHOS_UNICOS_SET = new Set(['U', 'UN', 'UNICO', 'UNICA', 'ÚNICA', 'ÚNICO', 'TM']);
+const NUM_ONLY_REGEX = /^[0-9]+$/;
+const LIXO_TAMANHO_REGEX = /(?:TAMANHO|TAM|COR)[:\s-]+/gi;
+const SKU_CLEANER_REGEX = /[-_.\s]?(PP|P|M|G|GG|XG|XGG|EXG|EG|G1|G2|G3|G4|G5|G6|U|UN|UNICA|UNICO|ÚNICA|ÚNICO|TM|[0-9]{2})$/i;
+const TAIL_CLEAN_REGEX = /[-_.\s]+$/;
+
+const HSL_HASH_CACHE = new Map();
+function getChartColor(name) {
+  const clean = String(name || 'N/D').toUpperCase().trim();
+  if (colorNameMap[clean]) return colorNameMap[clean];
+  if (HSL_HASH_CACHE.has(clean)) return HSL_HASH_CACHE.get(clean);
+  let hash = 0;
+  for (let i = 0; i < clean.length; i++) { hash = clean.charCodeAt(i) + ((hash << 5) - hash); hash = hash & hash; }
+  const hsl = `hsl(${Math.abs(hash) % 360}, 65%, 58%)`;
+  HSL_HASH_CACHE.set(clean, hsl);
+  return hsl;
+}
 
 function limparMascaraNumero(v) {
   if (typeof v === 'number') return v;
@@ -2063,6 +1769,11 @@ function limparMascaraNumero(v) {
 function parseData(v) {
   if (!v) return null;
   if (v instanceof Date) return v;
+  // Excel serial date
+  if (typeof v === 'number' && v > 20000 && v < 60000) {
+    const d = new Date(Math.round((v - 25569) * 86400 * 1000));
+    return isNaN(d) ? null : d;
+  }
   let s = String(v).trim(), m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
   if (m) return new Date(+m[3], +m[2] - 1, +m[1]);
   m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -2078,277 +1789,520 @@ function fmtMesAno(d) {
   return d ? `${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}` : '';
 }
 
-function mapearCabecalhosProdutos(sample) {
-  const map = { sku: 'SKU', nome: 'Produto' };
-  if (!sample) return map;
-  const keys = Object.keys(sample);
-  for (let i = 0; i < keys.length; i++) {
-    const kc = normalizeKey(keys[i]);
-    if (['SKU', 'CODIGO', 'REFERENCIA', 'ID'].includes(kc)) map.sku = keys[i];
-    if (['PRODUTO', 'NOME', 'DESCRICAO', 'DESCRICAOCOMPLEMENTAR', 'TITULO'].includes(kc)) map.nome = keys[i];
-  }
-  return map;
-}
-
-function mapearCabecalhosPedidos(sample) {
-  const map = { sku: 'SKU', nome: 'Produto', data: 'Data', qtd: 'Quantidade', total: 'Valor Total', op: 'OP', pedido: 'Número pedido' };
-  if (!sample) return map;
-  const keys = Object.keys(sample);
-  for (let i = 0; i < keys.length; i++) {
-    const kc = normalizeKey(keys[i]);
-    if (['SKU', 'CODIGO'].includes(kc)) map.sku = keys[i];
-    if (['PRODUTO', 'DESCRICAO', 'NOME'].includes(kc)) map.nome = keys[i];
-    if (['DATA', 'CRIADOEM', 'DATADOPEDIDO'].includes(kc)) map.data = keys[i];
-    if (['QUANTIDADE', 'QTD'].includes(kc)) map.qtd = keys[i];
-    if (['VALORTOTAL', 'TOTAL', 'FATURAMENTO', 'TOTALPEDIDO'].includes(kc)) map.total = keys[i];
-    if (['OP', 'STATUS', 'FASE', 'STATUSDOPEDIDO'].includes(kc)) map.op = keys[i];
-    if (['NUMEROPEDIDO', 'PEDIDO', 'ID'].includes(kc)) map.pedido = keys[i];
-  }
-  return map;
-}
-
-function extrairAtributosDaDescricao(descricao, sku) {
-  let nome = String(descricao || '').toUpperCase().trim();
-  let cor = 'N/D', tamanho = 'N/D', grupo = 'OUTROS';
+// Extração de atributos do nome (fallback quando colunas não são mapeadas)
+function extrairAtributos(nome, sku) {
+  let n = String(nome || '').toUpperCase().trim();
+  let cor = 'N/D', tamanho = 'N/D';
   
-  if (!nome && !sku) return { produto: 'PRODUTO NÃO IDENTIFICADO', estampa: 'SEM ESTAMPA / LISA', cor, tamanho, grupo };
+  if (!n && !sku) return { cor, tamanho };
   
-  const matchTamanho = SIZE_REGEX_GLOBAL.exec(' ' + nome + ' ');
-  if (matchTamanho) { tamanho = matchTamanho[1].toUpperCase(); nome = nome.replace(matchTamanho[0], ' '); }
+  const matchTam = SIZE_REGEX_GLOBAL.exec(' ' + n + ' ');
+  if (matchTam) {
+    tamanho = matchTam[1].toUpperCase();
+    n = n.replace(matchTam[0], ' ');
+  }
   if (TAMANHOS_UNICOS_SET.has(tamanho)) tamanho = 'ÚNICO';
   
-  let tempNome = ' ' + nome + ' ';
-  const matchCor = MASTER_COLOR_REGEX.exec(tempNome);
-  if (matchCor) { cor = matchCor[1].toUpperCase(); tempNome = tempNome.replace(matchCor[0], ' '); }
+  const matchCor = MASTER_COLOR_REGEX.exec(' ' + n + ' ');
+  if (matchCor) cor = matchCor[1].toUpperCase();
   
-  if (cor === 'N/D' && nome.indexOf('-') !== -1) {
-    const idxUltimoHifen = nome.lastIndexOf('-');
-    let sufixo = nome.substring(idxUltimoHifen + 1).trim();
-    sufixo = sufixo.replace(LIXO_TAMANHO_REGEX, ' ').replace(SIZE_REGEX_GLOBAL, ' ').replace(/[^A-ZÀ-Úa-zà-ú\s]/gi, ' ').replace(/\s+/g, ' ').trim();
-    if (sufixo.length >= 3 && !NUM_ONLY_REGEX.test(sufixo)) cor = sufixo.toUpperCase();
+  if (cor === 'N/D' && n.indexOf('-') !== -1) {
+    const idx = n.lastIndexOf('-');
+    let suf = n.substring(idx + 1).trim();
+    suf = suf.replace(LIXO_TAMANHO_REGEX, ' ').replace(SIZE_REGEX_GLOBAL, ' ').replace(/[^A-ZÀ-Úa-zà-ú\s]/gi, ' ').replace(/\s+/g, ' ').trim();
+    if (suf.length >= 3 && !NUM_ONLY_REGEX.test(suf)) cor = suf.toUpperCase();
   }
   
   if (cor === 'N/D' && sku) {
-    const skuStr = String(sku).toUpperCase();
+    const ss = String(sku).toUpperCase();
     for (const abbr in skuAbbrMap) {
-      if (skuStr.indexOf('-' + abbr) !== -1 || skuStr.indexOf('_' + abbr) !== -1 || skuStr.endsWith(abbr)) {
+      if (ss.indexOf('-' + abbr) !== -1 || ss.indexOf('_' + abbr) !== -1 || ss.endsWith(abbr)) {
         cor = skuAbbrMap[abbr]; break;
       }
     }
   }
   
-  let produtoFull = tempNome.replace(/\s+/g, ' ').replace(/\s-\s/g, ' ').replace(/^[-\s:]+|[-\s:]+$/g, '').trim();
-  
-  if (produtoFull.indexOf('T-SHIRT') !== -1 || produtoFull.indexOf('TSHIRT') !== -1) grupo = 'T-SHIRT';
-  else if (produtoFull.indexOf('CROPPED') !== -1 || produtoFull.indexOf('MOLECROPPED') !== -1) grupo = 'CROPPED';
-  else if (produtoFull.indexOf('VESTIDO') !== -1) grupo = 'VESTIDO';
-  else if (produtoFull.indexOf('BLUSA') !== -1 || produtoFull.indexOf('BLUSINHA') !== -1) grupo = 'BLUSA';
-  else if (produtoFull.indexOf('MOLETOM') !== -1) grupo = 'MOLETOM';
-  else if (produtoFull.indexOf('CONJUNTO') !== -1) grupo = 'CONJUNTO';
-  else if (produtoFull.indexOf('REGATA') !== -1) grupo = 'REGATA';
-  else if (produtoFull.indexOf('BODY') !== -1) grupo = 'BODY';
-  else if (produtoFull.indexOf('SHORT') !== -1) grupo = 'SHORTS';
-  else if (produtoFull.indexOf('CALÇA') !== -1 || produtoFull.indexOf('CALCA') !== -1) grupo = 'CALÇA';
-  else if (produtoFull.indexOf('SAIA') !== -1) grupo = 'SAIA';
-  
-  ESTAMPA_LIMPEZA_REGEX.lastIndex = 0;
-  let estampa = produtoFull.replace(ESTAMPA_LIMPEZA_REGEX, ' ').replace(/\s+/g, ' ').trim();
-  if (!estampa || estampa === '*' || estampa === '-') estampa = 'SEM ESTAMPA / LISA';
-  
-  if (!produtoFull || produtoFull.length < 2) produtoFull = nome || 'PRODUTO NÃO IDENTIFICADO';
   if (cor !== 'N/D') cor = cor.replace('PRETA', 'PRETO').replace('BRANCA', 'BRANCO').replace('VERMELHA', 'VERMELHO');
-  
-  return { produto: produtoFull, estampa, cor, tamanho, grupo };
+  return { cor, tamanho };
 }
 
-function processarBases() {
-  if (!dbPedidosRaw.length) {
-    toast('Carregue o arquivo de pedidos antes de processar', 'warn');
+function confirmarMapeamento() {
+  const minimum = Object.values(state.mapping.pedidos).some(r => ['SKU', 'PRODUTO', 'VALOR', 'QTD'].includes(r));
+  if (!minimum) {
+    toast('Mapeie pelo menos SKU, Produto, Valor ou Quantidade para continuar', 'warn', 4500);
     return;
   }
   
   showLoader(true, 'Processando dados…');
-  
   setTimeout(() => {
     try {
-      const mapProdCols = mapearCabecalhosProdutos(dbProdutosRaw[0]);
-      const mapPedCols = mapearCabecalhosPedidos(dbPedidosRaw[0]);
-      headerMapProdutos = mapProdCols;
-      headerMapPedidos = mapPedCols;
-      
-      const { sku: pSkuKey, nome: pNomeKey } = mapProdCols;
-      const { sku: vSkuKey, nome: vNomeKey, data: vDataKey, qtd: vQtdKey, total: vTotalKey, op: vOpKey, pedido: vPedKey } = mapPedCols;
-      
-      const mapProdSKU = new Map(), mapProdNome = new Map();
-      for (let i = 0; i < dbProdutosRaw.length; i++) {
-        const p = dbProdutosRaw[i];
-        const sku = String(p[pSkuKey] || '').trim().toUpperCase();
-        const nomeBase = String(p[pNomeKey] || '').trim().toUpperCase();
-        p._nomeBase = nomeBase;
-        p._SKU = sku;
-        if (sku) mapProdSKU.set(sku, p);
-        if (nomeBase) mapProdNome.set(nomeBase, p);
-      }
-      
-      const novaUnificada = new Array(dbPedidosRaw.length);
-      let writeIdx = 0;
-      
-      for (let i = 0; i < dbPedidosRaw.length; i++) {
-        const ped = dbPedidosRaw[i];
-        const rawSKU = ped[vSkuKey] || '';
-        const rawNome = ped[vNomeKey] || '';
-        const qtd = limparMascaraNumero(ped[vQtdKey] || 1);
-        const valTotal = limparMascaraNumero(ped[vTotalKey]);
-        
-        if (qtd <= 0 && valTotal <= 0) continue;
-        
-        const dataObj = parseData(ped[vDataKey]);
-        const skuMestre = String(rawSKU).toUpperCase().trim().replace(SKU_CLEANER_REGEX, '').replace(TAIL_CLEAN_REGEX, '').trim();
-        const extr = extrairAtributosDaDescricao(rawNome, rawSKU);
-        
-        let matchTipo = 'SEM MATCH', prodRef = null;
-        if (skuMestre && mapProdSKU.has(skuMestre)) {
-          prodRef = mapProdSKU.get(skuMestre); matchTipo = 'SKU EXATO';
-        } else {
-          const rnUpper = String(rawNome).toUpperCase().trim();
-          if (rnUpper && mapProdNome.has(rnUpper)) {
-            prodRef = mapProdNome.get(rnUpper); matchTipo = 'NOME';
-          } else if (extr.produto && extr.produto !== 'PRODUTO NÃO IDENTIFICADO') {
-            matchTipo = 'BUSCA TEXTUAL';
-          }
-        }
-        
-        let produtoFinal = (prodRef && prodRef._nomeBase) ? prodRef._nomeBase : extr.produto;
-        if (produtoFinal && produtoFinal.toUpperCase().trim().startsWith('ESTAMPA')) produtoFinal = 'ESTAMPA AVULSA';
-        
-        novaUnificada[writeIdx++] = {
-          data: dataObj, mesAno: fmtMesAno(dataObj), pedido: ped[vPedKey] || '-',
-          skuOriginal: rawSKU, skuMestre, nomeOriginal: rawNome,
-          produtoBase: produtoFinal, estampa: extr.estampa, cor: extr.cor,
-          tamanho: extr.tamanho, grupo: extr.grupo,
-          quantidade: qtd, valorUnitario: qtd ? valTotal / qtd : 0, valorTotal: valTotal,
-          opStatus: ped[vOpKey] || 'Concluído', match: matchTipo
-        };
-      }
-      
-      novaUnificada.length = writeIdx;
-      dbUnificada = novaUnificada;
-      
-      aplicarFiltrosGerais();
-      toast(`${writeIdx.toLocaleString('pt-BR')} pedidos processados`, 'success');
+      processar();
+      goToDashboard();
+      toast(`${state.unified.length.toLocaleString('pt-BR')} registros processados`, 'success');
     } catch (err) {
       console.error(err);
-      toast('Erro durante o processamento: ' + err.message, 'error', 5000);
+      toast('Erro: ' + err.message, 'error', 5000);
     } finally {
       showLoader(false);
     }
   }, 80);
 }
 
-function popularSelect(id, vals, padrao) {
-  const el = $(id);
-  const atual = el.value;
-  const opts = [`<option value="">${padrao}</option>`];
-  for (let i = 0; i < vals.length; i++) opts.push(`<option value="${vals[i]}">${vals[i]}</option>`);
-  el.innerHTML = opts.join('');
-  if (vals.includes(atual)) el.value = atual;
+// Retorna a coluna (header) que foi mapeada para um role
+function getCol(kind, role) {
+  for (const header in state.mapping[kind]) {
+    if (state.mapping[kind][header] === role) return header;
+  }
+  return null;
 }
 
-function aplicarFiltrosGerais() {
-  const ini = $('dtIni').value ? new Date($('dtIni').value + 'T00:00:00') : null;
-  const fim = $('dtFim').value ? new Date($('dtFim').value + 'T23:59:59') : null;
-  const mes = $('filtroMes').value, fp = $('fltProduto').value, fc = $('fltCor').value;
-  const ft = $('fltTamanho').value, fe = $('fltEstampa').value, fm = $('fltMatch').value;
+function getCustomCols(kind) {
+  const list = [];
+  for (const header in state.mapping[kind]) {
+    if (state.mapping[kind][header] === 'CUSTOM') list.push(header);
+  }
+  return list;
+}
+
+function processar() {
+  const m = state.mapping.pedidos;
   
-  const sMes = new Set(), sProd = new Set(), sCor = new Set(), sTam = new Set(), sEst = new Set();
-  const novaFiltrada = [];
+  const colData = getCol('pedidos', 'DATA');
+  const colPedido = getCol('pedidos', 'PEDIDO');
+  const colSku = getCol('pedidos', 'SKU');
+  const colProduto = getCol('pedidos', 'PRODUTO');
+  const colQtd = getCol('pedidos', 'QTD');
+  const colValor = getCol('pedidos', 'VALOR');
+  const colCor = getCol('pedidos', 'COR');
+  const colTam = getCol('pedidos', 'TAMANHO');
+  const colEst = getCol('pedidos', 'ESTAMPA');
+  const colStatus = getCol('pedidos', 'STATUS');
+  const customCols = getCustomCols('pedidos');
   
-  for (let i = 0; i < dbUnificada.length; i++) {
-    const r = dbUnificada[i];
-    const pDt = (!ini || (r.data && r.data >= ini)) && (!fim || (r.data && r.data <= fim));
-    const pMs = !mes || r.mesAno === mes;
-    const pPr = !fp || r.produtoBase === fp;
-    const pCr = !fc || r.cor === fc;
-    const pTm = !ft || r.tamanho === ft;
-    const pEs = !fe || r.estampa === fe;
-    const pMt = !fm || r.match === fm;
-    
-    if (pDt && pPr && pCr && pTm && pEs && pMt) sMes.add(r.mesAno);
-    if (pDt && pMs && pCr && pTm && pEs && pMt) sProd.add(r.produtoBase);
-    if (pDt && pMs && pPr && pTm && pEs && pMt) sCor.add(r.cor);
-    if (pDt && pMs && pPr && pCr && pEs && pMt) sTam.add(r.tamanho);
-    if (pDt && pMs && pPr && pCr && pTm && pMt) sEst.add(r.estampa);
-    if (pDt && pMs && pPr && pCr && pTm && pEs && pMt) novaFiltrada.push(r);
+  // Indexa cadastro de produtos
+  const mapProdSKU = new Map(), mapProdNome = new Map();
+  if (state.produtos.raw.length) {
+    const pSku = getCol('produtos', 'SKU');
+    const pNome = getCol('produtos', 'PRODUTO');
+    if (pSku || pNome) {
+      state.produtos.raw.forEach(p => {
+        const sku = pSku ? String(p[pSku] || '').trim().toUpperCase() : '';
+        const nome = pNome ? String(p[pNome] || '').trim().toUpperCase() : '';
+        p._SKU = sku;
+        p._nome = nome;
+        if (sku) mapProdSKU.set(sku, p);
+        if (nome) mapProdNome.set(nome, p);
+      });
+    }
   }
   
-  dbFiltrada = novaFiltrada;
-  popularSelect('filtroMes', [...sMes].sort(), 'Todos os meses');
-  popularSelect('fltProduto', [...sProd].sort(), 'Todos os produtos');
-  popularSelect('fltCor', [...sCor].sort(), 'Todas as cores');
-  popularSelect('fltTamanho', [...sTam].sort(), 'Todos os tamanhos');
-  popularSelect('fltEstampa', [...sEst].sort(), 'Todas as estampas');
-  renderizarPainel();
+  // Determina dimensões ativas (para montar abas dinamicamente)
+  const activeDims = [];
+  if (colData) activeDims.push('DATA');
+  if (colProduto || colSku) activeDims.push('PRODUTO');
+  if (colCor) activeDims.push('COR');
+  else if (colProduto) activeDims.push('COR_EXTRAIDA'); // marcador: cor vem da extração
+  if (colTam) activeDims.push('TAMANHO');
+  else if (colProduto) activeDims.push('TAMANHO_EXTRAIDO');
+  if (colEst) activeDims.push('ESTAMPA');
+  if (colStatus) activeDims.push('STATUS');
+  customCols.forEach(h => activeDims.push(`CUSTOM::${h}`));
+  
+  state.activeDimensions = activeDims;
+  
+  // Processa cada linha
+  const unified = [];
+  const n = state.pedidos.raw.length;
+  
+  for (let i = 0; i < n; i++) {
+    const ped = state.pedidos.raw[i];
+    
+    const rawSku = colSku ? String(ped[colSku] || '').trim() : '';
+    const rawProduto = colProduto ? String(ped[colProduto] || '').trim() : '';
+    const qtd = colQtd ? limparMascaraNumero(ped[colQtd]) : 1;
+    const valor = colValor ? limparMascaraNumero(ped[colValor]) : 0;
+    
+    // Skip linhas vazias
+    if (qtd <= 0 && valor <= 0) continue;
+    
+    const data = colData ? parseData(ped[colData]) : null;
+    const pedidoNum = colPedido ? String(ped[colPedido] || '-').trim() : '-';
+    const status = colStatus ? String(ped[colStatus] || 'N/D').trim() : 'N/D';
+    
+    let cor = colCor ? String(ped[colCor] || '').trim().toUpperCase() : '';
+    let tamanho = colTam ? String(ped[colTam] || '').trim().toUpperCase() : '';
+    const estampa = colEst ? String(ped[colEst] || '').trim() : '';
+    
+    // Se cor/tamanho não foi mapeado, tenta extrair do nome
+    if (!cor || !tamanho) {
+      const extr = extrairAtributos(rawProduto, rawSku);
+      if (!cor) cor = extr.cor;
+      if (!tamanho) tamanho = extr.tamanho;
+    }
+    
+    if (!cor) cor = 'N/D';
+    if (!tamanho) tamanho = 'N/D';
+    if (TAMANHOS_UNICOS_SET.has(tamanho.toUpperCase())) tamanho = 'ÚNICO';
+    
+    // Tentativa de match com cadastro
+    let matchTipo = 'DIRETO';
+    let produtoFinal = rawProduto;
+    let skuMestre = rawSku.toUpperCase().replace(SKU_CLEANER_REGEX, '').replace(TAIL_CLEAN_REGEX, '').trim();
+    
+    if (mapProdSKU.size || mapProdNome.size) {
+      matchTipo = 'SEM MATCH';
+      if (skuMestre && mapProdSKU.has(skuMestre)) {
+        const ref = mapProdSKU.get(skuMestre);
+        if (ref._nome) produtoFinal = ref._nome;
+        matchTipo = 'SKU EXATO';
+      } else if (rawProduto && mapProdNome.has(rawProduto.toUpperCase())) {
+        matchTipo = 'NOME';
+      } else if (rawProduto) {
+        matchTipo = 'BUSCA TEXTUAL';
+      }
+    }
+    
+    // Construção do registro
+    const record = {
+      _rowIndex: i,
+      data, mesAno: fmtMesAno(data),
+      pedido: pedidoNum,
+      skuOriginal: rawSku, skuMestre,
+      produto: produtoFinal || '(sem nome)',
+      cor, tamanho,
+      estampa: estampa || '—',
+      status,
+      quantidade: qtd,
+      valorUnitario: qtd ? valor / qtd : 0,
+      valorTotal: valor,
+      match: matchTipo
+    };
+    
+    // Dimensões customizadas
+    customCols.forEach(h => {
+      const v = ped[h];
+      record[`custom::${h}`] = (v === null || v === undefined || v === '') ? '—' : String(v).trim();
+    });
+    
+    unified.push(record);
+  }
+  
+  state.unified = unified;
+  aplicarFiltros();
 }
 
-function limparApenasFiltros() {
-  ['dtIni','dtFim','filtroMes','fltProduto','fltCor','fltTamanho','fltEstampa','fltMatch'].forEach(id => $(id).value = '');
-  if (dbUnificada.length) aplicarFiltrosGerais();
+// =============================================================================
+// FILTROS
+// =============================================================================
+function aplicarFiltros() {
+  const filters = state.activeFilters;
+  const filtered = state.unified.filter(r => {
+    for (const key in filters) {
+      const val = filters[key];
+      if (!val) continue;
+      if (key === 'dtIni') {
+        if (!r.data || r.data < new Date(val + 'T00:00:00')) return false;
+      } else if (key === 'dtFim') {
+        if (!r.data || r.data > new Date(val + 'T23:59:59')) return false;
+      } else if (key === 'mesAno') {
+        if (r.mesAno !== val) return false;
+      } else if (key.startsWith('custom::')) {
+        if (r[key] !== val) return false;
+      } else {
+        // cor, tamanho, estampa, status, produto
+        if (r[key.toLowerCase()] !== val && r[key] !== val) return false;
+      }
+    }
+    return true;
+  });
+  state.filtered = filtered;
+  renderDashboard();
 }
 
-document.querySelectorAll('.trigger-filter').forEach(el => {
-  el.addEventListener('change', () => { if (dbUnificada.length) aplicarFiltrosGerais(); });
-});
+function renderFilters() {
+  const dims = state.activeDimensions;
+  const customCols = getCustomCols('pedidos');
+  
+  let html = '';
+  
+  // Data filters
+  if (dims.includes('DATA')) {
+    html += `<input type="date" id="fltDtIni" title="Data inicial" onchange="onFilterChange('dtIni', this.value)" value="${state.activeFilters.dtIni || ''}">`;
+    html += `<input type="date" id="fltDtFim" title="Data final" onchange="onFilterChange('dtFim', this.value)" value="${state.activeFilters.dtFim || ''}">`;
+    html += `<select id="fltMesAno" onchange="onFilterChange('mesAno', this.value)"><option value="">Todos os meses</option>${uniqueVals('mesAno').map(v => `<option value="${v}" ${state.activeFilters.mesAno === v ? 'selected' : ''}>${v}</option>`).join('')}</select>`;
+  }
+  
+  // Produto
+  if (dims.includes('PRODUTO')) {
+    html += `<select onchange="onFilterChange('produto', this.value)"><option value="">Todos os produtos</option>${uniqueVals('produto').map(v => `<option value="${v}" ${state.activeFilters.produto === v ? 'selected' : ''}>${v}</option>`).join('')}</select>`;
+  }
+  
+  // Cor
+  if (dims.includes('COR') || dims.includes('COR_EXTRAIDA')) {
+    html += `<select onchange="onFilterChange('cor', this.value)"><option value="">Todas as cores</option>${uniqueVals('cor').map(v => `<option value="${v}" ${state.activeFilters.cor === v ? 'selected' : ''}>${v}</option>`).join('')}</select>`;
+  }
+  
+  // Tamanho
+  if (dims.includes('TAMANHO') || dims.includes('TAMANHO_EXTRAIDO')) {
+    html += `<select onchange="onFilterChange('tamanho', this.value)"><option value="">Todos os tamanhos</option>${uniqueVals('tamanho').map(v => `<option value="${v}" ${state.activeFilters.tamanho === v ? 'selected' : ''}>${v}</option>`).join('')}</select>`;
+  }
+  
+  // Estampa
+  if (dims.includes('ESTAMPA')) {
+    html += `<select onchange="onFilterChange('estampa', this.value)"><option value="">Todas as estampas</option>${uniqueVals('estampa').map(v => `<option value="${v}" ${state.activeFilters.estampa === v ? 'selected' : ''}>${v}</option>`).join('')}</select>`;
+  }
+  
+  // Status
+  if (dims.includes('STATUS')) {
+    html += `<select onchange="onFilterChange('status', this.value)"><option value="">Todos os status</option>${uniqueVals('status').map(v => `<option value="${v}" ${state.activeFilters.status === v ? 'selected' : ''}>${v}</option>`).join('')}</select>`;
+  }
+  
+  // Custom dims
+  customCols.forEach(h => {
+    const k = `custom::${h}`;
+    html += `<select onchange="onFilterChange('${k}', this.value)"><option value="">Todos — ${escapeHtml(h)}</option>${uniqueVals(k).map(v => `<option value="${escapeAttr(v)}" ${state.activeFilters[k] === v ? 'selected' : ''}>${escapeHtml(v)}</option>`).join('')}</select>`;
+  });
+  
+  html += `<button class="btn btn-warning" onclick="limparFiltros()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 3H2l8 9.5V19l4 2v-8.5z"/></svg>
+    Limpar filtros
+  </button>`;
+  
+  $('filterGrid').innerHTML = html;
+}
 
-function agrupar(dados, chave, porFat = false) {
+function uniqueVals(key) {
+  const set = new Set();
+  // Aplica os outros filtros (exceto este key) e retorna valores únicos
+  state.unified.forEach(r => {
+    const testFilters = { ...state.activeFilters };
+    delete testFilters[key];
+    let ok = true;
+    for (const k in testFilters) {
+      const v = testFilters[k];
+      if (!v) continue;
+      if (k === 'dtIni') { if (!r.data || r.data < new Date(v + 'T00:00:00')) ok = false; }
+      else if (k === 'dtFim') { if (!r.data || r.data > new Date(v + 'T23:59:59')) ok = false; }
+      else if (k.startsWith('custom::')) { if (r[k] !== v) ok = false; }
+      else if (r[k.toLowerCase()] !== v && r[k] !== v) ok = false;
+    }
+    if (ok) {
+      const val = key.startsWith('custom::') ? r[key] : r[key];
+      if (val && val !== '—') set.add(val);
+    }
+  });
+  return [...set].sort();
+}
+
+function onFilterChange(key, value) {
+  if (value) state.activeFilters[key] = value;
+  else delete state.activeFilters[key];
+  aplicarFiltros();
+}
+
+function limparFiltros() {
+  state.activeFilters = {};
+  aplicarFiltros();
+}
+
+// =============================================================================
+// RENDER DO DASHBOARD (tabs dinâmicas)
+// =============================================================================
+function renderTabs() {
+  const dims = state.activeDimensions;
+  const customCols = getCustomCols('pedidos');
+  const tabs = [];
+  
+  tabs.push({ id: 'tab-resumo', label: 'Visão geral', icon: 'chart' });
+  if (dims.includes('PRODUTO')) tabs.push({ id: 'tab-produtos', label: 'Produtos', icon: 'pkg' });
+  if (dims.includes('ESTAMPA')) tabs.push({ id: 'tab-estampas', label: 'Estampas', icon: 'star' });
+  if (dims.includes('COR') || dims.includes('COR_EXTRAIDA')) tabs.push({ id: 'tab-cores', label: 'Cores', icon: 'palette' });
+  if (dims.includes('TAMANHO') || dims.includes('TAMANHO_EXTRAIDO')) tabs.push({ id: 'tab-tamanhos', label: 'Tamanhos', icon: 'ruler' });
+  if (dims.includes('STATUS')) tabs.push({ id: 'tab-status', label: 'Status', icon: 'flag' });
+  customCols.forEach((h, i) => {
+    tabs.push({ id: `tab-custom-${i}`, label: h, icon: 'layers', customHeader: h });
+  });
+  tabs.push({ id: 'tab-base', label: 'Base de dados', icon: 'db' });
+  if (state.produtos.raw.length) tabs.push({ id: 'tab-audit', label: 'Auditoria', icon: 'alert' });
+  
+  const iconMap = {
+    chart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><path d="M18.4 9L12 15.6 8 11.6 3 16.6"/></svg>',
+    pkg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>',
+    star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2L12 16.8 5.7 21l2.3-7.2-6-4.4h7.6z"/></svg>',
+    palette: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2a10 10 0 0 0 0 20c.26 0 .51-.01.76-.03a1.4 1.4 0 0 0 1.24-1.4v-.5a2.5 2.5 0 0 1 2.5-2.5h1.5a3.5 3.5 0 0 0 3.5-3.5C21 6.5 17 2 12 2z"/></svg>',
+    ruler: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="8" width="20" height="8" rx="1"/><path d="M6 12h.01M10 12h.01M14 12h.01M18 12h.01"/></svg>',
+    flag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>',
+    layers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',
+    db: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/></svg>',
+    alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+  };
+  
+  const html = tabs.map((t, i) => 
+    `<div class="tab ${i === 0 ? 'active' : ''}" data-tab="${t.id}" onclick="switchTab('${t.id}', this)">
+      ${iconMap[t.icon] || ''}
+      ${escapeHtml(t.label)}
+    </div>`
+  ).join('');
+  $('dashTabs').innerHTML = html;
+  
+  // Gera containers de cada tab
+  const content = tabs.map((t, i) => 
+    `<div id="${t.id}" class="tab-content ${i === 0 ? 'active' : ''}">${buildTabHTML(t)}</div>`
+  ).join('');
+  $('dashContent').innerHTML = content;
+}
+
+function switchTab(tabId, el) {
+  document.querySelectorAll('#dashTabs .tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#dashContent .tab-content').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  $(tabId).classList.add('active');
+  renderTabCharts(tabId);
+}
+
+function buildTabHTML(tab) {
+  if (tab.id === 'tab-resumo') {
+    return `
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-label"><span class="kpi-indicator info"></span>Registros</div><div class="kpi-value" id="kpiLinhas">0</div><div class="kpi-caption">Total filtrado</div></div>
+        <div class="kpi"><div class="kpi-label"><span class="kpi-indicator info"></span>Volume</div><div class="kpi-value" id="kpiPecas">0</div><div class="kpi-caption">Quantidade</div></div>
+        <div class="kpi"><div class="kpi-label"><span class="kpi-indicator ok"></span>Faturamento</div><div class="kpi-value" id="kpiFat">R$ 0,00</div><div class="kpi-caption">Total</div></div>
+        <div class="kpi"><div class="kpi-label"><span class="kpi-indicator info"></span>Ticket médio</div><div class="kpi-value" id="kpiTicket">R$ 0,00</div><div class="kpi-caption">Por linha</div></div>
+        <div class="kpi"><div class="kpi-label"><span class="kpi-indicator info"></span>Itens distintos</div><div class="kpi-value" id="kpiMix">0</div><div class="kpi-caption">Mix</div></div>
+      </div>
+      ${state.activeDimensions.includes('DATA') ? `
+      <div class="card-row">
+        <div class="card"><div class="card-header"><h3>Evolução do faturamento</h3></div><canvas id="chartEvolucao"></canvas></div>
+        <div class="card"><div class="card-header"><h3>Top produtos</h3></div><canvas id="chartTopResumo"></canvas></div>
+      </div>` : `
+      <div class="card">
+        <div class="card-header"><h3>Top 10 produtos</h3></div>
+        <canvas id="chartTopResumo"></canvas>
+      </div>`}
+    `;
+  }
+  
+  if (tab.id === 'tab-produtos') return rankingTabHTML('produtos', 'Produtos');
+  if (tab.id === 'tab-estampas') return rankingTabHTML('estampas', 'Estampas');
+  if (tab.id === 'tab-cores') return rankingTabHTML('cores', 'Cores');
+  if (tab.id === 'tab-tamanhos') return rankingTabHTML('tamanhos', 'Tamanhos');
+  if (tab.id === 'tab-status') return rankingTabHTML('status', 'Status operacional');
+  
+  if (tab.id.startsWith('tab-custom-')) {
+    return rankingTabHTML(tab.id, tab.label, tab.customHeader);
+  }
+  
+  if (tab.id === 'tab-base') {
+    return `
+      <div class="card">
+        <div class="card-header">
+          <h3>Base consolidada</h3>
+          <div style="display:flex; gap: var(--s-2);">
+            <button class="btn btn-ghost btn-sm" onclick="renderBaseAnalitica(100)">100 linhas</button>
+            <button class="btn btn-primary btn-sm" onclick="renderBaseAnalitica(99999)">Todas</button>
+          </div>
+        </div>
+        <div class="table-wrap" style="max-height: 600px;"><table id="tblBase"></table></div>
+      </div>
+    `;
+  }
+  
+  if (tab.id === 'tab-audit') {
+    return `
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-label"><span class="kpi-indicator ok"></span>SKU exato</div><div class="kpi-value" id="auditSku">0</div></div>
+        <div class="kpi"><div class="kpi-label"><span class="kpi-indicator ok"></span>Nome exato</div><div class="kpi-value" id="auditNome">0</div></div>
+        <div class="kpi"><div class="kpi-label"><span class="kpi-indicator warn"></span>Busca textual</div><div class="kpi-value" id="auditBusca">0</div></div>
+        <div class="kpi"><div class="kpi-label"><span class="kpi-indicator bad"></span>Sem match</div><div class="kpi-value" id="auditSem">0</div></div>
+      </div>
+      <div class="card-row">
+        <div class="card"><div class="card-header"><h3>Origem do dado</h3></div><canvas id="chartAudit"></canvas></div>
+        <div class="card">
+          <div class="card-header"><h3>Sem correspondência no cadastro</h3></div>
+          <p class="card-caption">Pedidos onde dados foram extraídos só pelo nome.</p>
+          <div class="table-wrap"><table id="tblAudit"></table></div>
+        </div>
+      </div>
+    `;
+  }
+  
+  return '';
+}
+
+function rankingTabHTML(id, label, customHeader) {
+  return `
+    <div class="card-row">
+      <div class="card"><div class="card-header"><h3>Top ${label.toLowerCase()}</h3></div><canvas id="chart-${id}"></canvas></div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Ranking completo</h3>
+          <select class="btn btn-sm" style="padding: 6px 11px; width: auto;" onchange="window['limit-${id}']=parseInt(this.value); renderRanking('${id}', ${customHeader ? `'${escapeAttr(customHeader)}'` : 'null'});">
+            <option value="10">Top 10</option>
+            <option value="20" selected>Top 20</option>
+            <option value="50">Top 50</option>
+            <option value="99999">Todos</option>
+          </select>
+        </div>
+        <div class="table-wrap"><table id="tbl-${id}"></table></div>
+      </div>
+    </div>
+  `;
+}
+
+// =============================================================================
+// AGRUPAMENTO E RENDERIZAÇÃO DE DADOS
+// =============================================================================
+function agrupar(key) {
   const map = new Map();
-  for (let i = 0; i < dados.length; i++) {
-    const d = dados[i];
-    const k = String(d[chave] || 'N/D').trim();
+  state.filtered.forEach(r => {
+    let k;
+    if (key.startsWith('custom::')) k = r[key] || 'N/D';
+    else k = r[key] || 'N/D';
+    k = String(k).trim() || 'N/D';
+    
     let o = map.get(k);
     if (!o) { o = { nome: k, qtd: 0, fat: 0 }; map.set(k, o); }
-    o.qtd += d.quantidade;
-    o.fat += d.valorTotal;
-  }
-  return [...map.values()].sort((a,b) => porFat ? b.fat - a.fat : b.qtd - a.qtd);
+    o.qtd += r.quantidade;
+    o.fat += r.valorTotal;
+  });
+  return [...map.values()].sort((a, b) => b.fat - a.fat);
 }
 
-function agruparData(dados) {
+function agruparData() {
   const map = new Map();
-  for (let i = 0; i < dados.length; i++) {
-    const d = dados[i];
-    const k = fmtData(d.data) || 'S/ Data';
+  state.filtered.forEach(r => {
+    const k = fmtData(r.data) || 'S/ data';
     let o = map.get(k);
-    if (!o) { o = { dataOri: d.data, nome: k, qtd: 0, fat: 0 }; map.set(k, o); }
-    o.qtd += d.quantidade;
-    o.fat += d.valorTotal;
-  }
-  return [...map.values()].sort((a,b) => (a.dataOri || 0) - (b.dataOri || 0));
+    if (!o) { o = { dataOri: r.data, nome: k, qtd: 0, fat: 0 }; map.set(k, o); }
+    o.qtd += r.quantidade;
+    o.fat += r.valorTotal;
+  });
+  return [...map.values()].sort((a, b) => (a.dataOri || 0) - (b.dataOri || 0));
 }
 
 function renderTable(id, cols, dados) {
   const thead = `<tr>${cols.map(c => `<th>${c.label}</th>`).join('')}</tr>`;
-  const tb = [];
+  let body = '';
   if (!dados.length) {
-    tb.push(`<tr><td colspan="${cols.length}" style="text-align:center; padding:24px; color:var(--text-tertiary);">Nenhum registro encontrado</td></tr>`);
+    body = `<tr><td colspan="${cols.length}" style="text-align:center; padding:24px; color:var(--text-tertiary);">Nenhum registro</td></tr>`;
   } else {
-    for (let i = 0; i < dados.length; i++) {
-      const r = dados[i], tds = [];
-      for (let j = 0; j < cols.length; j++) {
-        const c = cols[j];
-        let v = c.fmt ? c.fmt(r[c.key], r) : (r[c.key] || '-');
+    body = dados.map(r => {
+      const tds = cols.map(c => {
+        let v = c.fmt ? c.fmt(r[c.key], r) : (r[c.key] !== undefined && r[c.key] !== null && r[c.key] !== '' ? r[c.key] : '-');
         if (c.tag && v !== '-') v = `<span class="tag ${c.tag(v)}">${v}</span>`;
-        tds.push(`<td>${v}</td>`);
-      }
-      tb.push(`<tr>${tds.join('')}</tr>`);
-    }
+        return `<td>${v}</td>`;
+      }).join('');
+      return `<tr>${tds}</tr>`;
+    }).join('');
   }
-  $(id).innerHTML = `<thead>${thead}</thead><tbody>${tb.join('')}</tbody>`;
+  $(id).innerHTML = `<thead>${thead}</thead><tbody>${body}</tbody>`;
 }
 
 function renderChart(id, tipo, rotulos, valores, label, extra = {}) {
-  if (graficos[id]) { try { graficos[id].destroy(); } catch(e) {} graficos[id] = null; }
-  
-  const ctx = $(id).getContext('2d');
+  if (graficos[id]) { try { graficos[id].destroy(); } catch(e) {} }
+  const el = $(id);
+  if (!el) return;
+  const ctx = el.getContext('2d');
   
   if (tipo === 'line') {
     extra.backgroundColor = ctx.createLinearGradient(0, 0, 0, 300);
@@ -2368,8 +2322,7 @@ function renderChart(id, tipo, rotulos, valores, label, extra = {}) {
     type: tipo,
     data: { labels: rotulos, datasets: [{ label, data: valores, ...extra }] },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
       animation: { duration: 700, easing: 'easeOutQuart' },
       plugins: {
         legend: {
@@ -2387,183 +2340,209 @@ function renderChart(id, tipo, rotulos, valores, label, extra = {}) {
 }
 
 function renderBaseAnalitica(lim) {
-  renderTable('tblBaseUnificada', [
+  const dims = state.activeDimensions;
+  const customCols = getCustomCols('pedidos');
+  
+  const cols = [
     { label: 'Data', key: 'data', fmt: v => fmtData(v) },
     { label: 'Pedido', key: 'pedido' },
     { label: 'SKU', key: 'skuOriginal' },
-    { label: 'Produto', key: 'produtoBase' },
-    { label: 'Estampa', key: 'estampa' },
-    { label: 'Cor', key: 'cor', tag: v => v === 'N/D' ? 'bad' : colorNameMap[v] ? 'good' : 'neutral' },
-    { label: 'Tamanho', key: 'tamanho' },
-    { label: 'Qtd.', key: 'quantidade', fmt: fmtInt },
-    { label: 'Valor total', key: 'valorTotal', fmt: fmtValor },
-    { label: 'Origem', key: 'match', tag: v => v === 'SKU EXATO' || v === 'NOME' ? 'good' : v === 'SEM MATCH' ? 'bad' : 'warn' }
-  ], dbFiltrada.slice(0, lim));
+    { label: 'Produto', key: 'produto' }
+  ];
+  if (dims.includes('ESTAMPA')) cols.push({ label: 'Estampa', key: 'estampa' });
+  cols.push({ label: 'Cor', key: 'cor', tag: v => v === 'N/D' ? 'bad' : colorNameMap[v] ? 'good' : 'neutral' });
+  cols.push({ label: 'Tamanho', key: 'tamanho' });
+  cols.push({ label: 'Qtd', key: 'quantidade', fmt: fmtInt });
+  cols.push({ label: 'Valor', key: 'valorTotal', fmt: fmtValor });
+  if (dims.includes('STATUS')) cols.push({ label: 'Status', key: 'status' });
+  customCols.forEach(h => cols.push({ label: h, key: `custom::${h}` }));
+  if (state.produtos.raw.length) cols.push({ label: 'Origem', key: 'match', tag: v => v === 'SKU EXATO' || v === 'NOME' ? 'good' : v === 'SEM MATCH' ? 'bad' : 'warn' });
+  
+  renderTable('tblBase', cols, state.filtered.slice(0, lim));
 }
 
-function renderizarPainel() {
-  const limit = parseInt($('limiteListas').value) || 20;
-  const rows = dbFiltrada, n = rows.length;
+function renderRanking(id, customHeader) {
+  const limit = window['limit-' + id] || 20;
+  let key;
+  if (customHeader) key = `custom::${customHeader}`;
+  else key = id === 'produtos' ? 'produto' : id === 'estampas' ? 'estampa' : id === 'cores' ? 'cor' : id === 'tamanhos' ? 'tamanho' : 'status';
   
-  let pecas = 0, fat = 0, dSku = 0, dNome = 0, dRegex = 0, dSem = 0;
-  const mixSet = new Set();
+  const ranking = agrupar(key);
+  const withPos = ranking.slice(0, limit).map((r, i) => ({ ...r, pos: i + 1 }));
   
-  for (let i = 0; i < n; i++) {
-    const r = rows[i];
-    pecas += r.quantidade;
-    fat += r.valorTotal;
-    mixSet.add(r.produtoBase);
-    const m = r.match;
-    if (m === 'SKU EXATO') dSku++;
-    else if (m === 'NOME') dNome++;
-    else if (m === 'BUSCA TEXTUAL') dRegex++;
-    else dSem++;
-  }
-  
-  $('kpiLinhas').textContent = fmtInt(n);
-  $('kpiPecas').textContent = fmtInt(pecas);
-  $('kpiFat').textContent = fmtValor(fat);
-  $('kpiTicket').textContent = fmtValor(n ? fat/n : 0);
-  $('kpiMix').textContent = fmtInt(mixSet.size);
-  
-  $('diagSku').textContent = fmtInt(dSku);
-  $('diagNome').textContent = fmtInt(dNome);
-  $('diagRegex').textContent = fmtInt(dRegex);
-  $('diagSem').textContent = fmtInt(dSem);
-  
-  const rankProd = agrupar(rows, 'produtoBase', true);
-  const rankGrupo = agrupar(rows, 'grupo', false);
-  const rankEst = agrupar(rows, 'estampa', false);
-  const rankCor = agrupar(rows, 'cor', false);
-  const rankTam = agrupar(rows, 'tamanho', false);
-  const rankOP = agrupar(rows, 'opStatus', false);
-  const trend = agruparData(rows);
-  
-  renderChart('chartEvolucao', 'line', trend.map(x=>x.nome), trend.map(x=>x.fat), 'Faturamento diário (R$)', {});
-  
-  const gruposTop = rankGrupo.slice(0, 7);
-  renderChart('chartTopProdsVisao', 'polarArea',
-    gruposTop.map(x=>x.nome),
-    gruposTop.map(x=>x.qtd),
-    'Volume',
-    { backgroundColor: gruposTop.map((_,i) => colorPalette[i % colorPalette.length] + 'cc'), borderWidth: 0 });
-  
-  renderChart('chartTopProds', 'bar',
-    rankProd.slice(0,10).map(x=>x.nome),
-    rankProd.slice(0,10).map(x=>x.fat),
-    'Faturamento (R$)',
-    { backgroundColor: '#c8102e', borderRadius: 4, indexAxis: 'y' });
-  
-  const coresTop = rankCor.slice(0,15);
-  renderChart('chartCores', 'doughnut',
-    coresTop.map(x=>x.nome),
-    coresTop.map(x=>x.qtd),
-    'Volume',
-    { backgroundColor: coresTop.map(x => getChartColor(x.nome)), borderWidth: 2, borderColor: '#0a1228', cutout: '68%' });
-  
-  renderChart('chartTamanhos', 'bar',
-    rankTam.map(x=>x.nome), rankTam.map(x=>x.qtd),
-    'Quantidade',
-    { backgroundColor: rankTam.map((_,i) => colorPalette[i % colorPalette.length]), borderRadius: 4 });
-  
-  renderChart('chartEstampas', 'bar',
-    rankEst.slice(0,15).map(x=>x.nome),
-    rankEst.slice(0,15).map(x=>x.qtd),
-    'Volume',
-    { backgroundColor: '#1a2a5c', borderRadius: 4, indexAxis: 'y' });
-  
-  renderChart('chartMatch', 'doughnut',
-    ['SKU exato','Nome exato','Associação textual','Sem correspondência'],
-    [dSku, dNome, dRegex, dSem],
-    'Origem',
-    { backgroundColor: ['#10b981','#06b6d4','#f59e0b','#c8102e'], borderWidth: 0, cutout: '65%' });
-  
-  const tblOpts = arr => arr.slice(0, limit).map((r,i) => ({...r, pos: i+1}));
-  const colsRank = [
+  renderTable('tbl-' + id, [
     { label: 'Pos.', key: 'pos' },
     { label: 'Item', key: 'nome' },
     { label: 'Quantidade', key: 'qtd', fmt: fmtInt },
     { label: 'Faturamento', key: 'fat', fmt: fmtValor }
-  ];
+  ], withPos);
   
-  renderTable('tblProdutos', colsRank, tblOpts(rankProd));
-  renderTable('tblEstampas', colsRank, tblOpts(rankEst));
-  renderTable('tblCores', colsRank, tblOpts(rankCor));
-  renderTable('tblTamanhos', colsRank, tblOpts(rankTam));
-  
-  renderTable('tblOP', [
-    { label: 'Status', key: 'nome' },
-    { label: 'Quantidade', key: 'qtd', fmt: fmtInt },
-    { label: 'Faturamento', key: 'fat', fmt: fmtValor }
-  ], tblOpts(rankOP));
-  
-  renderTable('tblDicionario', [
-    { label: 'SKU', key: '_SKU' },
-    { label: 'Descrição', key: '_nomeBase' }
-  ], dbProdutosRaw.slice(0, limit));
-  
-  const arrOrfaos = [];
-  for (let i = 0; i < n; i++) {
-    const r = rows[i];
-    if (r.match === 'BUSCA TEXTUAL' || r.match === 'SEM MATCH') {
-      arrOrfaos.push(r);
-      if (arrOrfaos.length >= limit) break;
+  const top = ranking.slice(0, 10);
+  const isColor = key === 'cor';
+  renderChart('chart-' + id, 'bar',
+    top.map(x => x.nome),
+    top.map(x => x.fat),
+    'Faturamento',
+    {
+      backgroundColor: isColor ? top.map(x => getChartColor(x.nome)) : top.map((_, i) => colorPalette[i % colorPalette.length]),
+      borderRadius: 4,
+      indexAxis: 'y'
     }
-  }
-  renderTable('tblOrfaos', [
-    { label: 'Pedido', key: 'pedido' },
-    { label: 'SKU', key: 'skuOriginal' },
-    { label: 'Descrição original', key: 'nomeOriginal' },
-    { label: 'Cor', key: 'cor' },
-    { label: 'Tamanho', key: 'tamanho' }
-  ], arrOrfaos);
-  
-  renderBaseAnalitica(100);
+  );
 }
 
+function renderTabCharts(tabId) {
+  // Re-renderiza gráficos da aba ativa
+  if (tabId === 'tab-resumo') {
+    renderResumoCharts();
+  } else if (tabId === 'tab-produtos') renderRanking('produtos');
+  else if (tabId === 'tab-estampas') renderRanking('estampas');
+  else if (tabId === 'tab-cores') renderRanking('cores');
+  else if (tabId === 'tab-tamanhos') renderRanking('tamanhos');
+  else if (tabId === 'tab-status') renderRanking('status');
+  else if (tabId === 'tab-base') renderBaseAnalitica(100);
+  else if (tabId === 'tab-audit') renderAudit();
+  else if (tabId.startsWith('tab-custom-')) {
+    const idx = parseInt(tabId.replace('tab-custom-', ''));
+    const h = getCustomCols('pedidos')[idx];
+    if (h) renderRanking(tabId, h);
+  }
+}
+
+function renderResumoCharts() {
+  if (state.activeDimensions.includes('DATA')) {
+    const trend = agruparData();
+    if (trend.length) renderChart('chartEvolucao', 'line', trend.map(x=>x.nome), trend.map(x=>x.fat), 'Faturamento');
+  }
+  const top = agrupar('produto').slice(0, 10);
+  if (top.length) renderChart('chartTopResumo', 'bar', top.map(x=>x.nome), top.map(x=>x.fat), 'Faturamento',
+    { backgroundColor: '#c8102e', borderRadius: 4, indexAxis: 'y' });
+}
+
+function renderAudit() {
+  let dSku=0, dNome=0, dBusca=0, dSem=0;
+  state.filtered.forEach(r => {
+    if (r.match === 'SKU EXATO') dSku++;
+    else if (r.match === 'NOME') dNome++;
+    else if (r.match === 'BUSCA TEXTUAL') dBusca++;
+    else if (r.match === 'SEM MATCH') dSem++;
+  });
+  $('auditSku').textContent = fmtInt(dSku);
+  $('auditNome').textContent = fmtInt(dNome);
+  $('auditBusca').textContent = fmtInt(dBusca);
+  $('auditSem').textContent = fmtInt(dSem);
+  
+  renderChart('chartAudit', 'doughnut',
+    ['SKU exato','Nome exato','Busca textual','Sem match'],
+    [dSku, dNome, dBusca, dSem],
+    'Origem',
+    { backgroundColor: ['#10b981','#06b6d4','#f59e0b','#c8102e'], borderWidth: 0, cutout: '65%' });
+  
+  const orfaos = state.filtered.filter(r => r.match === 'BUSCA TEXTUAL' || r.match === 'SEM MATCH').slice(0, 50);
+  renderTable('tblAudit', [
+    { label: 'Pedido', key: 'pedido' },
+    { label: 'SKU', key: 'skuOriginal' },
+    { label: 'Produto', key: 'produto' },
+    { label: 'Cor', key: 'cor' },
+    { label: 'Origem', key: 'match', tag: v => v === 'SEM MATCH' ? 'bad' : 'warn' }
+  ], orfaos);
+}
+
+function renderDashboard() {
+  // Primeira chamada: monta filtros + tabs
+  if (!$('filterGrid').innerHTML) {
+    renderFilters();
+    renderTabs();
+  } else {
+    // Atualiza só selects de filtro (mantendo UI)
+    renderFilters();
+  }
+  
+  const rows = state.filtered;
+  const n = rows.length;
+  
+  // KPIs
+  let pecas = 0, fat = 0;
+  const mixSet = new Set();
+  rows.forEach(r => { pecas += r.quantidade; fat += r.valorTotal; mixSet.add(r.produto); });
+  
+  if ($('kpiLinhas')) $('kpiLinhas').textContent = fmtInt(n);
+  if ($('kpiPecas')) $('kpiPecas').textContent = fmtInt(pecas);
+  if ($('kpiFat')) $('kpiFat').textContent = fmtValor(fat);
+  if ($('kpiTicket')) $('kpiTicket').textContent = fmtValor(n ? fat/n : 0);
+  if ($('kpiMix')) $('kpiMix').textContent = fmtInt(mixSet.size);
+  
+  // Re-renderiza aba ativa
+  const activeTab = document.querySelector('#dashTabs .tab.active');
+  if (activeTab) renderTabCharts(activeTab.dataset.tab);
+}
+
+// =============================================================================
+// AÇÕES
+// =============================================================================
 function limparTudo() {
-  dbProdutosRaw = []; dbPedidosRaw = []; dbUnificada = []; dbFiltrada = [];
-  headerMapProdutos = null; headerMapPedidos = null;
+  state.produtos = { raw: [], headers: [], sample: [], fileName: '' };
+  state.pedidos = { raw: [], headers: [], sample: [], fileName: '' };
+  state.mapping = { pedidos: {}, produtos: {} };
+  state.unified = [];
+  state.filtered = [];
+  state.activeFilters = {};
+  state.activeDimensions = [];
+  
   for (const k in graficos) { if (graficos[k]) { try { graficos[k].destroy(); } catch(e) {} } }
   graficos = {};
-  $('fileProd').value = ''; $('filePed').value = '';
+  
+  ['fileProd', 'filePed'].forEach(id => $(id).value = '');
+  ['zoneProd', 'zonePed'].forEach(id => $(id).classList.remove('loaded'));
   $('lblProd').textContent = 'Clique ou arraste a planilha (.csv, .xlsx)';
   $('lblProd').style.color = 'var(--text-tertiary)';
   $('lblPed').textContent = 'Clique ou arraste a planilha (.csv, .xlsx)';
   $('lblPed').style.color = 'var(--text-tertiary)';
-  limparApenasFiltros();
-  document.querySelectorAll('.kpi-value').forEach(el => el.textContent = el.textContent.includes('R$') ? 'R$ 0,00' : '0');
-  ['tblProdutos','tblCores','tblTamanhos','tblEstampas','tblOP','tblDicionario','tblBaseUnificada','tblOrfaos'].forEach(id => $(id).innerHTML = '');
-  toast('Dados apagados', 'success');
+  $('tagProd').textContent = 'Opcional'; $('tagProd').className = 'tag-tiny opt';
+  $('tagPed').textContent = 'Obrigatório'; $('tagPed').className = 'tag-tiny req';
+  
+  $('filterGrid').innerHTML = '';
+  $('dashTabs').innerHTML = '';
+  $('dashContent').innerHTML = '';
+  
+  updateUploadButtons();
+  setStep(1);
+  toast('Tudo apagado', 'success');
 }
 
 function exportarCSV() {
-  if (!dbFiltrada.length) {
-    toast('Não há dados para exportar. Processe uma planilha primeiro.', 'warn');
-    return;
-  }
-  const rows = dbFiltrada.map(r => ({
-    Data: fmtData(r.data), Mes_Ano: r.mesAno, Pedido: r.pedido,
-    SKU: r.skuMestre, SKU_Original: r.skuOriginal,
-    Produto: r.produtoBase, Estampa: r.estampa, Cor: r.cor, Tamanho: r.tamanho,
-    Quantidade: r.quantidade, Valor_Unitario: r.valorUnitario, Valor_Total: r.valorTotal,
-    Status: r.opStatus, Origem: r.match
-  }));
+  if (!state.filtered.length) { toast('Não há dados para exportar', 'warn'); return; }
+  const rows = state.filtered.map(r => {
+    const base = {
+      Data: fmtData(r.data), Mes_Ano: r.mesAno,
+      Pedido: r.pedido, SKU: r.skuOriginal,
+      Produto: r.produto, Estampa: r.estampa,
+      Cor: r.cor, Tamanho: r.tamanho, Status: r.status,
+      Quantidade: r.quantidade,
+      Valor_Unitario: r.valorUnitario, Valor_Total: r.valorTotal
+    };
+    getCustomCols('pedidos').forEach(h => {
+      base[h.replace(/[^\w]/g, '_')] = r[`custom::${h}`];
+    });
+    if (state.produtos.raw.length) base.Origem = r.match;
+    return base;
+  });
   const csv = Papa.unparse(rows, { delimiter: ';' });
   const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = "resute_vendas.csv";
+  link.download = "resute_relatorio.csv";
   link.click();
   toast('CSV exportado', 'success');
 }
 
-// Atalho: Ctrl/Cmd+K abre topbar-search (visual apenas)
+// Atalho
 document.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
     e.preventDefault();
-    document.querySelector('.topbar-search').style.borderColor = 'var(--brand-red)';
-    setTimeout(() => document.querySelector('.topbar-search').style.borderColor = '', 800);
+    const s = document.querySelector('.topbar-search');
+    s.style.borderColor = 'var(--brand-red)';
+    setTimeout(() => s.style.borderColor = '', 800);
   }
 });
 </script>
