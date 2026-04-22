@@ -455,7 +455,7 @@
       border: 1px solid var(--border-subtle);
       border-radius: var(--r-lg);
       margin-bottom: var(--s-5);
-      overflow: hidden;
+      /* SEM overflow:hidden — ele cortava o scroll do grid */
     }
     
     .mapping-header {
@@ -523,7 +523,8 @@
       overflow-y: auto;
       background: var(--surface-0);
       position: relative;
-      /* Scrollbar mais visível que o padrão do body */
+      width: 100%;       /* NÃO expande junto com o grid */
+      min-width: 0;      /* permite encolher em flex context */
       scrollbar-width: auto;
     }
     .sheet-container::-webkit-scrollbar { width: 14px; height: 14px; }
@@ -547,6 +548,8 @@
       height: 14px;
       background: var(--surface-1);
       border-bottom: 1px solid var(--border-subtle);
+      width: 100%;
+      min-width: 0;
     }
     .sheet-topscroll-inner {
       height: 1px;
@@ -563,6 +566,8 @@
     /* Wrapper que mostra sombras indicadoras "tem mais à direita / à esquerda" */
     .sheet-viewport {
       position: relative;
+      overflow: hidden; /* contém as sombras e botões nav flutuantes */
+      min-width: 0; /* permite encolher dentro de flex/grid context */
     }
     .sheet-viewport::before,
     .sheet-viewport::after {
@@ -906,27 +911,28 @@
     .mapping-status-num.ok { color: var(--success); }
     
     /* ============================================================
-       🎯 STICKY ACTION BAR — sempre visível no step de mapeamento
+       🎯 FIXED ACTION BAR — sempre visível no rodapé da tela
        ============================================================ */
     .sticky-actions {
-      position: sticky;
+      position: fixed;
       bottom: 0;
-      left: 0;
+      left: var(--sidebar-w);
       right: 0;
-      z-index: 30;
-      background: rgba(10, 18, 40, 0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      z-index: 45; /* acima do conteúdo, abaixo do sidebar/topbar */
+      background: rgba(10, 18, 40, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-top: 1px solid var(--border-default);
-      border-radius: var(--r-lg) var(--r-lg) 0 0;
-      padding: var(--s-4) var(--s-5);
-      margin-top: var(--s-5);
-      display: flex;
+      padding: var(--s-4) var(--s-8);
+      display: none; /* controlado via JS */
       align-items: center;
       justify-content: space-between;
       gap: var(--s-4);
       flex-wrap: wrap;
-      box-shadow: 0 -8px 24px rgba(0,0,0,0.35);
+      box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
+    }
+    .sticky-actions.visible {
+      display: flex;
     }
     .sticky-actions-info {
       display: flex;
@@ -1286,10 +1292,11 @@
       /* Footer do mapping + sticky actions */
       .mapping-footer { padding: var(--s-3) var(--s-4); font-size: 11px; }
       .sticky-actions {
+        left: var(--sidebar-w-collapsed); /* sidebar colapsada */
+        padding: var(--s-3) var(--s-4);
         flex-direction: column;
         align-items: stretch;
         gap: var(--s-3);
-        padding: var(--s-3) var(--s-4);
       }
       .sticky-actions-info { text-align: center; }
       .sticky-actions-right { 
@@ -1339,9 +1346,10 @@
     
     /* Mobile pequeno */
     @media (max-width: 420px) {
-      .step-label { display: none; } /* só mostra círculos */
+      .step-label { display: none; }
       .step-indicator { gap: var(--s-1); }
       .step-bar { width: 18px; }
+      .sticky-actions { left: 0; } /* mobile sem sidebar */
       .sticky-actions-right { flex-direction: column; }
       .sticky-actions-right .btn { width: 100%; }
       .filter-grid { grid-template-columns: 1fr; }
@@ -1702,25 +1710,27 @@
           </div>
         </div>
         
-        <div class="sticky-actions">
-          <div class="sticky-actions-info">
-            <div class="sticky-actions-title" id="stickyTitle">Aguardando mapeamento</div>
-            <div class="sticky-actions-sub" id="stickySub">Marque ao menos uma coluna para continuar</div>
-          </div>
-          <div class="sticky-actions-right">
-            <button class="btn btn-ghost" onclick="goToUpload()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-              Voltar
-            </button>
-            <button class="btn" onclick="autoMapping()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/><circle cx="12" cy="12" r="10"/></svg>
-              Sugestão automática
-            </button>
-            <button class="btn btn-primary btn-lg" id="btnConfirmMapping" onclick="confirmarMapeamento()">
-              Finalizar parametrização
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-            </button>
-          </div>
+      </div>
+      
+      <!-- FIXED ACTION BAR — vive no nível do view-app, controlada via JS -->
+      <div class="sticky-actions" id="fixedActionBar">
+        <div class="sticky-actions-info">
+          <div class="sticky-actions-title" id="stickyTitle">Aguardando mapeamento</div>
+          <div class="sticky-actions-sub" id="stickySub">Marque ao menos uma coluna para continuar</div>
+        </div>
+        <div class="sticky-actions-right">
+          <button class="btn btn-ghost" onclick="goToUpload()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Voltar
+          </button>
+          <button class="btn" onclick="autoMapping()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/><circle cx="12" cy="12" r="10"/></svg>
+            Sugestão automática
+          </button>
+          <button class="btn btn-primary btn-lg" id="btnConfirmMapping" onclick="confirmarMapeamento()">
+            Finalizar parametrização
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
         </div>
       </div>
       
@@ -2024,6 +2034,18 @@ function setStep(stepNum) {
   ['step-upload', 'step-mapping', 'step-dashboard'].forEach((id, i) => {
     $(id).style.display = (i + 1 === stepNum) ? 'block' : 'none';
   });
+  
+  // Barra fixa: só aparece no step 2 (mapeamento)
+  const bar = $('fixedActionBar');
+  if (bar) {
+    bar.classList.toggle('visible', stepNum === 2);
+  }
+  
+  // Padding inferior no conteúdo para não ficar atrás da barra fixa
+  const content = document.querySelector('.content');
+  if (content) {
+    content.style.paddingBottom = (stepNum === 2) ? '100px' : '';
+  }
 }
 
 function goToUpload() { setStep(1); }
