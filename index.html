@@ -206,13 +206,18 @@
        ============================================================ */
     .main {
       margin-left: var(--sidebar-w); flex: 1; min-height: 100vh;
+      min-width: 0; /* CRÍTICO: permite que o conteúdo com grandes grids role horizontalmente */
       display: flex; flex-direction: column;
       position: relative; z-index: 1;
     }
-    .content { padding: var(--s-8); flex: 1; }
+    .content { 
+      padding: var(--s-8); flex: 1; 
+      min-width: 0; /* CRÍTICO: cadeia de contenção para scroll do grid */
+    }
     
-    .page-view { display: none; animation: pageEnter var(--dur-slow) var(--ease-out); }
+    .page-view { display: none; animation: pageEnter var(--dur-slow) var(--ease-out); min-width: 0; }
     .page-view.active { display: block; }
+    .step-content { min-width: 0; }
     @keyframes pageEnter {
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
@@ -516,7 +521,141 @@
       letter-spacing: 0.05em;
     }
     
-    /* Grid excel-like */
+    /* ============================================================
+       SETTINGS PANEL + TOGGLE SWITCH
+       ============================================================ */
+    .settings-panel {
+      background: var(--surface-1);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      margin-top: var(--s-5);
+      overflow: hidden;
+    }
+    .settings-panel-header {
+      display: flex;
+      align-items: center;
+      gap: var(--s-2);
+      padding: var(--s-3) var(--s-5);
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+    }
+    .settings-panel-header svg { color: var(--brand-red-2); }
+    .settings-panel-items {
+      padding: var(--s-2) var(--s-5);
+    }
+    .setting-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--s-3) 0;
+      cursor: pointer;
+      user-select: none;
+      gap: var(--s-4);
+    }
+    .setting-toggle + .setting-toggle {
+      border-top: 1px solid var(--border-subtle);
+    }
+    .setting-toggle-info { flex: 1; min-width: 0; }
+    .setting-toggle-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .setting-toggle-desc {
+      font-size: 11.5px;
+      color: var(--text-tertiary);
+      line-height: 1.4;
+    }
+    
+    /* Switch (toggle liga/desliga) */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .switch-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--surface-4);
+      border: 1px solid var(--border-default);
+      transition: all var(--dur-base) var(--ease-out);
+      border-radius: 24px;
+    }
+    .switch-slider::before {
+      position: absolute;
+      content: "";
+      height: 16px; width: 16px;
+      left: 3px; bottom: 3px;
+      background: #fff;
+      transition: all var(--dur-base) var(--ease-spring);
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+    .switch input:checked + .switch-slider {
+      background: var(--brand-red);
+      border-color: var(--brand-red);
+    }
+    .switch input:checked + .switch-slider::before {
+      transform: translateX(20px);
+    }
+    .switch input:focus + .switch-slider {
+      box-shadow: 0 0 0 3px var(--brand-red-soft);
+    }
+    
+    /* Empty state de tab desativada */
+    .tab-disabled-state {
+      padding: var(--s-16) var(--s-6);
+      text-align: center;
+      color: var(--text-tertiary);
+      background: var(--surface-1);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+    }
+    .tab-disabled-state svg {
+      width: 48px; height: 48px; stroke-width: 1.5;
+      color: var(--text-disabled);
+      margin-bottom: var(--s-4);
+    }
+    .tab-disabled-state h3 {
+      font-size: 15px; color: var(--text-primary);
+      margin-bottom: var(--s-2);
+    }
+    .tab-disabled-state p {
+      font-size: 13px;
+      max-width: 420px;
+      margin: 0 auto var(--s-5);
+      line-height: 1.6;
+    }
+    
+    /* Intro das abas de ranking */
+    .ranking-intro {
+      background: linear-gradient(135deg, var(--surface-1), var(--surface-2));
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid var(--brand-red);
+      border-radius: var(--r-md);
+      padding: var(--s-3) var(--s-4);
+      margin-bottom: var(--s-4);
+    }
+    .ranking-intro p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+    
     .sheet-container {
       max-height: 480px;
       overflow-x: auto;
@@ -1546,6 +1685,26 @@
           </div>
         </div>
         
+        <!-- Painel de configurações globais -->
+        <div class="settings-panel">
+          <div class="settings-panel-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Configurações do sistema</span>
+          </div>
+          <div class="settings-panel-items">
+            <label class="setting-toggle">
+              <div class="setting-toggle-info">
+                <div class="setting-toggle-title">Análise de Status / Situação</div>
+                <div class="setting-toggle-desc">Habilitar reconhecimento e relatórios por status do pedido (em desenvolvimento)</div>
+              </div>
+              <div class="switch">
+                <input type="checkbox" id="toggleStatus" onchange="toggleStatusFeature(this.checked)">
+                <span class="switch-slider"></span>
+              </div>
+            </label>
+          </div>
+        </div>
+        
         <div style="display:flex; justify-content:flex-end; gap: var(--s-3); margin-top: var(--s-5);">
           <button class="btn btn-ghost" onclick="limparTudo()">Apagar tudo</button>
           <button class="btn btn-primary" id="btnGoMapping" onclick="goToMapping()" disabled>
@@ -1863,6 +2022,20 @@ function toast(msg, type = 'info', duration = 3500) {
   }, duration);
 }
 
+// Toggle global do recurso Status
+function toggleStatusFeature(enabled) {
+  state.statusEnabled = enabled;
+  // Se tinha alguma coluna mapeada como STATUS, remove o mapeamento
+  if (!enabled) {
+    ['pedidos','produtos'].forEach(kind => {
+      for (const h in state.mapping[kind]) {
+        if (state.mapping[kind][h] === 'STATUS') delete state.mapping[kind][h];
+      }
+    });
+  }
+  toast(enabled ? 'Análise de Status ativada' : 'Análise de Status desativada', 'info', 2500);
+}
+
 // =============================================================================
 // 🌟 SISTEMA UNIVERSAL DE MAPEAMENTO DE COLUNAS
 // =============================================================================
@@ -1887,28 +2060,24 @@ const ROLES = {
 const state = {
   produtos: { raw: [], headers: [], sample: [], fileName: '' },
   pedidos: { raw: [], headers: [], sample: [], fileName: '' },
-  // Mapeamento: headerName → role
   mapping: {
     pedidos: {},
     produtos: {}
   },
-  // Colunas explicitamente ignoradas pelo botão "Ignorar restante"
   explicitIgnored: {
     pedidos: new Set(),
     produtos: new Set()
   },
-  // Modo de visualização do grid: 'all' ou 'mapped-only'
   gridView: {
     pedidos: 'all',
     produtos: 'all'
   },
-  // Nome customizado de cada coluna CUSTOM (header → label visível)
   customNames: {},
-  // Depois de processar, os registros unificados
   unified: [],
   filtered: [],
-  activeDimensions: [], // lista de roles presentes (usado para montar tabs)
-  activeFilters: {} // map role → valor selecionado
+  activeDimensions: [],
+  activeFilters: {},
+  statusEnabled: false // Toggle global para o recurso de Status (desabilitado por padrão)
 };
 
 let graficos = {};
@@ -2112,7 +2281,11 @@ function renderSheetGrid(kind, containerId) {
       isIgnoredExplicit ? 'col-ignored' : ''
     ].filter(Boolean).join(' ');
     
-    const roleOptions = Object.keys(ROLES).map(r => 
+    const roleOptions = Object.keys(ROLES).filter(r => {
+      // Esconde STATUS do dropdown quando o toggle global está OFF
+      if (r === 'STATUS' && !state.statusEnabled) return false;
+      return true;
+    }).map(r => 
       `<option value="${r}" ${r === currentRole ? 'selected' : ''}>${ROLES[r].label}</option>`
     ).join('');
     
@@ -2462,27 +2635,60 @@ function escapeAttr(s) { return escapeHtml(s); }
 const HEADER_HINTS = {
   DATA: ['DATA', 'DT', 'CRIADOEM', 'CREATEDAT', 'DATAPEDIDO', 'DATADOPEDIDO', 'DATAVENDA', 
          'DATAEMISSAO', 'EMISSAO', 'PEDIDOEM', 'ORDERDATE', 'DATE', 'DATACRIACAO', 
-         'DATAREGISTRO', 'DATACOMPRA', 'DATAFATURAMENTO', 'DATACONFIRMACAO'],
+         'DATAREGISTRO', 'DATACOMPRA', 'DATAFATURAMENTO', 'DATACONFIRMACAO',
+         'DTPEDIDO', 'DTVENDA', 'DTEMISSAO', 'DTCRIACAO', 'DATAHORA', 'TIMESTAMP',
+         'DATACADASTRO', 'DATAINCLUSAO', 'CREATED', 'UPDATEDAT', 'INSERTDATE',
+         'DATAAPROVACAO', 'DATAENTREGA', 'DATAFECHAMENTO', 'DATAAUTORIZACAO'],
   PEDIDO: ['NUMEROPEDIDO', 'PEDIDO', 'NUMPEDIDO', 'NPEDIDO', 'NROPEDIDO', 'NUMERODOPEDIDO',
            'ORDER', 'ORDERID', 'ORDERNUMBER', 'IDPEDIDO', 'CODPEDIDO', 'CODIGOPEDIDO',
-           'NF', 'NOTAFISCAL', 'NUMERONOTA', 'INVOICE'],
+           'NF', 'NOTAFISCAL', 'NUMERONOTA', 'INVOICE',
+           'PEDIDONUMERO', 'NUMERO', 'NUMVENDA', 'VENDAID', 'IDVENDA', 'CODVENDA',
+           'NFNUMERO', 'NNF', 'NROVENDA', 'NROINVOICE', 'ORDERCODE', 'PONUMBER',
+           'PO', 'VENDA', 'OPNUMERO', 'OP', 'NROPO', 'CODOP'],
   SKU: ['SKU', 'CODIGO', 'COD', 'CODPRODUTO', 'CODIGODOPRODUTO', 'REFERENCIA', 'REF', 
-        'IDPRODUTO', 'PRODUCTID', 'PRODUCTCODE', 'EAN', 'GTIN', 'CODBARRA', 'CODIGOBARRA'],
+        'IDPRODUTO', 'PRODUCTID', 'PRODUCTCODE', 'EAN', 'GTIN', 'CODBARRA', 'CODIGOBARRA',
+        'REFERENCE', 'CODERRO', 'CODINTERNO', 'CODIGOINTERNO', 'CODITEM', 'CODIGOITEM',
+        'ITEMID', 'ITEMCODE', 'PARTNUMBER', 'CODEAN', 'BARCODE', 'PROD', 'PRODCOD',
+        'CODPROD', 'CODREF', 'SKUPRODUTO', 'CODFABRICA', 'MODELO'],
   PRODUTO: ['PRODUTO', 'NOME', 'NOMEPRODUTO', 'DESCRICAO', 'DESCRICAODOPRODUTO', 
             'DESCRICAOCOMPLEMENTAR', 'TITULO', 'ITEM', 'NOMEDOPRODUTO', 'PRODUCT', 
-            'PRODUCTNAME', 'TITLE', 'DESCRICAOITEM'],
+            'PRODUCTNAME', 'TITLE', 'DESCRICAOITEM', 'PRODNOME', 'NOMEITEM',
+            'DESCPROD', 'DESCRICAOPRODUTO', 'DESC', 'DESCRIPTION', 'NOMECOMERCIAL',
+            'DENOMINACAO', 'ARTIGO', 'MERCADORIA', 'MATERIAL', 'DESCITEM'],
   QTD: ['QUANTIDADE', 'QTD', 'QTDE', 'QT', 'QUANT', 'QTDVENDIDA', 'QTDITEM', 'QUANTITY', 
-        'QTY', 'VOLUME', 'UNIDADES', 'QTDPRODUTO'],
+        'QTY', 'VOLUME', 'UNIDADES', 'QTDPRODUTO', 'QTDVENDA', 'QTDEPEDIDO', 'QTDEVENDIDA',
+        'VOLPEDIDO', 'UNIDADESVENDIDAS', 'QTDITENS', 'QUANTVENDIDA', 'QUANTIDADEVENDIDA',
+        'PECAS', 'NUNIDADES', 'NRITENS'],
   VALOR: ['VALORTOTAL', 'VLTOTAL', 'TOTAL', 'FATURAMENTO', 'TOTALPEDIDO', 'VALORBRUTO', 
           'VALORLIQUIDO', 'VALORVENDA', 'SUBTOTAL', 'VALOR', 'VL', 'PRECO', 'PRECOTOTAL',
-          'VALORFINAL', 'TOTALGERAL', 'VALORPAGO', 'PRICE', 'TOTALPRICE', 'AMOUNT'],
-  COR: ['COR', 'CORES', 'COLOR', 'COLORS', 'CORPRODUTO', 'CORDOPRODUTO'],
-  TAMANHO: ['TAMANHO', 'TAM', 'SIZE', 'TAMANHOPRODUTO', 'MEDIDA', 'NUMERACAO'],
+          'VALORFINAL', 'TOTALGERAL', 'VALORPAGO', 'PRICE', 'TOTALPRICE', 'AMOUNT',
+          'VLVENDA', 'VENDATOTAL', 'VALORVENDIDO', 'TOTALVENDIDO', 'PRECOVENDA',
+          'PRECOUNITARIO', 'VALORUNITARIO', 'VLUNIT', 'VUNIT', 'TOTALVLR', 'MONTANTE',
+          'RECEITA', 'FATURADO', 'TOTALFATURADO', 'VLRBRUTO', 'VLRLIQUIDO', 'REVENUE',
+          'NETREVENUE', 'GROSSREVENUE', 'SALES', 'VALORPEDIDO', 'VLPEDIDO'],
+  COR: ['COR', 'CORES', 'COLOR', 'COLORS', 'CORPRODUTO', 'CORDOPRODUTO', 'CORITEM',
+        'CORPRINCIPAL', 'PRODUTOCOR', 'NOMECOR', 'CORES'],
+  TAMANHO: ['TAMANHO', 'TAM', 'SIZE', 'TAMANHOPRODUTO', 'MEDIDA', 'NUMERACAO',
+            'TAMANHOITEM', 'TAMPRODUTO', 'TAMANHOS', 'TAMSELECIONADO', 'SIZES'],
   ESTAMPA: ['ESTAMPA', 'VARIANTE', 'VARIATION', 'MODELO', 'ESTILO', 'PRINT', 'ARTE',
-            'DESENHO'],
+            'DESENHO', 'ESTAMPAS', 'TEMA', 'COLECAO', 'SERIE'],
   STATUS: ['STATUS', 'SITUACAO', 'FASE', 'STATUSDOPEDIDO', 'STATUSPEDIDO', 'ETAPA', 
-           'OP', 'ESTADO', 'STATUSENTREGA', 'SITUACAOPEDIDO']
+           'OP', 'ESTADO', 'STATUSENTREGA', 'SITUACAOPEDIDO', 'STATUSVENDA',
+           'SITUACAOVENDA', 'STAGE', 'STATE', 'CONDITION', 'STATUSATUAL',
+           'ANDAMENTO', 'PROGRESSO', 'STATUSOPERACIONAL']
 };
+
+// Fuzzy match: retorna true se header contém qualquer hint como substring
+function fuzzyMatch(headerNorm, hints) {
+  for (const hint of hints) {
+    // Match exato
+    if (headerNorm === hint) return { score: 100, exact: true };
+    // Substring match (header contém hint OU hint contém header)
+    if (hint.length >= 3 && headerNorm.includes(hint)) return { score: 60, exact: false };
+    if (headerNorm.length >= 3 && hint.includes(headerNorm)) return { score: 55, exact: false };
+  }
+  return { score: 0, exact: false };
+}
 
 // Detecta o tipo de dado de uma coluna analisando as células
 function analyzeColumnContent(values) {
@@ -2490,16 +2696,23 @@ function analyzeColumnContent(values) {
   let sizeValueCount = 0, colorValueCount = 0;
   let intSum = 0, intCount = 0, floatCount = 0;
   let avgLength = 0, distinctValues = new Set();
+  let textWithSpaces = 0; // indica descrições longas
   
   // Padrões para detecção
-  const DATE_REGEX = /(\d{2}\/\d{2}\/\d{4})|(\d{4}-\d{2}-\d{2})|(\d{2}-\d{2}-\d{4})/;
-  const MONETARY_REGEX = /R\$|\$\s?[\d.,]+|^\s*[\d.,]+\s*$/;
-  const SKU_LIKE_REGEX = /^[A-Z0-9]{2,}[-_.\s]?[A-Z0-9]+/i;
+  const DATE_REGEX = /(\d{1,2}\/\d{1,2}\/\d{2,4})|(\d{4}-\d{1,2}-\d{1,2})|(\d{1,2}-\d{1,2}-\d{2,4})|(\d{1,2}\.\d{1,2}\.\d{2,4})/;
+  const MONETARY_REGEX = /R\$|\$\s?[\d.,]+|^\s*[\d]{1,3}(?:[.,]\d{3})*[.,]\d{2}\s*$/;
+  const SKU_LIKE_REGEX = /^[A-Z0-9][A-Z0-9\-_.]{2,}[A-Z0-9]$/i;
+  const EAN_REGEX = /^\d{8,14}$/;
   const SIZE_VALUES = new Set(['PP','P','M','G','GG','XG','XGG','EXG','U','UN','UNICO','UNICA','ÚNICO','ÚNICA',
-                                'TM','34','36','38','40','42','44','46','48','50']);
+                                'TM','34','36','38','40','42','44','46','48','50','52','54','56']);
   const COLOR_KEYWORDS = new Set(Object.keys(colorNameMap));
+  const STATUS_KEYWORDS = new Set(['APROVADO','PENDENTE','CANCELADO','ENTREGUE','ENVIADO','FATURADO',
+                                    'EM PROCESSAMENTO','PROCESSANDO','FINALIZADO','ABERTO','FECHADO',
+                                    'PAGO','AGUARDANDO','CONCLUIDO','ATIVO','INATIVO','RECEBIDO',
+                                    'SEPARACAO','PRODUCAO','EXPEDICAO','PREPARANDO','ATRASADO']);
   
-  const sample = values.slice(0, 100); // analisa até 100 células
+  const sample = values.slice(0, 100);
+  let statusLikeCount = 0;
   
   sample.forEach(v => {
     if (v === null || v === undefined || v === '') return;
@@ -2511,18 +2724,11 @@ function analyzeColumnContent(values) {
     avgLength += s.length;
     
     if (s.length <= 10) shortText++;
+    if (s.includes(' ')) textWithSpaces++;
     
-    // Data? (formatos comuns ou serial Excel)
-    if (DATE_REGEX.test(s) || (v instanceof Date) || (typeof v === 'number' && v > 20000 && v < 60000)) {
-      dateCount++;
-    }
+    if (DATE_REGEX.test(s) || (v instanceof Date) || (typeof v === 'number' && v > 20000 && v < 60000)) dateCount++;
+    if (MONETARY_REGEX.test(s)) monetaryCount++;
     
-    // Número monetário?
-    if (MONETARY_REGEX.test(s)) {
-      monetaryCount++;
-    }
-    
-    // Número puro?
     const num = parseFloat(String(v).replace(/\./g,'').replace(',','.'));
     if (!isNaN(num) && isFinite(num)) {
       numCount++;
@@ -2530,16 +2736,13 @@ function analyzeColumnContent(values) {
       else floatCount++;
     }
     
-    // SKU-like? (mistura letra+número+separador)
-    if (SKU_LIKE_REGEX.test(s) && s.length <= 40 && /[A-Z]/i.test(s) && /\d/.test(s)) {
-      skuLikeCount++;
-    }
+    // SKU-like: alfanumérico, tem letra OU só dígitos em quantidade EAN
+    if (SKU_LIKE_REGEX.test(s) && /[A-Z]/i.test(s) && /\d/.test(s) && s.length <= 40) skuLikeCount++;
+    else if (EAN_REGEX.test(s)) skuLikeCount++;
     
-    // Tamanho?
     if (SIZE_VALUES.has(upper)) sizeValueCount++;
-    
-    // Cor?
     if (COLOR_KEYWORDS.has(upper)) colorValueCount++;
+    if (STATUS_KEYWORDS.has(upper)) statusLikeCount++;
   });
   
   avgLength = nonEmpty > 0 ? avgLength / nonEmpty : 0;
@@ -2551,9 +2754,12 @@ function analyzeColumnContent(values) {
     monetaryRatio: nonEmpty > 0 ? monetaryCount / nonEmpty : 0,
     numRatio: nonEmpty > 0 ? numCount / nonEmpty : 0,
     intRatio: nonEmpty > 0 ? intCount / nonEmpty : 0,
+    floatRatio: nonEmpty > 0 ? floatCount / nonEmpty : 0,
     skuRatio: nonEmpty > 0 ? skuLikeCount / nonEmpty : 0,
     sizeRatio: nonEmpty > 0 ? sizeValueCount / nonEmpty : 0,
     colorRatio: nonEmpty > 0 ? colorValueCount / nonEmpty : 0,
+    statusRatio: nonEmpty > 0 ? statusLikeCount / nonEmpty : 0,
+    textWithSpacesRatio: nonEmpty > 0 ? textWithSpaces / nonEmpty : 0,
     avgLength,
     intAvg,
     distinctCount: distinctValues.size,
@@ -2561,67 +2767,66 @@ function analyzeColumnContent(values) {
   };
 }
 
-// Score de um header vs um papel (0 a 100)
+// Score de um header vs um papel (0 a 200)
 function scoreRole(headerNormalized, contentAnalysis, role) {
   let score = 0;
   const hints = HEADER_HINTS[role] || [];
   
-  // 1. Match exato do nome do header (peso forte)
-  if (hints.includes(headerNormalized)) score += 70;
-  // 2. Match parcial (contém uma das palavras)
-  else {
-    for (const hint of hints) {
-      if (headerNormalized.includes(hint) || hint.includes(headerNormalized)) {
-        score += 40;
-        break;
-      }
-    }
-  }
+  // 1. Match do nome do header (peso forte)
+  const match = fuzzyMatch(headerNormalized, hints);
+  score += match.score;
   
-  // 3. Análise de conteúdo (peso adaptativo conforme o papel)
+  // 2. Análise de conteúdo
   const a = contentAnalysis;
   if (!a || a.nonEmpty === 0) return score;
   
   switch(role) {
     case 'DATA':
-      if (a.dateRatio > 0.8) score += 50;
-      else if (a.dateRatio > 0.5) score += 25;
+      if (a.dateRatio > 0.8) score += 80;
+      else if (a.dateRatio > 0.5) score += 40;
+      else if (a.dateRatio > 0.2) score += 15;
       break;
     case 'VALOR':
-      if (a.monetaryRatio > 0.5) score += 35;
-      if (a.floatRatio > 0.6) score += 15;
+      if (a.monetaryRatio > 0.5) score += 50;
+      if (a.floatRatio > 0.6) score += 25;
       if (a.numRatio > 0.9 && a.intAvg > 10) score += 20;
+      if (a.avgLength > 3 && a.avgLength < 20 && a.numRatio > 0.8) score += 15;
       break;
     case 'QTD':
-      if (a.intRatio > 0.9 && a.intAvg < 50 && a.intAvg > 0) score += 35;
+      if (a.intRatio > 0.9 && a.intAvg < 50 && a.intAvg > 0) score += 45;
+      if (a.intRatio > 0.9 && a.intAvg < 1000) score += 15;
       if (a.distinctCount < 20) score += 10;
       break;
     case 'SKU':
-      if (a.skuRatio > 0.7) score += 40;
-      if (a.distinctRatio > 0.7) score += 15; // SKUs são variados
+      if (a.skuRatio > 0.7) score += 55;
+      else if (a.skuRatio > 0.4) score += 25;
+      if (a.distinctRatio > 0.7) score += 20;
       break;
     case 'PEDIDO':
-      if (a.intRatio > 0.8 && a.intAvg > 100) score += 25;
-      if (a.distinctRatio > 0.8) score += 15; // pedidos são variados
+      if (a.intRatio > 0.8 && a.intAvg > 100) score += 30;
+      if (a.distinctRatio > 0.5) score += 15;
       break;
     case 'PRODUTO':
-      if (a.avgLength > 10 && a.avgLength < 100 && a.numRatio < 0.3) score += 25;
+      if (a.avgLength > 10 && a.avgLength < 120 && a.numRatio < 0.3) score += 35;
+      if (a.textWithSpacesRatio > 0.6) score += 15;
       break;
     case 'COR':
-      if (a.colorRatio > 0.5) score += 60;
-      else if (a.colorRatio > 0.2) score += 30;
+      if (a.colorRatio > 0.5) score += 80;
+      else if (a.colorRatio > 0.2) score += 40;
       if (a.distinctCount < 30 && a.avgLength < 20) score += 10;
       break;
     case 'TAMANHO':
-      if (a.sizeRatio > 0.5) score += 60;
-      else if (a.sizeRatio > 0.2) score += 30;
-      if (a.distinctCount < 15) score += 10;
+      if (a.sizeRatio > 0.5) score += 80;
+      else if (a.sizeRatio > 0.2) score += 40;
+      if (a.distinctCount < 15) score += 15;
       break;
     case 'STATUS':
-      if (a.distinctCount <= 10 && a.avgLength < 25 && a.avgLength > 3) score += 20;
+      if (a.statusRatio > 0.5) score += 70;
+      else if (a.statusRatio > 0.2) score += 35;
+      if (a.distinctCount <= 10 && a.avgLength < 25 && a.avgLength > 3 && a.numRatio < 0.3) score += 25;
       break;
     case 'ESTAMPA':
-      if (a.avgLength > 5 && a.avgLength < 50 && a.distinctRatio > 0.3) score += 15;
+      if (a.avgLength > 5 && a.avgLength < 50 && a.distinctRatio > 0.3) score += 20;
       break;
   }
   
@@ -2633,17 +2838,17 @@ function detectarRoles(kind) {
   const d = state[kind];
   if (!d.raw.length) return {};
   
-  // Para cada coluna, analisa conteúdo
   const colAnalysis = {};
   d.headers.forEach(header => {
     const values = d.raw.slice(0, 100).map(row => row[header]);
     colAnalysis[header] = analyzeColumnContent(values);
   });
   
-  // Score cada (header, role) e escolhe o melhor
-  const rolesToTry = ['DATA','PEDIDO','SKU','PRODUTO','QTD','VALOR','COR','TAMANHO','ESTAMPA','STATUS'];
+  // Se Status está desligado globalmente, remove dele
+  const rolesToTry = state.statusEnabled
+    ? ['DATA','PEDIDO','SKU','PRODUTO','QTD','VALOR','COR','TAMANHO','ESTAMPA','STATUS']
+    : ['DATA','PEDIDO','SKU','PRODUTO','QTD','VALOR','COR','TAMANHO','ESTAMPA'];
   
-  // Matriz: { header -> { role -> score } }
   const scores = {};
   d.headers.forEach(header => {
     const hNorm = normalizeKey(header).replace(/[\s_\-\.\/]/g, '');
@@ -2657,21 +2862,19 @@ function detectarRoles(kind) {
   const assigned = {}; // role -> header
   const result = {};   // header -> role
   
-  // Lista todos os pares (header, role, score) e ordena por score desc
   const candidates = [];
   for (const header in scores) {
     for (const role in scores[header]) {
-      if (scores[header][role] >= 35) { // threshold mínimo
+      if (scores[header][role] >= 40) { // threshold aumentado com novo scoring
         candidates.push({ header, role, score: scores[header][role] });
       }
     }
   }
   candidates.sort((a,b) => b.score - a.score);
   
-  // Greedy: atribui o maior score primeiro
   for (const c of candidates) {
-    if (result[c.header]) continue; // header já tem role
-    if (ROLES[c.role].unique && assigned[c.role]) continue; // role único já usado
+    if (result[c.header]) continue;
+    if (ROLES[c.role].unique && assigned[c.role]) continue;
     result[c.header] = c.role;
     if (ROLES[c.role].unique) assigned[c.role] = c.header;
   }
@@ -2679,16 +2882,13 @@ function detectarRoles(kind) {
   return result;
 }
 
-// Dispara auto-detecção (chamado após upload + no botão "Sugestão automática")
 function autoDetectarEAplicar(kind, forceOverride = false) {
   const detected = detectarRoles(kind);
   let applied = 0;
   for (const header in detected) {
-    // Se forceOverride, sobrescreve; senão, só preenche vazio
     if (!forceOverride && state.mapping[kind][header]) continue;
     
     const role = detected[header];
-    // Se role único já foi atribuído pelo usuário, pula
     if (ROLES[role].unique) {
       const taken = Object.entries(state.mapping[kind]).find(([h, r]) => r === role && h !== header);
       if (taken && !forceOverride) continue;
@@ -3177,6 +3377,7 @@ function switchTab(tabId, el) {
 
 function buildTabHTML(tab) {
   if (tab.id === 'tab-resumo') {
+    const hasData = state.activeDimensions.includes('DATA');
     return `
       <div class="kpi-grid">
         <div class="kpi"><div class="kpi-label"><span class="kpi-indicator info"></span>Registros</div><div class="kpi-value" id="kpiLinhas">0</div><div class="kpi-caption">Total filtrado</div></div>
@@ -3185,15 +3386,40 @@ function buildTabHTML(tab) {
         <div class="kpi"><div class="kpi-label"><span class="kpi-indicator info"></span>Ticket médio</div><div class="kpi-value" id="kpiTicket">R$ 0,00</div><div class="kpi-caption">Por linha</div></div>
         <div class="kpi"><div class="kpi-label"><span class="kpi-indicator info"></span>Itens distintos</div><div class="kpi-value" id="kpiMix">0</div><div class="kpi-caption">Mix</div></div>
       </div>
-      ${state.activeDimensions.includes('DATA') ? `
+      
+      ${hasData ? `
+      <div class="card" style="margin-bottom: var(--s-4);">
+        <div class="card-header"><h3>Evolução do faturamento ao longo do tempo</h3></div>
+        <p class="card-caption">Acompanhe a performance diária de vendas.</p>
+        <canvas id="chartEvolucao" style="max-height: 280px !important;"></canvas>
+      </div>` : ''}
+      
       <div class="card-row">
-        <div class="card"><div class="card-header"><h3>Evolução do faturamento</h3></div><canvas id="chartEvolucao"></canvas></div>
-        <div class="card"><div class="card-header"><h3>Top produtos</h3></div><canvas id="chartTopResumo"></canvas></div>
-      </div>` : `
-      <div class="card">
-        <div class="card-header"><h3>Top 10 produtos</h3></div>
-        <canvas id="chartTopResumo"></canvas>
-      </div>`}
+        <div class="card">
+          <div class="card-header"><h3>Top 10 produtos por faturamento</h3></div>
+          <p class="card-caption">Os produtos que mais geram receita.</p>
+          <canvas id="chartTopResumo" style="max-height: 360px !important;"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Participação dos top 5</h3></div>
+          <p class="card-caption">Concentração de vendas nos principais produtos.</p>
+          <canvas id="chartTopDonut" style="max-height: 360px !important;"></canvas>
+        </div>
+      </div>
+      
+      ${hasData ? `
+      <div class="card-row">
+        <div class="card">
+          <div class="card-header"><h3>Volume vendido por período</h3></div>
+          <p class="card-caption">Distribuição de quantidade ao longo do tempo.</p>
+          <canvas id="chartQtdPeriodo" style="max-height: 260px !important;"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Ticket médio por período</h3></div>
+          <p class="card-caption">Valor médio por registro em cada dia.</p>
+          <canvas id="chartTicketPeriodo" style="max-height: 260px !important;"></canvas>
+        </div>
+      </div>` : ''}
     `;
   }
   
@@ -3245,21 +3471,94 @@ function buildTabHTML(tab) {
 }
 
 function rankingTabHTML(id, label, customHeader) {
+  const lbl = label.toLowerCase();
+  const isProd = id === 'produtos';
+  const isCor = id === 'cores';
+  const isTam = id === 'tamanhos';
+  
+  // Explicações customizadas por tipo
+  const descriptions = {
+    produtos: 'Análise completa do mix de produtos — identifique os campeões de venda e os produtos em recuperação.',
+    cores: 'Preferências de cores dos clientes — veja quais tonalidades mais vendem.',
+    tamanhos: 'Distribuição de tamanhos — essencial para planejamento de estoque.',
+    estampas: 'Análise das estampas — quais variantes têm melhor performance.',
+    status: 'Distribuição operacional — acompanhe em que estágio os pedidos se encontram.'
+  };
+  const desc = descriptions[id] || `Análise detalhada de ${lbl}.`;
+  
   return `
-    <div class="card-row">
-      <div class="card"><div class="card-header"><h3>Top ${label.toLowerCase()}</h3></div><canvas id="chart-${id}"></canvas></div>
-      <div class="card">
-        <div class="card-header">
-          <h3>Ranking completo</h3>
-          <select class="btn btn-sm" style="padding: 6px 11px; width: auto;" onchange="window['limit-${id}']=parseInt(this.value); renderRanking('${id}', ${customHeader ? `'${escapeAttr(customHeader)}'` : 'null'});">
-            <option value="10">Top 10</option>
-            <option value="20" selected>Top 20</option>
-            <option value="50">Top 50</option>
-            <option value="99999">Todos</option>
-          </select>
-        </div>
-        <div class="table-wrap"><table id="tbl-${id}"></table></div>
+    <div class="ranking-intro">
+      <p>${desc}</p>
+    </div>
+    
+    <div class="kpi-grid" style="margin-bottom: var(--s-4);">
+      <div class="kpi">
+        <div class="kpi-label"><span class="kpi-indicator info"></span>Total de ${lbl}</div>
+        <div class="kpi-value" id="kpi-${id}-total">0</div>
+        <div class="kpi-caption">Itens distintos</div>
       </div>
+      <div class="kpi">
+        <div class="kpi-label"><span class="kpi-indicator ok"></span>Líder</div>
+        <div class="kpi-value" id="kpi-${id}-lider" style="font-size: 16px; line-height: 1.3;">—</div>
+        <div class="kpi-caption" id="kpi-${id}-liderval">—</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label"><span class="kpi-indicator warn"></span>Concentração top 3</div>
+        <div class="kpi-value" id="kpi-${id}-conc">0%</div>
+        <div class="kpi-caption">Do faturamento total</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label"><span class="kpi-indicator info"></span>Ticket médio</div>
+        <div class="kpi-value" id="kpi-${id}-ticket">R$ 0,00</div>
+        <div class="kpi-caption">Por item vendido</div>
+      </div>
+    </div>
+    
+    <div class="card-row">
+      <div class="card">
+        <div class="card-header"><h3>Top ${lbl} por faturamento</h3></div>
+        <p class="card-caption">Ranking ordenado pelo valor total vendido.</p>
+        <canvas id="chart-${id}" style="max-height: 380px !important;"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Distribuição de ${lbl}</h3></div>
+        <p class="card-caption">Participação percentual no faturamento total.</p>
+        <canvas id="chart-${id}-donut" style="max-height: 380px !important;"></canvas>
+      </div>
+    </div>
+    
+    ${(isTam || isCor) ? `
+    <div class="card-row">
+      <div class="card">
+        <div class="card-header"><h3>Top por volume (peças vendidas)</h3></div>
+        <p class="card-caption">${isCor ? 'As cores mais movimentadas em unidades.' : 'Os tamanhos com maior giro de estoque.'}</p>
+        <canvas id="chart-${id}-qtd" style="max-height: 280px !important;"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Visão polar</h3></div>
+        <p class="card-caption">Comparativo visual alternativo.</p>
+        <canvas id="chart-${id}-polar" style="max-height: 280px !important;"></canvas>
+      </div>
+    </div>` : ''}
+    
+    ${isProd ? `
+    <div class="card">
+      <div class="card-header"><h3>Análise Pareto — os 80% do faturamento</h3></div>
+      <p class="card-caption">Quais produtos respondem pela maior parte da receita. A linha mostra a contribuição acumulada.</p>
+      <canvas id="chart-${id}-pareto" style="max-height: 320px !important;"></canvas>
+    </div>` : ''}
+    
+    <div class="card">
+      <div class="card-header">
+        <h3>Ranking completo</h3>
+        <select class="btn btn-sm" style="padding: 6px 11px; width: auto;" onchange="window['limit-${id}']=parseInt(this.value); renderRanking('${id}', ${customHeader ? `'${escapeAttr(customHeader)}'` : 'null'});">
+          <option value="10">Top 10</option>
+          <option value="20" selected>Top 20</option>
+          <option value="50">Top 50</option>
+          <option value="99999">Todos</option>
+        </select>
+      </div>
+      <div class="table-wrap"><table id="tbl-${id}"></table></div>
     </div>
   `;
 }
@@ -3319,36 +3618,118 @@ function renderChart(id, tipo, rotulos, valores, label, extra = {}) {
   if (!el) return;
   const ctx = el.getContext('2d');
   
+  // Trunca labels para exibição (mas guarda original para tooltip)
+  const labelsFull = rotulos.slice();
+  const maxLabelLen = tipo === 'bar' && extra.indexAxis === 'y' ? 32 : 20;
+  const labelsDisplay = rotulos.map(l => {
+    const s = String(l || '—');
+    return s.length > maxLabelLen ? s.substring(0, maxLabelLen - 1) + '…' : s;
+  });
+  
   if (tipo === 'line') {
     extra.backgroundColor = ctx.createLinearGradient(0, 0, 0, 300);
     extra.backgroundColor.addColorStop(0, 'rgba(200, 16, 46, 0.35)');
     extra.backgroundColor.addColorStop(1, 'rgba(200, 16, 46, 0)');
-    extra.borderColor = '#c8102e';
-    extra.fill = true;
+    extra.borderColor = extra.borderColor || '#c8102e';
+    extra.fill = extra.fill !== false;
     extra.tension = 0.35;
     extra.pointBackgroundColor = '#0a1430';
-    extra.pointBorderColor = '#c8102e';
+    extra.pointBorderColor = extra.borderColor;
     extra.pointBorderWidth = 2;
     extra.pointRadius = 3;
     extra.pointHoverRadius = 6;
   }
   
+  const isCircular = ['pie','doughnut','polarArea','radar'].includes(tipo);
+  const isMoney = (label || '').toLowerCase().includes('faturamento') || 
+                   (label || '').toLowerCase().includes('valor') ||
+                   (label || '').toLowerCase().includes('receita');
+  const fmtValue = (v) => isMoney ? fmtValor(v) : fmtInt(v);
+  
   graficos[id] = new Chart(ctx, {
     type: tipo,
-    data: { labels: rotulos, datasets: [{ label, data: valores, ...extra }] },
+    data: { 
+      labels: labelsDisplay, 
+      datasets: [{ label, data: valores, ...extra }] 
+    },
     options: {
-      responsive: true, maintainAspectRatio: false,
+      responsive: true, 
+      maintainAspectRatio: false,
       animation: { duration: 700, easing: 'easeOutQuart' },
       plugins: {
         legend: {
-          display: ['pie','doughnut','polarArea'].includes(tipo),
+          display: isCircular,
           position: 'right',
-          labels: { color: '#b4bed4', padding: 14, font: { size: 11 }, usePointStyle: true, pointStyle: 'circle' }
+          labels: { 
+            color: '#b4bed4', 
+            padding: 12, 
+            font: { size: 11 }, 
+            usePointStyle: true, 
+            pointStyle: 'circle',
+            // Nas legendas de gráfico circular, mostra nome completo
+            generateLabels: (chart) => {
+              const data = chart.data;
+              if (!data.labels || !data.datasets.length) return [];
+              return data.labels.map((lbl, i) => {
+                const full = labelsFull[i] || lbl;
+                const displayLbl = String(full).length > 28 ? String(full).substring(0, 27) + '…' : full;
+                const bg = data.datasets[0].backgroundColor;
+                return {
+                  text: displayLbl,
+                  fillStyle: Array.isArray(bg) ? bg[i] : bg,
+                  strokeStyle: Array.isArray(bg) ? bg[i] : bg,
+                  hidden: false,
+                  index: i
+                };
+              });
+            }
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(10,18,40,0.95)',
+          titleColor: '#f5f7fb',
+          bodyColor: '#b4bed4',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          padding: 10,
+          titleFont: { size: 12, weight: '600' },
+          bodyFont: { size: 12 },
+          cornerRadius: 6,
+          displayColors: true,
+          callbacks: {
+            title: (items) => items.map(i => labelsFull[i.dataIndex] || i.label).join(', '),
+            label: (item) => {
+              const v = item.parsed.y !== undefined ? item.parsed.y : item.parsed;
+              return ` ${label}: ${fmtValue(v)}`;
+            }
+          }
         }
       },
-      scales: ['pie','doughnut','polarArea'].includes(tipo) ? {} : {
-        x: { ticks: { color: '#7a869f', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false } },
-        y: { ticks: { color: '#7a869f', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false } }
+      scales: isCircular ? {} : {
+        x: { 
+          ticks: { 
+            color: '#7a869f', 
+            font: { size: 10.5 },
+            maxRotation: 45,
+            minRotation: 0
+          }, 
+          grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false } 
+        },
+        y: { 
+          ticks: { 
+            color: '#7a869f', 
+            font: { size: 10.5 },
+            callback: function(v) {
+              if (isMoney) {
+                if (v >= 1000000) return 'R$ ' + (v/1000000).toFixed(1) + 'M';
+                if (v >= 1000) return 'R$ ' + (v/1000).toFixed(0) + 'k';
+                return 'R$ ' + v;
+              }
+              return v >= 1000 ? (v/1000).toFixed(1) + 'k' : v;
+            }
+          }, 
+          grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false }
+        }
       }
     }
   });
@@ -3385,25 +3766,196 @@ function renderRanking(id, customHeader) {
   const ranking = agrupar(key);
   const withPos = ranking.slice(0, limit).map((r, i) => ({ ...r, pos: i + 1 }));
   
+  // KPIs específicos da aba
+  const totalFat = ranking.reduce((sum, r) => sum + r.fat, 0);
+  const totalQtd = ranking.reduce((sum, r) => sum + r.qtd, 0);
+  const top3Fat = ranking.slice(0, 3).reduce((sum, r) => sum + r.fat, 0);
+  const concentracao = totalFat > 0 ? (top3Fat / totalFat * 100) : 0;
+  
+  const kpiTotalEl = $(`kpi-${id}-total`);
+  const kpiLiderEl = $(`kpi-${id}-lider`);
+  const kpiLiderValEl = $(`kpi-${id}-liderval`);
+  const kpiConcEl = $(`kpi-${id}-conc`);
+  const kpiTicketEl = $(`kpi-${id}-ticket`);
+  
+  if (kpiTotalEl) kpiTotalEl.textContent = fmtInt(ranking.length);
+  if (kpiLiderEl && ranking.length > 0) {
+    const liderNome = String(ranking[0].nome);
+    kpiLiderEl.textContent = liderNome.length > 22 ? liderNome.substring(0, 20) + '…' : liderNome;
+    kpiLiderEl.title = liderNome;
+  }
+  if (kpiLiderValEl && ranking.length > 0) kpiLiderValEl.textContent = fmtValor(ranking[0].fat);
+  if (kpiConcEl) kpiConcEl.textContent = concentracao.toFixed(1) + '%';
+  if (kpiTicketEl) kpiTicketEl.textContent = fmtValor(totalQtd > 0 ? totalFat / totalQtd : 0);
+  
+  // Tabela
   renderTable('tbl-' + id, [
     { label: 'Pos.', key: 'pos' },
     { label: 'Item', key: 'nome' },
     { label: 'Quantidade', key: 'qtd', fmt: fmtInt },
-    { label: 'Faturamento', key: 'fat', fmt: fmtValor }
+    { label: 'Faturamento', key: 'fat', fmt: fmtValor },
+    { label: '% do total', key: 'fat', fmt: (v) => totalFat > 0 ? (v/totalFat*100).toFixed(1) + '%' : '0%' }
   ], withPos);
   
+  // Gráfico 1: Top por faturamento (barra horizontal)
   const top = ranking.slice(0, 10);
   const isColor = key === 'cor';
+  const bgColors = isColor 
+    ? top.map(x => getChartColor(x.nome)) 
+    : top.map((_, i) => colorPalette[i % colorPalette.length]);
+  
   renderChart('chart-' + id, 'bar',
     top.map(x => x.nome),
     top.map(x => x.fat),
     'Faturamento',
-    {
-      backgroundColor: isColor ? top.map(x => getChartColor(x.nome)) : top.map((_, i) => colorPalette[i % colorPalette.length]),
-      borderRadius: 4,
-      indexAxis: 'y'
-    }
+    { backgroundColor: bgColors, borderRadius: 4, indexAxis: 'y' }
   );
+  
+  // Gráfico 2: Doughnut distribuição (top 7 + outros)
+  const donutEl = $(`chart-${id}-donut`);
+  if (donutEl) {
+    const top7 = ranking.slice(0, 7);
+    const outrosFat = ranking.slice(7).reduce((s, r) => s + r.fat, 0);
+    const donutLabels = outrosFat > 0 ? [...top7.map(x=>x.nome), 'Outros'] : top7.map(x=>x.nome);
+    const donutData = outrosFat > 0 ? [...top7.map(x=>x.fat), outrosFat] : top7.map(x=>x.fat);
+    const donutColors = isColor
+      ? donutLabels.map(n => n === 'Outros' ? 'rgba(120,130,160,0.4)' : getChartColor(n))
+      : [...colorPalette.slice(0, donutLabels.length - (outrosFat > 0 ? 1 : 0)), 'rgba(120,130,160,0.4)'];
+    renderChart(`chart-${id}-donut`, 'doughnut', donutLabels, donutData, 'Faturamento',
+      { backgroundColor: donutColors, borderWidth: 0, cutout: '55%' });
+  }
+  
+  // Gráficos extras para Cores e Tamanhos
+  if (id === 'cores' || id === 'tamanhos') {
+    const qtdEl = $(`chart-${id}-qtd`);
+    const polarEl = $(`chart-${id}-polar`);
+    
+    if (qtdEl) {
+      const topQtd = ranking.slice().sort((a,b) => b.qtd - a.qtd).slice(0, 8);
+      const qtdColors = isColor ? topQtd.map(x => getChartColor(x.nome)) : colorPalette;
+      renderChart(`chart-${id}-qtd`, 'bar',
+        topQtd.map(x => x.nome), topQtd.map(x => x.qtd), 'Quantidade',
+        { backgroundColor: qtdColors, borderRadius: 4 });
+    }
+    
+    if (polarEl) {
+      const topPolar = ranking.slice(0, 7);
+      const polarColors = isColor 
+        ? topPolar.map(x => getChartColor(x.nome))
+        : topPolar.map((_, i) => colorPalette[i % colorPalette.length]);
+      renderChart(`chart-${id}-polar`, 'polarArea',
+        topPolar.map(x => x.nome), topPolar.map(x => x.fat), 'Faturamento',
+        { backgroundColor: polarColors.map(c => c.startsWith('rgba') || c.startsWith('hsl') ? c : c + 'cc'), borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' });
+    }
+  }
+  
+  // Pareto para Produtos
+  if (id === 'produtos') {
+    const paretoEl = $(`chart-${id}-pareto`);
+    if (paretoEl) {
+      const topPareto = ranking.slice(0, 15);
+      let cumulative = 0;
+      const totalRank = ranking.reduce((s, r) => s + r.fat, 0);
+      const paretoData = topPareto.map(x => {
+        cumulative += x.fat;
+        return { nome: x.nome, fat: x.fat, acum: totalRank > 0 ? (cumulative / totalRank * 100) : 0 };
+      });
+      renderParetoChart(`chart-${id}-pareto`, paretoData);
+    }
+  }
+}
+
+// Gráfico Pareto (combo: barra + linha acumulada)
+function renderParetoChart(id, data) {
+  if (graficos[id]) { try { graficos[id].destroy(); } catch(e) {} }
+  const el = $(id);
+  if (!el) return;
+  const ctx = el.getContext('2d');
+  
+  const labelsFull = data.map(d => d.nome);
+  const labelsDisplay = labelsFull.map(l => {
+    const s = String(l || '—');
+    return s.length > 14 ? s.substring(0, 12) + '…' : s;
+  });
+  
+  graficos[id] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labelsDisplay,
+      datasets: [
+        {
+          type: 'bar',
+          label: 'Faturamento',
+          data: data.map(d => d.fat),
+          backgroundColor: '#c8102e',
+          borderRadius: 3,
+          order: 2,
+          yAxisID: 'y'
+        },
+        {
+          type: 'line',
+          label: 'Acumulado %',
+          data: data.map(d => d.acum),
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16,185,129,0.15)',
+          tension: 0.3,
+          pointBackgroundColor: '#0a1430',
+          pointBorderColor: '#10b981',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          order: 1,
+          yAxisID: 'y1',
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 700 },
+      plugins: {
+        legend: { 
+          display: true, position: 'top',
+          labels: { color: '#b4bed4', padding: 10, font: { size: 11 }, usePointStyle: true, pointStyle: 'circle' }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(10,18,40,0.95)',
+          titleColor: '#f5f7fb',
+          bodyColor: '#b4bed4',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          padding: 10,
+          callbacks: {
+            title: (items) => items.map(i => labelsFull[i.dataIndex] || i.label).join(', '),
+            label: (item) => {
+              if (item.dataset.type === 'line') return ` Acumulado: ${item.parsed.y.toFixed(1)}%`;
+              return ` Faturamento: ${fmtValor(item.parsed.y)}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color: '#7a869f', font: { size: 10 }, maxRotation: 45 }, grid: { color: 'rgba(255,255,255,0.03)' } },
+        y: { 
+          position: 'left',
+          ticks: { 
+            color: '#7a869f', font: { size: 10.5 },
+            callback: v => v >= 1000 ? 'R$ ' + (v/1000).toFixed(0) + 'k' : 'R$ ' + v 
+          }, 
+          grid: { color: 'rgba(255,255,255,0.03)' }
+        },
+        y1: {
+          position: 'right',
+          min: 0, max: 100,
+          ticks: { 
+            color: '#10b981', font: { size: 10.5 },
+            callback: v => v + '%' 
+          }, 
+          grid: { drawOnChartArea: false }
+        }
+      }
+    }
+  });
 }
 
 function renderTabCharts(tabId) {
@@ -3425,13 +3977,36 @@ function renderTabCharts(tabId) {
 }
 
 function renderResumoCharts() {
-  if (state.activeDimensions.includes('DATA')) {
+  const hasData = state.activeDimensions.includes('DATA');
+  
+  if (hasData) {
     const trend = agruparData();
-    if (trend.length) renderChart('chartEvolucao', 'line', trend.map(x=>x.nome), trend.map(x=>x.fat), 'Faturamento');
+    if (trend.length) {
+      renderChart('chartEvolucao', 'line', trend.map(x=>x.nome), trend.map(x=>x.fat), 'Faturamento');
+      
+      renderChart('chartQtdPeriodo', 'bar', trend.map(x=>x.nome), trend.map(x=>x.qtd), 'Quantidade',
+        { backgroundColor: '#3b82f6', borderRadius: 3 });
+      
+      const ticketData = trend.map(x => x.qtd > 0 ? x.fat / x.qtd : 0);
+      renderChart('chartTicketPeriodo', 'line', trend.map(x=>x.nome), ticketData, 'Ticket médio',
+        { borderColor: '#10b981', fill: false });
+    }
   }
+  
+  // Top 10 produtos (barra horizontal)
   const top = agrupar('produto').slice(0, 10);
-  if (top.length) renderChart('chartTopResumo', 'bar', top.map(x=>x.nome), top.map(x=>x.fat), 'Faturamento',
-    { backgroundColor: '#c8102e', borderRadius: 4, indexAxis: 'y' });
+  if (top.length) {
+    renderChart('chartTopResumo', 'bar', top.map(x=>x.nome), top.map(x=>x.fat), 'Faturamento',
+      { backgroundColor: colorPalette.slice(0, top.length), borderRadius: 4, indexAxis: 'y' });
+    
+    // Doughnut com top 5 + "Outros"
+    const top5 = top.slice(0, 5);
+    const outros = agrupar('produto').slice(5).reduce((sum, x) => sum + x.fat, 0);
+    const donutLabels = [...top5.map(x=>x.nome), 'Outros'];
+    const donutData = [...top5.map(x=>x.fat), outros];
+    renderChart('chartTopDonut', 'doughnut', donutLabels, donutData, 'Faturamento',
+      { backgroundColor: [...colorPalette.slice(0, 5), 'rgba(120,130,160,0.4)'], borderWidth: 0, cutout: '55%' });
+  }
 }
 
 function renderAudit() {
