@@ -522,6 +522,296 @@
     }
     
     /* ============================================================
+       UNIÃO DE PLANILHAS
+       ============================================================ */
+    .uniao-dropzone {
+      background: var(--surface-1);
+      border: 2px dashed var(--border-default);
+      border-radius: var(--r-lg);
+      padding: var(--s-12) var(--s-6);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--dur-base) var(--ease-out);
+      margin-bottom: var(--s-5);
+    }
+    .uniao-dropzone:hover,
+    .uniao-dropzone.drag-over {
+      border-color: var(--brand-red);
+      background: var(--surface-2);
+      transform: translateY(-2px);
+    }
+    .uniao-dropzone-icon {
+      width: 64px; height: 64px;
+      background: var(--brand-red-soft);
+      border-radius: var(--r-lg);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--brand-red-2);
+      margin-bottom: var(--s-4);
+    }
+    .uniao-dropzone-icon svg { width: 28px; height: 28px; stroke-width: 1.8; }
+    .uniao-dropzone h3 {
+      font-size: 17px; font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: var(--s-2);
+    }
+    .uniao-dropzone p {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-bottom: var(--s-1);
+    }
+    .uniao-dropzone-hint {
+      font-size: 12px !important;
+      color: var(--text-disabled) !important;
+      margin-top: var(--s-3) !important;
+    }
+    .uniao-dropzone-hint strong {
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    
+    /* Section com header */
+    .uniao-files-section,
+    .uniao-summary,
+    .uniao-preview-section {
+      background: var(--surface-1);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--r-lg);
+      margin-bottom: var(--s-5);
+    }
+    .uniao-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--s-4) var(--s-5);
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--surface-2);
+      flex-wrap: wrap;
+      gap: var(--s-3);
+    }
+    .uniao-section-title {
+      display: flex;
+      align-items: center;
+      gap: var(--s-2);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .uniao-section-title svg { color: var(--brand-red-2); }
+    .uniao-count {
+      background: var(--brand-red);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: var(--s-1);
+      font-variant-numeric: tabular-nums;
+    }
+    
+    /* Lista de arquivos */
+    .uniao-files-list {
+      padding: var(--s-2) var(--s-5) var(--s-4);
+    }
+    .uniao-file-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      align-items: center;
+      gap: var(--s-4);
+      padding: var(--s-3) var(--s-3);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background var(--dur-fast);
+    }
+    .uniao-file-item:hover { background: var(--surface-2); border-radius: var(--r-sm); }
+    .uniao-file-item:last-child { border-bottom: none; }
+    
+    .uniao-file-icon {
+      width: 36px; height: 36px;
+      background: var(--surface-3);
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    .uniao-file-icon svg { width: 16px; height: 16px; }
+    .uniao-file-icon.csv { background: rgba(16,185,129,0.12); color: var(--success); }
+    .uniao-file-icon.xlsx { background: rgba(34,139,73,0.15); color: #22c55e; }
+    .uniao-file-icon.error { background: var(--danger-soft); color: var(--danger); }
+    
+    .uniao-file-info { min-width: 0; }
+    .uniao-file-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .uniao-file-meta {
+      font-size: 11.5px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+      display: flex;
+      gap: var(--s-3);
+      flex-wrap: wrap;
+    }
+    .uniao-file-meta span { display: flex; align-items: center; gap: 4px; }
+    .uniao-file-meta svg { width: 11px; height: 11px; stroke-width: 2; }
+    
+    .uniao-file-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 3px 8px;
+      border-radius: 10px;
+      text-transform: uppercase;
+    }
+    .uniao-file-badge.primary {
+      background: var(--brand-red-soft);
+      color: var(--brand-red-2);
+      border: 1px solid var(--border-brand);
+    }
+    .uniao-file-badge.oldest {
+      background: rgba(59,130,246,0.12);
+      color: #60a5fa;
+    }
+    .uniao-file-badge.newest {
+      background: var(--success-soft);
+      color: var(--success);
+    }
+    
+    .uniao-file-remove {
+      width: 28px; height: 28px;
+      border-radius: var(--r-sm);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--dur-fast);
+    }
+    .uniao-file-remove:hover {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border-color: rgba(239,68,68,0.3);
+    }
+    .uniao-file-remove svg { width: 14px; height: 14px; stroke-width: 2; }
+    
+    /* Summary KPIs */
+    .uniao-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 1px;
+      background: var(--border-subtle);
+      padding: 1px;
+    }
+    .uniao-summary-kpi {
+      background: var(--surface-1);
+      padding: var(--s-4) var(--s-5);
+    }
+    .uniao-summary-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: var(--s-2);
+    }
+    .uniao-summary-val {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+    .uniao-summary-val-text {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0;
+      color: var(--text-secondary);
+    }
+    
+    /* Warnings */
+    #uniaoWarnings {
+      padding: 0 var(--s-5) var(--s-5);
+    }
+    .uniao-warning {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--s-3);
+      padding: var(--s-3) var(--s-4);
+      border-radius: var(--r-md);
+      background: var(--warning-soft);
+      border: 1px solid rgba(245,158,11,0.25);
+      color: var(--text-secondary);
+      font-size: 13px;
+      margin-top: var(--s-3);
+    }
+    .uniao-warning svg {
+      width: 18px; height: 18px; stroke-width: 2;
+      color: var(--warning);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .uniao-warning.info {
+      background: rgba(59,130,246,0.08);
+      border-color: rgba(59,130,246,0.2);
+    }
+    .uniao-warning.info svg { color: #60a5fa; }
+    .uniao-warning strong { color: var(--text-primary); font-weight: 600; }
+    
+    /* Preview viewport */
+    .uniao-preview-viewport {
+      position: relative;
+      overflow: hidden;
+      min-width: 0;
+    }
+    
+    /* Ações finais */
+    .uniao-actions {
+      background: linear-gradient(135deg, var(--surface-1), var(--surface-2));
+      border: 1px solid var(--border-default);
+      border-left: 3px solid var(--success);
+      border-radius: var(--r-lg);
+      padding: var(--s-5) var(--s-6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--s-4);
+      margin-bottom: var(--s-8);
+      flex-wrap: wrap;
+    }
+    .uniao-actions-info { min-width: 0; }
+    .uniao-actions-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .uniao-actions-sub {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+    
+    @media (max-width: 768px) {
+      .uniao-dropzone { padding: var(--s-8) var(--s-4); }
+      .uniao-dropzone h3 { font-size: 15px; }
+      .uniao-file-item {
+        grid-template-columns: auto 1fr auto;
+        gap: var(--s-3);
+      }
+      .uniao-file-badge { display: none; }
+      .uniao-summary-val { font-size: 18px; }
+      .uniao-actions { flex-direction: column; align-items: stretch; }
+      .uniao-actions .btn { width: 100%; }
+    }
+
+    /* ============================================================
        SETTINGS PANEL + TOGGLE SWITCH
        ============================================================ */
     .settings-panel {
@@ -1519,6 +1809,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
       <span>Análise de Vendas</span>
     </div>
+    <div class="nav-item" data-view="view-uniao">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 3H3v5"/><path d="M21 8V3h-5"/><path d="M3 16v5h5"/><path d="M16 21h5v-5"/><path d="M9 9l6 6"/><path d="M15 9l-6 6"/></svg>
+      <span>União de Planilhas</span>
+    </div>
     <div class="nav-item" style="opacity:0.5; cursor:default;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 1 1 0 7H6"/></svg>
       <span>Conciliação</span>
@@ -1596,6 +1890,15 @@
           <div class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg></div>
           <h3>Análise de Vendas</h3>
           <p>Importe planilhas de pedidos de qualquer empresa, selecione as colunas que importam e gere relatórios consolidados automaticamente.</p>
+          <div class="tool-meta">
+            <span class="badge badge-active"><span class="badge-dot"></span>Disponível</span>
+            <div class="tool-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
+          </div>
+        </div>
+        <div class="tool-card" data-status="active" data-nav="view-uniao">
+          <div class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 3H3v5"/><path d="M21 8V3h-5"/><path d="M3 16v5h5"/><path d="M16 21h5v-5"/><path d="M9 9l6 6"/><path d="M15 9l-6 6"/></svg></div>
+          <h3>União de Planilhas</h3>
+          <p>Consolide múltiplas planilhas em um único arquivo. Detecta a coluna de data automaticamente e ordena os registros do mais antigo ao mais recente.</p>
           <div class="tool-meta">
             <span class="badge badge-active"><span class="badge-dot"></span>Disponível</span>
             <div class="tool-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></div>
@@ -1934,6 +2237,133 @@
       
     </div>
     
+    <!-- ============================================================
+         VIEW: UNIÃO DE PLANILHAS
+         ============================================================ -->
+    <div id="view-uniao" class="page-view">
+      
+      <div class="page-header">
+        <h1 class="page-title">União de Planilhas</h1>
+        <p class="page-subtitle">Consolide múltiplas planilhas com a mesma estrutura em um único arquivo ordenado por data.</p>
+      </div>
+      
+      <!-- Zona de upload multi-arquivo -->
+      <div class="uniao-dropzone" id="uniaoDropzone" onclick="document.getElementById('uniaoFiles').click()">
+        <div class="uniao-dropzone-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <h3>Arraste suas planilhas aqui ou clique para selecionar</h3>
+        <p>Aceita múltiplos arquivos .csv e .xlsx · sem limite de quantidade</p>
+        <p class="uniao-dropzone-hint">O cabeçalho da <strong>primeira planilha</strong> será usado para todas — as demais serão importadas a partir da linha 2</p>
+        <input type="file" id="uniaoFiles" multiple accept=".csv,.xlsx,.xls" style="display:none">
+      </div>
+      
+      <!-- Lista das planilhas carregadas -->
+      <div class="uniao-files-section" id="uniaoFilesSection" style="display:none;">
+        <div class="uniao-section-header">
+          <div class="uniao-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>Planilhas carregadas</span>
+            <span class="uniao-count" id="uniaoCount">0</span>
+          </div>
+          <div style="display:flex; gap: var(--s-2);">
+            <button class="btn btn-sm" onclick="document.getElementById('uniaoFiles').click()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Adicionar mais
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="uniaoLimparTudo()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              Apagar todas
+            </button>
+          </div>
+        </div>
+        <div class="uniao-files-list" id="uniaoFilesList"></div>
+      </div>
+      
+      <!-- Resumo da consolidação -->
+      <div class="uniao-summary" id="uniaoSummary" style="display:none;">
+        <div class="uniao-summary-grid">
+          <div class="uniao-summary-kpi">
+            <div class="uniao-summary-label">Arquivos</div>
+            <div class="uniao-summary-val" id="summaryArquivos">0</div>
+          </div>
+          <div class="uniao-summary-kpi">
+            <div class="uniao-summary-label">Linhas totais</div>
+            <div class="uniao-summary-val" id="summaryLinhas">0</div>
+          </div>
+          <div class="uniao-summary-kpi">
+            <div class="uniao-summary-label">Colunas</div>
+            <div class="uniao-summary-val" id="summaryColunas">0</div>
+          </div>
+          <div class="uniao-summary-kpi">
+            <div class="uniao-summary-label">Coluna de data detectada</div>
+            <div class="uniao-summary-val uniao-summary-val-text" id="summaryDataCol">—</div>
+          </div>
+          <div class="uniao-summary-kpi">
+            <div class="uniao-summary-label">Período</div>
+            <div class="uniao-summary-val uniao-summary-val-text" id="summaryPeriodo">—</div>
+          </div>
+        </div>
+        
+        <div id="uniaoWarnings"></div>
+      </div>
+      
+      <!-- Preview consolidado -->
+      <div class="uniao-preview-section" id="uniaoPreviewSection" style="display:none;">
+        <div class="uniao-section-header">
+          <div class="uniao-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>Prévia do arquivo consolidado</span>
+            <span class="uniao-count" id="uniaoPreviewCount">0 linhas</span>
+          </div>
+          <div style="display:flex; gap: var(--s-2); align-items: center;">
+            <label style="display:flex; align-items:center; gap: var(--s-2); font-size: 12px; color: var(--text-tertiary); user-select: none; cursor: pointer;">
+              <div class="switch" style="width: 36px; height: 20px;">
+                <input type="checkbox" id="toggleOrdenar" checked onchange="uniaoReprocessar()">
+                <span class="switch-slider"></span>
+              </div>
+              Ordenar por data (antigo → recente)
+            </label>
+          </div>
+        </div>
+        
+        <div class="uniao-preview-viewport" id="uniaoPreviewViewport">
+          <div class="scroll-minimap">
+            <span class="scroll-minimap-info"><kbd>Shift</kbd> + scroll rola horizontal</span>
+            <div class="scroll-minimap-track" onclick="uniaoJumpScroll(event)">
+              <div class="scroll-minimap-thumb" id="uniaoMinimapThumb" style="left: 0%; width: 30%;"></div>
+            </div>
+            <span class="scroll-minimap-info" id="uniaoMinimapLabel">—</span>
+          </div>
+          <div class="sheet-topscroll" id="uniaoTopscroll">
+            <div id="uniaoTopscrollInner"></div>
+          </div>
+          <div class="sheet-container" id="uniaoPreviewContainer">
+            <div class="sheet-grid" id="uniaoPreviewGrid"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Ações finais -->
+      <div class="uniao-actions" id="uniaoActions" style="display:none;">
+        <div class="uniao-actions-info">
+          <div class="uniao-actions-title">Pronto para exportar</div>
+          <div class="uniao-actions-sub" id="uniaoActionsSub">Consolidação finalizada com sucesso</div>
+        </div>
+        <div style="display:flex; gap: var(--s-3); flex-wrap: wrap;">
+          <button class="btn btn-primary btn-lg" onclick="uniaoExportarXLSX()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Exportar Excel (.xlsx)
+          </button>
+          <button class="btn btn-lg" onclick="uniaoExportarCSV()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Exportar CSV
+          </button>
+        </div>
+      </div>
+      
+    </div>
+    
   </div>
 </main>
 
@@ -1944,7 +2374,8 @@
 const BREADCRUMB = {
   'view-home': 'Início',
   'view-tools': 'Ferramentas',
-  'view-app': 'Ferramentas › Análise de Vendas'
+  'view-app': 'Ferramentas › Análise de Vendas',
+  'view-uniao': 'Ferramentas › União de Planilhas'
 };
 
 function switchView(viewId) {
@@ -4126,6 +4557,706 @@ function exportarCSV() {
   link.download = "resute_relatorio.csv";
   link.click();
   toast('CSV exportado', 'success');
+}
+
+// =============================================================================
+// 🔗 FERRAMENTA UNIÃO DE PLANILHAS
+// =============================================================================
+
+const uniaoState = {
+  files: [],        // [{ id, name, size, type, data, headers, dateCol, firstDate, lastDate, error }]
+  consolidated: [], // linhas consolidadas (já ordenadas)
+  headers: [],      // cabeçalhos da primeira planilha
+  dateColName: null,
+  sortByDate: true,
+  fileCounter: 0
+};
+
+// Leitura de um arquivo individual — retorna Promise
+function uniaoLerArquivo(file) {
+  return new Promise((resolve) => {
+    const ext = file.name.split('.').pop().toLowerCase();
+    
+    if (ext === 'csv') {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const text = e.target.result;
+        Papa.parse(text, {
+          header: true, skipEmptyLines: 'greedy',
+          delimiter: text.includes(';') ? ';' : ',',
+          transformHeader: h => h ? h.trim().replace(/^"|"$/g, '') : '',
+          complete: res => resolve({ ok: true, data: res.data, ext })
+        });
+      };
+      reader.onerror = () => resolve({ ok: false, error: 'Erro ao ler arquivo' });
+      reader.readAsText(file, 'windows-1252');
+    } else if (ext === 'xlsx' || ext === 'xls') {
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+          const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
+          resolve({ ok: true, data, ext });
+        } catch (err) {
+          resolve({ ok: false, error: 'Formato inválido' });
+        }
+      };
+      reader.onerror = () => resolve({ ok: false, error: 'Erro ao ler arquivo' });
+      reader.readAsArrayBuffer(file);
+    } else {
+      resolve({ ok: false, error: 'Extensão não suportada' });
+    }
+  });
+}
+
+// Detecta qual coluna é data analisando conteúdo
+function uniaoDetectarColunaData(headers, data) {
+  if (!data.length || !headers.length) return null;
+  
+  let bestCol = null;
+  let bestScore = 0;
+  
+  const DATE_REGEX = /(\d{1,2}\/\d{1,2}\/\d{2,4})|(\d{4}-\d{1,2}-\d{1,2})|(\d{1,2}-\d{1,2}-\d{2,4})|(\d{1,2}\.\d{1,2}\.\d{2,4})/;
+  
+  headers.forEach(header => {
+    const values = data.slice(0, 50).map(row => row[header]);
+    let dateCount = 0, nonEmpty = 0;
+    
+    values.forEach(v => {
+      if (v === null || v === undefined || v === '') return;
+      nonEmpty++;
+      
+      if (v instanceof Date) { dateCount++; return; }
+      if (typeof v === 'number' && v > 20000 && v < 60000) { dateCount++; return; }
+      if (DATE_REGEX.test(String(v))) dateCount++;
+    });
+    
+    if (nonEmpty === 0) return;
+    const ratio = dateCount / nonEmpty;
+    
+    let score = ratio * 100;
+    // Bonus por nome de coluna
+    const hNorm = normalizeKey(header).replace(/[\s_\-\.\/]/g, '');
+    if (HEADER_HINTS.DATA && HEADER_HINTS.DATA.includes(hNorm)) score += 30;
+    
+    if (score > bestScore && ratio >= 0.5) {
+      bestScore = score;
+      bestCol = header;
+    }
+  });
+  
+  return bestCol;
+}
+
+// Parse de data (mesma lógica da análise de vendas)
+function uniaoParseData(v) {
+  if (!v && v !== 0) return null;
+  if (v instanceof Date) return isNaN(v) ? null : v;
+  if (typeof v === 'number' && v > 20000 && v < 60000) {
+    const d = new Date(Math.round((v - 25569) * 86400 * 1000));
+    return isNaN(d) ? null : d;
+  }
+  const s = String(v).trim();
+  if (!s) return null;
+  
+  let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+  if (m) {
+    let y = +m[3];
+    if (y < 100) y = y < 50 ? 2000 + y : 1900 + y;
+    return new Date(y, +m[2] - 1, +m[1]);
+  }
+  m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
+  m = s.match(/^(\d{1,2})-(\d{1,2})-(\d{2,4})/);
+  if (m) {
+    let y = +m[3];
+    if (y < 100) y = y < 50 ? 2000 + y : 1900 + y;
+    return new Date(y, +m[2] - 1, +m[1]);
+  }
+  m = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})/);
+  if (m) {
+    let y = +m[3];
+    if (y < 100) y = y < 50 ? 2000 + y : 1900 + y;
+    return new Date(y, +m[2] - 1, +m[1]);
+  }
+  const d = new Date(s);
+  return isNaN(d) ? null : d;
+}
+
+function uniaoFmtData(d) {
+  if (!d) return '—';
+  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+}
+
+function uniaoFmtBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+  return (b/1048576).toFixed(1) + ' MB';
+}
+
+// Processa múltiplos arquivos sequencialmente
+async function uniaoProcessarArquivos(fileList) {
+  showLoader(true, 'Lendo planilhas…');
+  
+  const filesArr = Array.from(fileList);
+  for (let i = 0; i < filesArr.length; i++) {
+    const file = filesArr[i];
+    $('loaderMsg').textContent = `Lendo ${i+1}/${filesArr.length}: ${file.name}`;
+    
+    const result = await uniaoLerArquivo(file);
+    uniaoState.fileCounter++;
+    
+    const fileObj = {
+      id: 'f_' + uniaoState.fileCounter,
+      name: file.name,
+      size: file.size,
+      ext: file.name.split('.').pop().toLowerCase(),
+      error: null,
+      data: [],
+      headers: [],
+      dateCol: null,
+      firstDate: null,
+      lastDate: null
+    };
+    
+    if (!result.ok) {
+      fileObj.error = result.error;
+    } else {
+      fileObj.data = result.data.filter(r => {
+        // Remove linhas completamente vazias
+        return Object.values(r).some(v => v !== null && v !== undefined && v !== '');
+      });
+      fileObj.headers = fileObj.data.length ? Object.keys(fileObj.data[0]).filter(h => h && h.trim()) : [];
+    }
+    
+    uniaoState.files.push(fileObj);
+  }
+  
+  showLoader(false);
+  uniaoProcessarConsolidado();
+}
+
+function uniaoProcessarConsolidado() {
+  const validFiles = uniaoState.files.filter(f => !f.error && f.data.length);
+  
+  if (!validFiles.length) {
+    uniaoState.consolidated = [];
+    uniaoState.headers = [];
+    uniaoState.dateColName = null;
+    uniaoRenderFilesList();
+    $('uniaoSummary').style.display = 'none';
+    $('uniaoPreviewSection').style.display = 'none';
+    $('uniaoActions').style.display = 'none';
+    return;
+  }
+  
+  // 1. Cabeçalho mestre: primeira planilha válida
+  const master = validFiles[0];
+  const masterHeaders = master.headers.slice();
+  uniaoState.headers = masterHeaders;
+  
+  // 2. Detecta coluna de data na primeira planilha
+  const dateCol = uniaoDetectarColunaData(masterHeaders, master.data);
+  uniaoState.dateColName = dateCol;
+  
+  // 3. Analisa cada arquivo: extrai datas e dados
+  const warnings = [];
+  
+  validFiles.forEach((f, idx) => {
+    // Para a primeira planilha, usa direto
+    if (idx === 0) {
+      f.rowsToUse = f.data.slice();
+    } else {
+      // Demais planilhas: mapeia pelo header da mestre
+      // Se headers são idênticos (mesma ordem e nomes), usa direto
+      const sameHeaders = f.headers.length === masterHeaders.length && 
+                          f.headers.every((h, i) => h === masterHeaders[i]);
+      
+      if (sameHeaders) {
+        f.rowsToUse = f.data.slice();
+      } else {
+        // Headers diferentes: tenta mapear pela posição (posição mesma = mesma coluna)
+        // Assume que arquivo tem mesma estrutura (conforme solicitado pelo usuário)
+        const mappedRows = f.data.map(row => {
+          const fileHeaders = f.headers;
+          const newRow = {};
+          masterHeaders.forEach((mh, i) => {
+            const sourceHeader = fileHeaders[i]; // mapeia por posição
+            newRow[mh] = sourceHeader !== undefined ? row[sourceHeader] : '';
+          });
+          return newRow;
+        });
+        f.rowsToUse = mappedRows;
+        
+        warnings.push({
+          type: 'warn',
+          msg: `<strong>${f.name}</strong> tem cabeçalhos diferentes da primeira planilha. As colunas foram mapeadas por posição (coluna 1 → coluna 1, etc).`
+        });
+      }
+    }
+    
+    // Detecta datas dentro do arquivo
+    if (dateCol) {
+      let minD = null, maxD = null;
+      f.rowsToUse.forEach(row => {
+        const d = uniaoParseData(row[dateCol]);
+        if (d) {
+          if (!minD || d < minD) minD = d;
+          if (!maxD || d > maxD) maxD = d;
+        }
+      });
+      f.firstDate = minD;
+      f.lastDate = maxD;
+      f.dateCol = dateCol;
+    }
+  });
+  
+  // 4. Consolida todas as linhas (garantindo que têm só as colunas do cabeçalho mestre)
+  const consolidated = [];
+  validFiles.forEach(f => {
+    f.rowsToUse.forEach(row => {
+      const cleanRow = {};
+      masterHeaders.forEach(h => {
+        cleanRow[h] = row[h] !== undefined ? row[h] : '';
+      });
+      consolidated.push(cleanRow);
+    });
+  });
+  
+  // 5. Ordena por data (se habilitado e há coluna de data)
+  if (uniaoState.sortByDate && dateCol) {
+    consolidated.sort((a, b) => {
+      const da = uniaoParseData(a[dateCol]);
+      const db = uniaoParseData(b[dateCol]);
+      if (!da && !db) return 0;
+      if (!da) return 1;  // sem data vai pro fim
+      if (!db) return -1;
+      return da - db; // mais antigo primeiro
+    });
+  }
+  
+  uniaoState.consolidated = consolidated;
+  
+  // 6. Renderiza tudo
+  uniaoRenderFilesList();
+  uniaoRenderSummary(validFiles, warnings);
+  uniaoRenderPreview();
+  $('uniaoActions').style.display = 'flex';
+  const actSub = $('uniaoActionsSub');
+  if (actSub) {
+    actSub.textContent = `${consolidated.length.toLocaleString('pt-BR')} linhas consolidadas · ${validFiles.length} arquivo${validFiles.length>1?'s':''}`;
+  }
+}
+
+function uniaoRenderFilesList() {
+  const container = $('uniaoFilesList');
+  const countEl = $('uniaoCount');
+  const section = $('uniaoFilesSection');
+  
+  if (!uniaoState.files.length) {
+    section.style.display = 'none';
+    return;
+  }
+  
+  section.style.display = 'block';
+  countEl.textContent = uniaoState.files.length;
+  
+  // Identifica o mais antigo e mais recente
+  let oldestId = null, newestId = null;
+  if (uniaoState.dateColName) {
+    let oldD = null, newD = null;
+    uniaoState.files.forEach(f => {
+      if (f.firstDate && (!oldD || f.firstDate < oldD)) { oldD = f.firstDate; oldestId = f.id; }
+      if (f.lastDate && (!newD || f.lastDate > newD)) { newD = f.lastDate; newestId = f.id; }
+    });
+  }
+  
+  const validFiles = uniaoState.files.filter(f => !f.error);
+  const primaryId = validFiles.length ? validFiles[0].id : null;
+  
+  const html = uniaoState.files.map(f => {
+    const iconClass = f.error ? 'error' : (f.ext === 'csv' ? 'csv' : 'xlsx');
+    const iconSvg = f.error
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+    
+    const meta = [];
+    if (f.error) {
+      meta.push(`<span style="color: var(--danger);">${escapeHtml(f.error)}</span>`);
+    } else {
+      meta.push(`<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><path d="M7 12l4 4 6-6"/></svg>${fmtInt(f.data.length)} linhas</span>`);
+      meta.push(`<span>${f.headers.length} colunas</span>`);
+      meta.push(`<span>${uniaoFmtBytes(f.size)}</span>`);
+      if (f.firstDate && f.lastDate) {
+        meta.push(`<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${uniaoFmtData(f.firstDate)} → ${uniaoFmtData(f.lastDate)}</span>`);
+      }
+    }
+    
+    const badges = [];
+    if (f.id === primaryId && !f.error) badges.push('<span class="uniao-file-badge primary">Cabeçalho mestre</span>');
+    if (f.id === oldestId && oldestId !== newestId) badges.push('<span class="uniao-file-badge oldest">Mais antigo</span>');
+    if (f.id === newestId && oldestId !== newestId) badges.push('<span class="uniao-file-badge newest">Mais recente</span>');
+    
+    return `
+      <div class="uniao-file-item" data-id="${f.id}">
+        <div class="uniao-file-icon ${iconClass}">${iconSvg}</div>
+        <div class="uniao-file-info">
+          <div class="uniao-file-name" title="${escapeAttr(f.name)}">${escapeHtml(f.name)}</div>
+          <div class="uniao-file-meta">${meta.join('')}</div>
+        </div>
+        <div style="display:flex; gap: 4px;">${badges.join('')}</div>
+        <button class="uniao-file-remove" onclick="uniaoRemoverArquivo('${f.id}')" title="Remover">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    `;
+  }).join('');
+  
+  container.innerHTML = html;
+}
+
+function uniaoRenderSummary(validFiles, warnings) {
+  const totalLinhas = uniaoState.consolidated.length;
+  const totalArquivos = validFiles.length;
+  const totalCols = uniaoState.headers.length;
+  const dateCol = uniaoState.dateColName;
+  
+  $('summaryArquivos').textContent = fmtInt(totalArquivos);
+  $('summaryLinhas').textContent = fmtInt(totalLinhas);
+  $('summaryColunas').textContent = fmtInt(totalCols);
+  $('summaryDataCol').textContent = dateCol || 'Não detectada';
+  $('summaryDataCol').style.color = dateCol ? 'var(--success)' : 'var(--text-tertiary)';
+  
+  // Período total
+  if (dateCol && uniaoState.consolidated.length) {
+    const firstRow = uniaoState.consolidated[0];
+    const lastRow = uniaoState.consolidated[uniaoState.consolidated.length - 1];
+    const firstD = uniaoParseData(firstRow[dateCol]);
+    const lastD = uniaoParseData(lastRow[dateCol]);
+    if (firstD || lastD) {
+      $('summaryPeriodo').textContent = `${uniaoFmtData(firstD)} → ${uniaoFmtData(lastD)}`;
+    } else {
+      $('summaryPeriodo').textContent = '—';
+    }
+  } else {
+    $('summaryPeriodo').textContent = 'Sem ordenação por data';
+  }
+  
+  // Warnings
+  const wHtml = [];
+  if (!dateCol) {
+    wHtml.push(`
+      <div class="uniao-warning info">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <div><strong>Coluna de data não detectada.</strong> As linhas foram concatenadas na ordem dos arquivos carregados.</div>
+      </div>
+    `);
+  }
+  
+  warnings.forEach(w => {
+    wHtml.push(`
+      <div class="uniao-warning">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div>${w.msg}</div>
+      </div>
+    `);
+  });
+  
+  $('uniaoWarnings').innerHTML = wHtml.join('');
+  $('uniaoSummary').style.display = 'block';
+}
+
+function uniaoRenderPreview() {
+  const container = $('uniaoPreviewContainer');
+  const grid = $('uniaoPreviewGrid');
+  const section = $('uniaoPreviewSection');
+  const countEl = $('uniaoPreviewCount');
+  
+  const data = uniaoState.consolidated;
+  const headers = uniaoState.headers;
+  
+  if (!data.length || !headers.length) {
+    section.style.display = 'none';
+    return;
+  }
+  
+  section.style.display = 'block';
+  countEl.textContent = `${fmtInt(data.length)} linhas · ${headers.length} colunas`;
+  
+  // Mostra primeiras 20 + últimas 20
+  const PREVIEW_ROWS = 20;
+  const showFirst = data.slice(0, PREVIEW_ROWS);
+  const showLast = data.length > PREVIEW_ROWS * 2 ? data.slice(-PREVIEW_ROWS) : [];
+  const skipCount = data.length - (showFirst.length + showLast.length);
+  
+  const cols = headers.length;
+  grid.style.gridTemplateColumns = `56px repeat(${cols}, 145px)`;
+  
+  const colLetter = (n) => {
+    let s = '';
+    while (n >= 0) {
+      s = String.fromCharCode(65 + (n % 26)) + s;
+      n = Math.floor(n / 26) - 1;
+    }
+    return s;
+  };
+  
+  let html = '';
+  
+  // Header
+  html += `<div class="sheet-header-cell row-num" style="min-width:56px; max-width:56px;">#</div>`;
+  headers.forEach((h, i) => {
+    const isDateCol = h === uniaoState.dateColName;
+    html += `
+      <div class="sheet-header-cell" ${isDateCol ? 'data-role="DATA"' : ''}>
+        <div class="sheet-col-letter">${colLetter(i)}${isDateCol ? ' · DATA' : ''}</div>
+        <div class="sheet-col-name" title="${escapeAttr(h)}">${escapeHtml(h)}</div>
+      </div>
+    `;
+  });
+  
+  // Rows
+  showFirst.forEach((row, idx) => {
+    html += `<div class="sheet-cell row-num" style="min-width:56px; max-width:56px;">${idx + 1}</div>`;
+    headers.forEach(h => {
+      const v = row[h];
+      const display = (v === null || v === undefined || v === '') ? '—' : String(v);
+      const truncated = display.length > 40 ? display.substring(0, 40) + '…' : display;
+      const isDateCol = h === uniaoState.dateColName;
+      html += `<div class="sheet-cell" ${isDateCol ? 'data-role="DATA"' : ''} title="${escapeAttr(display)}">${escapeHtml(truncated)}</div>`;
+    });
+  });
+  
+  // Skip indicator
+  if (skipCount > 0) {
+    html += `<div class="sheet-cell row-num" style="min-width:56px; max-width:56px; color: var(--text-disabled);">⋯</div>`;
+    headers.forEach((h, i) => {
+      html += `<div class="sheet-cell" style="color: var(--text-disabled); text-align: ${i === 0 ? 'left' : 'center'};">${i === 0 ? `... ${fmtInt(skipCount)} linhas ocultas ...` : '⋯'}</div>`;
+    });
+  }
+  
+  // Last rows
+  if (showLast.length) {
+    showLast.forEach((row, idx) => {
+      const realIdx = data.length - showLast.length + idx + 1;
+      html += `<div class="sheet-cell row-num" style="min-width:56px; max-width:56px;">${fmtInt(realIdx)}</div>`;
+      headers.forEach(h => {
+        const v = row[h];
+        const display = (v === null || v === undefined || v === '') ? '—' : String(v);
+        const truncated = display.length > 40 ? display.substring(0, 40) + '…' : display;
+        const isDateCol = h === uniaoState.dateColName;
+        html += `<div class="sheet-cell" ${isDateCol ? 'data-role="DATA"' : ''} title="${escapeAttr(display)}">${escapeHtml(truncated)}</div>`;
+      });
+    });
+  }
+  
+  grid.innerHTML = html;
+  
+  // Listeners de scroll
+  setTimeout(() => {
+    uniaoBindPreviewScroll();
+    uniaoUpdateMinimap();
+  }, 50);
+}
+
+function uniaoBindPreviewScroll() {
+  const c = $('uniaoPreviewContainer');
+  const ts = $('uniaoTopscroll');
+  const inner = $('uniaoTopscrollInner');
+  
+  if (!c || c._uniaoBound) return;
+  c._uniaoBound = true;
+  
+  // Sincroniza largura do topscroll
+  if (inner) inner.style.width = c.scrollWidth + 'px';
+  
+  c.addEventListener('scroll', () => {
+    if (ts && !ts._syncing) {
+      ts._syncing = true;
+      ts.scrollLeft = c.scrollLeft;
+      requestAnimationFrame(() => ts._syncing = false);
+    }
+    uniaoUpdateMinimap();
+  }, { passive: true });
+  
+  if (ts) {
+    ts.addEventListener('scroll', () => {
+      if (c._syncing) return;
+      c._syncing = true;
+      c.scrollLeft = ts.scrollLeft;
+      requestAnimationFrame(() => c._syncing = false);
+    }, { passive: true });
+  }
+}
+
+function uniaoUpdateMinimap() {
+  const c = $('uniaoPreviewContainer');
+  const thumb = $('uniaoMinimapThumb');
+  const label = $('uniaoMinimapLabel');
+  if (!c || !thumb) return;
+  
+  const maxScroll = Math.max(0, c.scrollWidth - c.clientWidth);
+  const ratioVisible = c.scrollWidth > 0 ? Math.min(1, c.clientWidth / c.scrollWidth) : 1;
+  const ratioScroll = maxScroll > 0 ? c.scrollLeft / maxScroll : 0;
+  const thumbWidth = Math.max(10, ratioVisible * 100);
+  const availableSpace = 100 - thumbWidth;
+  thumb.style.width = thumbWidth + '%';
+  thumb.style.left = (ratioScroll * availableSpace) + '%';
+  
+  if (label) {
+    const total = uniaoState.headers.length;
+    const colsVisible = Math.ceil(c.clientWidth / 145) - 1;
+    const firstVisible = Math.floor(c.scrollLeft / 145);
+    const lastVisible = Math.min(total, firstVisible + colsVisible);
+    label.textContent = total > 0 ? `Col. ${firstVisible + 1}–${lastVisible} de ${total}` : '—';
+  }
+}
+
+function uniaoJumpScroll(event) {
+  const c = $('uniaoPreviewContainer');
+  if (!c) return;
+  const track = event.currentTarget;
+  const rect = track.getBoundingClientRect();
+  const ratio = (event.clientX - rect.left) / rect.width;
+  const maxScroll = c.scrollWidth - c.clientWidth;
+  c.scrollTo({ left: maxScroll * ratio, behavior: 'smooth' });
+}
+
+function uniaoRemoverArquivo(id) {
+  uniaoState.files = uniaoState.files.filter(f => f.id !== id);
+  uniaoProcessarConsolidado();
+  toast('Arquivo removido', 'info', 2000);
+}
+
+function uniaoLimparTudo() {
+  if (!uniaoState.files.length) return;
+  uniaoState.files = [];
+  uniaoState.consolidated = [];
+  uniaoState.headers = [];
+  uniaoState.dateColName = null;
+  $('uniaoFiles').value = '';
+  $('uniaoFilesSection').style.display = 'none';
+  $('uniaoSummary').style.display = 'none';
+  $('uniaoPreviewSection').style.display = 'none';
+  $('uniaoActions').style.display = 'none';
+  toast('Tudo apagado', 'success');
+}
+
+function uniaoReprocessar() {
+  uniaoState.sortByDate = $('toggleOrdenar').checked;
+  uniaoProcessarConsolidado();
+}
+
+// Exportação
+function uniaoExportarXLSX() {
+  if (!uniaoState.consolidated.length) {
+    toast('Nenhum dado para exportar', 'warn');
+    return;
+  }
+  
+  try {
+    const headers = uniaoState.headers;
+    const dataRows = uniaoState.consolidated.map(row => 
+      headers.map(h => {
+        const v = row[h];
+        return (v === null || v === undefined) ? '' : v;
+      })
+    );
+    
+    const aoa = [headers, ...dataRows];
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    
+    // Auto-fit simples de colunas
+    const colWidths = headers.map((h, colIdx) => {
+      let maxLen = String(h).length;
+      for (let i = 0; i < Math.min(dataRows.length, 200); i++) {
+        const val = dataRows[i][colIdx];
+        const len = val !== null && val !== undefined ? String(val).length : 0;
+        if (len > maxLen) maxLen = len;
+      }
+      return { wch: Math.min(Math.max(maxLen + 2, 10), 50) };
+    });
+    ws['!cols'] = colWidths;
+    
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Consolidado');
+    
+    const fileName = uniaoGerarNomeArquivo('xlsx');
+    XLSX.writeFile(wb, fileName);
+    
+    toast(`${fileName} exportado`, 'success');
+  } catch (err) {
+    console.error(err);
+    toast('Erro ao exportar: ' + err.message, 'error', 5000);
+  }
+}
+
+function uniaoExportarCSV() {
+  if (!uniaoState.consolidated.length) {
+    toast('Nenhum dado para exportar', 'warn');
+    return;
+  }
+  
+  const csv = Papa.unparse(uniaoState.consolidated, { 
+    delimiter: ';',
+    columns: uniaoState.headers
+  });
+  const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = uniaoGerarNomeArquivo('csv');
+  link.click();
+  toast('CSV exportado', 'success');
+}
+
+function uniaoGerarNomeArquivo(ext) {
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const timestamp = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
+  
+  // Se tem coluna de data e período, usa intervalo
+  if (uniaoState.dateColName && uniaoState.consolidated.length) {
+    const dateCol = uniaoState.dateColName;
+    const firstD = uniaoParseData(uniaoState.consolidated[0][dateCol]);
+    const lastD = uniaoParseData(uniaoState.consolidated[uniaoState.consolidated.length - 1][dateCol]);
+    if (firstD && lastD) {
+      const d1 = `${pad(firstD.getDate())}-${pad(firstD.getMonth()+1)}-${firstD.getFullYear()}`;
+      const d2 = `${pad(lastD.getDate())}-${pad(lastD.getMonth()+1)}-${lastD.getFullYear()}`;
+      return `uniao_planilhas_${d1}_a_${d2}.${ext}`;
+    }
+  }
+  
+  return `uniao_planilhas_${timestamp}.${ext}`;
+}
+
+// Event listeners
+$('uniaoFiles').addEventListener('change', (e) => {
+  if (e.target.files.length) {
+    uniaoProcessarArquivos(e.target.files);
+    e.target.value = '';
+  }
+});
+
+// Drag & drop
+const uniaoDropzone = $('uniaoDropzone');
+if (uniaoDropzone) {
+  ['dragenter','dragover'].forEach(evt => {
+    uniaoDropzone.addEventListener(evt, (e) => {
+      e.preventDefault(); e.stopPropagation();
+      uniaoDropzone.classList.add('drag-over');
+    });
+  });
+  ['dragleave','drop'].forEach(evt => {
+    uniaoDropzone.addEventListener(evt, (e) => {
+      e.preventDefault(); e.stopPropagation();
+      uniaoDropzone.classList.remove('drag-over');
+    });
+  });
+  uniaoDropzone.addEventListener('drop', (e) => {
+    if (e.dataTransfer.files.length) {
+      uniaoProcessarArquivos(e.dataTransfer.files);
+    }
+  });
 }
 
 // Atalho
